@@ -22,7 +22,6 @@ class UserController extends Controller
      */
     public function create()
     {
-        
     }
 
     /**
@@ -30,15 +29,30 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        return User::create($request->all());
+
+        $validatedData = $request->rules();
+
+        $user = User::create($validatedData);
+        $message = "{$user->username} Successfully created";
+
+        return response()->json([
+            'message' => $message,
+            'Data' => $user,
+        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $User)
+    public function show(int $id)
     {
-        //
+        $user = User::find($id);
+        
+        if($user->fails()) {
+            return response()->json([
+                'message' => 'User Not Found',
+            ]);
+        }
     }
 
     /**
