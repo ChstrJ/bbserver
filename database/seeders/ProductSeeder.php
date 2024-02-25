@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Employee;
+use App\Models\User;
 use App\Models\Product;
-use Database\Factories\EmployeeFactory;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

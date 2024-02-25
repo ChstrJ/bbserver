@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Employee extends Model
+class User extends Model
 {
     use HasFactory;
 
@@ -16,4 +16,5 @@ class Employee extends Model
         'password',
         'is_active',
     ];
+
 }
