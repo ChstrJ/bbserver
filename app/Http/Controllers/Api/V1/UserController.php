@@ -14,11 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::all();
-
-        // return UserResource::collection(
-        //     User::where('user_id', Auth::user()->id)->get()
-        // );
+        return response()->json(User::all());
     }
 
     /**
@@ -26,6 +22,7 @@ class UserController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**
@@ -34,20 +31,20 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
 
-        $validated_data = $request->validate([
-            'full_name' => 'required|string|min:2',
-            'username' => 'required|string|min:2|unique:users,username',
-            'password' => 'required|string|min:2',
-            'is_active' => 'required|boolean',
-        ]);
+        // $validated_data = $request->validate([
+        //     'full_name' => 'required|string|min:2',
+        //     'username' => 'required|string|min:2|unique:users,username',
+        //     'password' => 'required|string|min:2',
+        //     'is_active' => 'required|boolean',
+        // ]);
 
-        $user = User::create($validated_data);
-        $message = "{$user->username} successfully created";
+        // $user = User::create($validated_data);
+        // $message = "{$user->username} successfully created";
 
-        return response()->json([
-            'message' => $message,
-            'user' => $user,
-        ]);
+        // return response()->json([
+        //     'message' => $message,
+        //     'user' => $user,
+        // ]);
     }
 
     /**
@@ -55,9 +52,7 @@ class UserController extends Controller
      */
     public function show(int $id)
     {
-        $user = User::find($id);
-        dd($user);
-        
+        $user = User::find($id);        
         return response($user);
     }
 
