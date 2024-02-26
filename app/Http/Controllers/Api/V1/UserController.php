@@ -30,14 +30,19 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
 
-        $validatedData = $request->rules();
+        $validated_data = $request->validate([
+            'full_name' => 'required|string|min:2',
+            'username' => 'required|string|min:2|unique:users,username',
+            'password' => 'required|string|min:2',
+            'is_active' => 'required|boolean',
+        ]);
 
-        $user = User::create($validatedData);
-        $message = "{$user->username} Successfully created";
+        $user = User::create($validated_data);
+        $message = "{$user->username} successfully created";
 
         return response()->json([
             'message' => $message,
-            'Data' => $user,
+            'user' => $user,
         ]);
     }
 
@@ -47,12 +52,9 @@ class UserController extends Controller
     public function show(int $id)
     {
         $user = User::find($id);
+        dd($user);
         
-        if($user->fails()) {
-            return response()->json([
-                'message' => 'User Not Found',
-            ]);
-        }
+        return response($user);
     }
 
     /**

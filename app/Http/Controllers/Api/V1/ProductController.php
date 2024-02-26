@@ -31,14 +31,22 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $validatedData = $request->rules();
+        $validated_data = $request->validate([
+            'category_id' => 'required|int',
+            'name' => 'required|string|min:2|unique:products,name',
+            'description' => 'required|string|min:2',
+            'quantity' => 'required|int',
+            'srp' => 'required|numeric',
+            'member_price' => 'required|numeric',
+        ]);
 
-        $product = Product::create($validatedData);
-        $message = "{$product->name} succesffully added to inventory.";
+
+        $product = Product::create($validated_data);
+        $message = "{$product->name} succesffully added to the inventory.";
 
         return response()->json([
             'message' => $message,
-            'data' => $product
+            'products' => $product
         ]);
     }
 

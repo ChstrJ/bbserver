@@ -16,6 +16,12 @@ return [
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
+
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+            'hash' => false,
+        ],
     ],
 
     /*
