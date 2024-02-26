@@ -15,7 +15,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        return Transaction::all();
     }
 
     /**
@@ -33,24 +33,23 @@ class TransactionController extends Controller
     {
         $validated_data = $request->validate([
             'amountDue' => 'required|numeric',
-            'amountOfItems' => 'required|int',
+            'numberOfItems' => 'required|int',
             'paymentType' => 'required|string',
 
         ]);
         $transaction = Transaction::create($validated_data);
-        $message = "{$transaction->name} succesffully added to the inventory.";
         return response()->json([
-            'products' => $transaction,
-            'message' => $message
+            'orders' => $transaction,
+            'message' => "Success!"
         ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Transaction $transaction)
+    public function show(int $id)
     {
-        //
+        
     }
 
     /**

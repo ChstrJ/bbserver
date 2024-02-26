@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\TransactionController;
-use App\Http\Controllers\AuthController;
 
 
 /*
@@ -39,7 +39,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/v1/pos', [TransactionController::class, 'store']);
+    Route::get('/v1/pos/', [TransactionController::class, 'index']);
+    Route::get('/v1/pos/{id}', [TransactionController::class, 'view']);
+    Route::delete('/v1/pos/{id}', [TransactionController::class, 'destory']);
+    Route::put('/v1/pos/{id}', [TransactionController::class, 'update']);
 });
+
+
 
 
 
