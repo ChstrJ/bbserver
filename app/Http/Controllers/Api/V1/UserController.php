@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\HttpStatusCode;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -14,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(User::all());
+        return response()->json(User::all(), HttpStatusCode::$OK);
     }
 
     /**

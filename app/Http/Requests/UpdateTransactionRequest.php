@@ -22,7 +22,9 @@ class UpdateTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'amount_due' => 'required|numeric',
+            'number_of_items' => 'required|int',
+            'payment_type' => 'required|string',
         ];
     }
 }

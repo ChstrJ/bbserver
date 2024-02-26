@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\GenericMessage;
+use App\Http\Helpers\HttpStatusCode;
+use App\Http\Helpers\HttpStatusMessage;
 use App\Http\Helpers\ResponseHelper;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
@@ -50,9 +52,15 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id)
+    public function edit(UpdateProductRequest $request, int $id)
     {
-    //    $product = Product::find($id);
+        $product = Product::find($id);
+        if (!$product) {
+            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
+        }
+        $validated_data = $request->validated();
+        $product->update($validated_data);
+        return $product;
     }
 
     /**
@@ -61,7 +69,11 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, int $id)
     {
         $product = Product::find($id);
-        $product->update($request->all());
+        if (!$product) {
+            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
+        }
+        $validated_data = $request->validated();
+        $product->update($validated_data);
         return $product;
     }
 
@@ -70,6 +82,10 @@ class ProductController extends Controller
      */
     public function destroy(int $id)
     {
-        return Product::destroy($id);
+        $product = Product::destroy($id);
+        if (!$product) {
+            return response()->json(["message" => HttpStatusMessage::$BAD_REQUEST], 400);
+        }
+        return $product;
     }
 }

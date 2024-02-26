@@ -1,5 +1,5 @@
 <?php
-
+namespace App\Http\Helpers;
 class HttpStatusMessage {
      // Informational 1xx
      static $CONTINUE = "Your request is received, and we're processing it.";

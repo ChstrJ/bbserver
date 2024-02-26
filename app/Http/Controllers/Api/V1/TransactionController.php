@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\GenericMessage;
+use App\Http\Helpers\HttpStatusMessage;
 use App\Http\Helpers\ResponseHelper;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
@@ -48,30 +49,53 @@ class TransactionController extends Controller
      */
     public function show(int $id)
     {
-        return Transaction::find($id);
+        $transaction = Transaction::find($id);
+        if (!$transaction) {
+            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
+        }
+        return $transaction;
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Transaction $transaction)
+    public function edit(UpdateTransactionRequest $request, int $id)
     {
-        //
+        $transaction = Transaction::find($id);
+        if (!$transaction) {
+            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
+        }
+        $validated_data = $request->validated();
+        $transaction->update($validated_data);
+        return $transaction;
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTransactionRequest $request, Transaction $transaction)
+    public function update(UpdateTransactionRequest $request, int $id)
     {
-        //
+
+        $transaction = Transaction::find($id);
+        $user = auth()->user()->id;
+        $user_transact_id = $transaction->user_id;
+        if ($user !== $user_transact_id) {
+            return response()->json(['message' => HttpStatusMessage::$FORBIDDEN], 403); 
+        }
+        $validated_data = $request->validated();
+        $transaction->update($validated_data);
+        return $transaction;
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Transaction $transaction)
+    public function destroy(int $id)
     {
-        //
+        $transaction = Transaction::destroy($id);
+        if (!$transaction) {
+            return response()->json(["message" => HttpStatusMessage::$BAD_REQUEST], 400);
+        }
+        return $transaction;
     }
 }
