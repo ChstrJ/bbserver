@@ -2,24 +2,25 @@
 
 namespace App\Models;
 
+use App\Http\Middleware\Authenticate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class Transaction extends Model
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
     protected $table = "transactions";
-    protected $primaryKey = 'orderTransactionID';
 
     
     protected $fillable = [
-        'userID',
-        'amountDue',
-        'numberOfItems',
-        'paymentType',
+        'user_id',
+        'amount_due',
+        'number_of_items',
+        'payment_type',
     ];
 
-    public function user(){
+    protected function user(){
         return $this->belongsTo(User::class);
     }
 

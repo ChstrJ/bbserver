@@ -4,9 +4,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\GenericMessage;
+use App\Http\Helpers\ResponseHelper;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+
 
 class TransactionController extends Controller
 {
@@ -31,17 +34,13 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request)
     {
-        $validated_data = $request->validate([
-            'amountDue' => 'required|numeric',
-            'numberOfItems' => 'required|int',
-            'paymentType' => 'required|string',
-
-        ]);
+        //check if user is logged in
+        $user = auth()->user();
+        $validated_data = $request->validated();
+        $validated_data['user_id'] = $user->id;
         $transaction = Transaction::create($validated_data);
-        return response()->json([
-            'orders' => $transaction,
-            'message' => "Success!"
-        ], 201);
+        $message = GenericMessage::transactionAdded($user->username);
+        return ResponseHelper::transactionResponse($transaction,  $message);
     }
 
     /**
@@ -49,7 +48,7 @@ class TransactionController extends Controller
      */
     public function show(int $id)
     {
-        
+        return Transaction::find($id);
     }
 
     /**

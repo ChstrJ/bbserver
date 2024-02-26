@@ -17,10 +17,10 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'fullName' => $this->faker->name(),
+            'full_name' => $this->faker->name(),
             'username' => $this->faker->name(),
             'password' => $this->faker->password(), 
-            'isActive' => $this->faker->boolean(), 
+            'is_active' => $this->faker->boolean(), 
         ];
     }
 }

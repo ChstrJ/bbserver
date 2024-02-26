@@ -11,28 +11,23 @@ class AuthController extends Controller
 {
     public function register (Request $request) {
         $data = $request->validate([
-            'fullName' => 'required|string|min:2',
+            'full_name' => 'required|string|min:2',
             'username' => 'required|string|min:2|unique:users,username',
             'password' => 'required|string|min:2'
         ]);
         $user_data = User::create([
-            'fullName' => $data['fullName'],
+            'full_name' => $data['full_name'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
             
         ]);
+        
         $token = $user_data->createToken('barista-token')->plainTextToken;
-        $response = [
-            'user' => [
-                'userID' => $user_data->userID,
-                'fullName' => $user_data->fullName,
-                'username' => $user_data->username,
-                'password' => $user_data->password,
-            ],
+        return response([
+            'user' => $user_data,
             'token' => $token,
-            'message' => "Register Success"
-        ];
-        return response($response, 201);
+            'message' => 'Register Success!'
+        ], 201);
             
     }
 

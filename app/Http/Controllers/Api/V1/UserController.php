@@ -17,7 +17,7 @@ class UserController extends Controller
         return User::all();
 
         // return UserResource::collection(
-        //     User::where('userID', Auth::user()->id)->get()
+        //     User::where('user_id', Auth::user()->id)->get()
         // );
     }
 
@@ -35,10 +35,10 @@ class UserController extends Controller
     {
 
         $validated_data = $request->validate([
-            'fullName' => 'required|string|min:2',
+            'full_name' => 'required|string|min:2',
             'username' => 'required|string|min:2|unique:users,username',
             'password' => 'required|string|min:2',
-            'isActive' => 'required|boolean',
+            'is_active' => 'required|boolean',
         ]);
 
         $user = User::create($validated_data);

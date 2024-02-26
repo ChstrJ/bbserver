@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\GenericMessage;
+use App\Http\Helpers\ResponseHelper;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use Illuminate\Validation\ValidationException;
+
 
 class ProductController extends Controller
 {
@@ -31,20 +33,10 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $validated_data = $request->validate([
-            'categoryID' => 'required|int',
-            'name' => 'required|string|min:2|unique:products,name',
-            'description' => 'required|string|min:2',
-            'quantity' => 'required|int',
-            'srp' => 'required|numeric',
-            'memberPrice' => 'required|numeric',
-        ]);
+        $validated_data = $request->validated();
         $product = Product::create($validated_data);
-        $message = "{$product->name} succesffully added to the inventory.";
-        return response()->json([
-            'products' => $product,
-            'message' => $message
-        ], 201);
+        $message = GenericMessage::productAdded($product->name);
+        return ResponseHelper::productResponse($product, $message);
     }
 
     /**
@@ -60,7 +52,7 @@ class ProductController extends Controller
      */
     public function edit(int $id)
     {
-        // $product = Product::find($id);
+    //    $product = Product::find($id);
     }
 
     /**
