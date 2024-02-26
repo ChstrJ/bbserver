@@ -32,22 +32,19 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $validated_data = $request->validate([
-            'category_id' => 'required|int',
+            'categoryID' => 'required|int',
             'name' => 'required|string|min:2|unique:products,name',
             'description' => 'required|string|min:2',
             'quantity' => 'required|int',
             'srp' => 'required|numeric',
-            'member_price' => 'required|numeric',
+            'memberPrice' => 'required|numeric',
         ]);
-
-
         $product = Product::create($validated_data);
         $message = "{$product->name} succesffully added to the inventory.";
-
         return response()->json([
-            'message' => $message,
-            'products' => $product
-        ]);
+            'products' => $product,
+            'message' => $message
+        ], 201);
     }
 
     /**
@@ -61,9 +58,9 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(int $id)
     {
-        //
+        // $product = Product::find($id);
     }
 
     /**

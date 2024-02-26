@@ -10,22 +10,26 @@ class AuthController extends Controller
 {
     public function register (Request $request) {
         $data = $request->validate([
-            'full_name' => 'required|string|min:2',
+            'fullName' => 'required|string|min:2',
             'username' => 'required|string|min:2|unique:users,username',
             'password' => 'required|string|min:2'
         ]);
         $user_data = User::create([
-            'full_name' => $data['full_name'],
+            'fullName' => $data['fullName'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
             
         ]);
-        $message = "{$user_data->username} successfully registered";
         $token = $user_data->createToken('barista-token')->plainTextToken;
         $response = [
-            'message' => $message,
-            'user' => $user_data,
-            'token' => $token
+            'user' => [
+                'userID' => $user_data->userID,
+                'fullName' => $user_data->fullName,
+                'username' => $user_data->username,
+                'password' => $user_data->password,
+            ],
+            'token' => $token,
+            'message' => "Register Success"
         ];
         return response($response, 201);
             
@@ -37,22 +41,22 @@ class AuthController extends Controller
             'password' => 'required|string'
         ]);
         $user_data = User::where('username', $data['username'])->first();
-        $token = $user_data->createToken('barista-token')->plainTextToken;
         if(!$user_data || !Hash::check($data['password'], $user_data->password)) {
             return response([
                 "message" => "Bad Credentials",
             ], 401);
         } else {
+            $token = $user_data->createToken('barista-token')->plainTextToken;
             return response([
-                "message" => "Login Success",
                 "user" => $user_data,
-                "token" => $token
+                "token" => $token,
+                "message" => "Login Success"
             ], 200);
         }
     }
 
     public function logout (Request $request) {
-        auth()->user()->tokens()->delete();
+        $request->auth()->user()->tokens()->delete();
         return response([
             "message" => "Logout Success"
         ], 200);

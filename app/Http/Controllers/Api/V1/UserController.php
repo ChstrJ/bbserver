@@ -31,10 +31,10 @@ class UserController extends Controller
     {
 
         $validated_data = $request->validate([
-            'full_name' => 'required|string|min:2',
+            'fullName' => 'required|string|min:2',
             'username' => 'required|string|min:2|unique:users,username',
             'password' => 'required|string|min:2',
-            'is_active' => 'required|boolean',
+            'isActive' => 'required|boolean',
         ]);
 
         $user = User::create($validated_data);
