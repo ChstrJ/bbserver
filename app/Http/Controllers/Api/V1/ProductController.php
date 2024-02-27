@@ -57,19 +57,8 @@ class ProductController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(UpdateProductRequest $request, int $id)
-    {
-        $product = Product::find($id);
-        if (!$product) {
-            return response()->json([
-                "message" => HttpStatusMessage::$NOT_FOUND
-            ], 404);
-        }
-        $validated_data = $request->validated();
-        $product->update($validated_data);
-        return response()->json([
-            "data" => $product,
-            "message" => GenericMessage::producUpdated($product->name)
-        ], 200);
+    {   
+        //
     }
 
     /**
@@ -87,7 +76,7 @@ class ProductController extends Controller
         $product->update($validated_data);
         return response()->json([
             "data" => $product,
-            "message" => GenericMessage::producUpdated($product->name)
+            "message" => GenericMessage::productUpdated($product->name)
         ], 200);
     }
 

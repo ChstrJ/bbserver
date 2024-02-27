@@ -72,16 +72,11 @@ class TransactionController extends Controller
 
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return response()->json([
-                "message" => HttpStatusMessage::$NOT_FOUND
-            ], 404);
+            return response()->json([ "message" => HttpStatusMessage::$NOT_FOUND], 404);
         }
         $validated_data = $request->validated();
         $transaction->update($validated_data);
-        return response()->json([
-            "data" => $transaction,
-            "message" => GenericMessage::producUpdated($transaction->name)
-        ], 200);
+        return response()->json(["data" => $transaction,"message" => "Transaction updated"], 200);
     }
 
     /**
