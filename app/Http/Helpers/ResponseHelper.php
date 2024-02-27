@@ -39,8 +39,8 @@ class ResponseHelper
                 "member_price" => $product->member_price,
                 "created_at" => $product->created_at,
                 "updated_at" => $product->updated_at,
-                "message" => $message
-            ]
+            ],
+            "message" => $message
         ];
         return response()->json($data, HttpStatusCode::$CREATED);
     }

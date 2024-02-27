@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Helpers\utils;
-
-$product_category = [
+return [
     [
         "id" => 1,
         "name" => "Beverages"
@@ -21,4 +19,3 @@ $product_category = [
     ]
 ];
 
-$category_length = count($product_categories);
