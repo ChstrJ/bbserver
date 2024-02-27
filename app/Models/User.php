@@ -22,4 +22,8 @@ class User extends Authenticatable
         'is_active',
     ];
 
+    protected function user() {
+        return $this->belongsToMany(Transaction::class);
+    }
+
 }

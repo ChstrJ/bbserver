@@ -21,7 +21,7 @@ class Transaction extends Model
     ];
 
     protected function user(){
-        return $this->belongsToMany(User::class);
+        return $this->belongsTo(User::class);
     }
 
 }

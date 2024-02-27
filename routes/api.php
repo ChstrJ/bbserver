@@ -23,14 +23,14 @@ Route::get('/v1/users', [UserController::class, 'index']);
 Route::post('/v1/users', [UserController::class, 'store']);
 Route::get('/v1/users/{id}', [UserController::class, 'show']);
 
-
 Route::post('/v1/login', [AuthController::class, 'login']);
 Route::post('/v1/register', [AuthController::class, 'register']);
 
+Route::get('/v1/products', [ProductController::class, 'index']);
+Route::get('/v1/products/{id}', [ProductController::class, 'show']);
+
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/v1/logout', [AuthController::class, 'logout']);
-    Route::get('/v1/products', [ProductController::class, 'index']);
-    Route::get('/v1/products/{id}', [ProductController::class, 'show']);
     Route::post('/v1/products', [ProductController::class, 'store']);
     Route::patch('/v1/products/{id}', [ProductController::class, 'edit']);
     Route::put('/v1/products/{id}', [ProductController::class, 'update']);
