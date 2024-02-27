@@ -40,7 +40,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/v1/pos/{id}', [TransactionController::class, 'show']);
     Route::delete('/v1/pos/{id}', [TransactionController::class, 'destroy']);
     Route::put('/v1/pos/{id}', [TransactionController::class, 'update']);
+    Route::patch('/v1/pos/{id}', [TransactionController::class, 'update']);
 });
+
 
 
 

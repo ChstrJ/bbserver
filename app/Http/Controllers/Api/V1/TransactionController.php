@@ -61,7 +61,7 @@ class TransactionController extends Controller
      */
     public function edit(UpdateTransactionRequest $request, int $id)
     {
-       //
+        //
     }
 
     /**
@@ -72,15 +72,16 @@ class TransactionController extends Controller
 
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return response()->json(['message' => HttpStatusMessage::$NOT_FOUND], 404);
+            return response()->json([
+                "message" => HttpStatusMessage::$NOT_FOUND
+            ], 404);
         }
-
-        $user = auth()->user();
-        Log::info('Retrieved user:', $user); 
-
         $validated_data = $request->validated();
         $transaction->update($validated_data);
-        return $transaction;
+        return response()->json([
+            "data" => $transaction,
+            "message" => GenericMessage::producUpdated($transaction->name)
+        ], 200);
     }
 
     /**
