@@ -3,25 +3,21 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register (Request $request) {
-        $data = $request->validate([
-            'full_name' => 'required|string|min:2',
-            'username' => 'required|string|min:2|unique:users,username',
-            'password' => 'required|string|min:2'
-        ]);
+    public function register (StoreUserRequest $request) {
+        $data = $request->validated();
         $user_data = User::create([
             'full_name' => $data['full_name'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
             
         ]);
-        
         $token = $user_data->createToken('barista-token')->plainTextToken;
         return response([
             'user' => $user_data,
@@ -31,11 +27,8 @@ class AuthController extends Controller
             
     }
 
-    public function login (Request $request) {
-        $data = $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string'
-        ]);
+    public function login (StoreUserRequest $request) {
+        $data = $request->validated();
         $user_data = User::where('username', $data['username'])->first();
         if(!$user_data || !Hash::check($data['password'], $user_data->password)) {
             return response([
