@@ -19,7 +19,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        return response()->json(Product::all());
+    
     }
 
     /**
@@ -46,7 +47,10 @@ class ProductController extends Controller
      */
     public function show(int $id)
     {
-        return Product::find($id);
+        $product = Product::find($id);
+        return response()->json([
+            "product" => $product,
+        ], 200);
     }
 
     /**
@@ -56,11 +60,16 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         if (!$product) {
-            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
+            return response()->json([
+                "message" => HttpStatusMessage::$NOT_FOUND
+            ], 404);
         }
         $validated_data = $request->validated();
         $product->update($validated_data);
-        return $product;
+        return response()->json([
+            "data" => $product,
+            "message" => GenericMessage::producUpdated($product->name)
+        ], 200);
     }
 
     /**
@@ -70,11 +79,16 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         if (!$product) {
-            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
+            return response()->json([
+                "message" => HttpStatusMessage::$NOT_FOUND
+            ], 404);
         }
         $validated_data = $request->validated();
         $product->update($validated_data);
-        return $product;
+        return response()->json([
+            "data" => $product,
+            "message" => GenericMessage::producUpdated($product->name)
+        ], 200);
     }
 
     /**
@@ -86,6 +100,6 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json(["message" => HttpStatusMessage::$BAD_REQUEST], 400);
         }
-        return $product;
+        return response()->json(["message" => 'Deleted Success!'], 200);
     }
 }

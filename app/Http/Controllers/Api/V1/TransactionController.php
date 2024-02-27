@@ -10,7 +10,7 @@ use App\Http\Helpers\ResponseHelper;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
-
+use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -61,13 +61,7 @@ class TransactionController extends Controller
      */
     public function edit(UpdateTransactionRequest $request, int $id)
     {
-        $transaction = Transaction::find($id);
-        if (!$transaction) {
-            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
-        }
-        $validated_data = $request->validated();
-        $transaction->update($validated_data);
-        return $transaction;
+       //
     }
 
     /**
@@ -77,11 +71,13 @@ class TransactionController extends Controller
     {
 
         $transaction = Transaction::find($id);
-        $user = auth()->user()->id;
-        $user_transact_id = $transaction->user_id;
-        if ($user !== $user_transact_id) {
-            return response()->json(['message' => HttpStatusMessage::$FORBIDDEN], 403); 
+        if (!$transaction) {
+            return response()->json(['message' => HttpStatusMessage::$NOT_FOUND], 404);
         }
+
+        $user = auth()->user();
+        Log::info('Retrieved user:', $user); 
+
         $validated_data = $request->validated();
         $transaction->update($validated_data);
         return $transaction;
@@ -96,6 +92,6 @@ class TransactionController extends Controller
         if (!$transaction) {
             return response()->json(["message" => HttpStatusMessage::$BAD_REQUEST], 400);
         }
-        return $transaction;
+        return response()->json(["message" => 'Deleted Success!'], 200);
     }
 }
