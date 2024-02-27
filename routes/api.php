@@ -23,7 +23,7 @@ Route::get('/v1/users', [UserController::class, 'index']);
 Route::post('/v1/users', [UserController::class, 'store']);
 Route::get('/v1/users/{id}', [UserController::class, 'show']);
 
-Route::post('/v1/login', [AuthController::class, 'login']);
+Route::post('/v1/auth', [AuthController::class, 'login']);
 Route::post('/v1/register', [AuthController::class, 'register']);
 
 Route::get('/v1/products', [ProductController::class, 'index']);
