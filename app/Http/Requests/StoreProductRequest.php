@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+
+use App\Http\Helpers\ProductCategories;
 use Illuminate\Foundation\Http\FormRequest;
+
 
 class StoreProductRequest extends FormRequest
 {
@@ -19,10 +22,13 @@ class StoreProductRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
+
     public function rules(): array
     {
+        $categories_length = ProductCategories::getCategories();
         return [
-            'category_id' => 'required|int|',
+            'category_id' => "required|int|min:1|max:$categories_length",
             'name' => 'required|string|min:2|unique:products,name',
             'description' => 'required|string|min:2',
             'quantity' => 'required|int',
