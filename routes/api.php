@@ -20,7 +20,7 @@ use App\Http\Controllers\Api\V1\TransactionController;
 */
 
 
-Route::post('/v1/auth', [AuthController::class, 'login']);
+Route::post('/v1/auth', [AuthController::class, 'auth']);
 Route::post('/v1/register', [AuthController::class, 'register']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
