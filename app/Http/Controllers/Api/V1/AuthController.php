@@ -28,11 +28,10 @@ class AuthController extends Controller
     }
 
     public function login (StoreUserRequest $request) {
-        $data = $request->validated();
-        $user_data = User::where('username', $data['username'])->first();
-        if(!$user_data || !Hash::check($data['password'], $user_data->password)) {
+        $user_data = User::where('username', $request['username'])->first();
+        if(!$user_data || !Hash::check($request['password'], $user_data->password)) {
             return response([
-                "message" => "Bad Credentials",
+                "message" => "Invalid Username and Password!",
             ], 401);
         } else {
             $token = $user_data->createToken('barista-token')->plainTextToken;
