@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'paths' => ['*', 'http://localhost:5173/*'],
+    'paths' => ['*'],
 
     'supports_credentials' => true,
 
