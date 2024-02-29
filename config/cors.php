@@ -21,7 +21,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [''],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => ["**"],
 
@@ -34,6 +34,6 @@ return [
 
     'Access_Control_Allow_Origin' => '*',
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];
