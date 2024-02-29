@@ -4,7 +4,7 @@ namespace App\Http\Helpers;
 
 use App\Models\Product;
 use App\Models\Transaction;
-
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class ResponseHelper
@@ -40,6 +40,23 @@ class ResponseHelper
                 "created_at" => $product->created_at,
                 "updated_at" => $product->updated_at,
             ],
+            "message" => $message
+        ];
+        return response()->json($data, HttpStatusCode::$CREATED);
+    }
+
+    public static function registerResponse(User $user, $token = null, string $message = null,): JsonResponse
+    {
+        $data = [
+            "user" => [
+                "id" => $user->id,
+                "full_name" => $user->full_name,
+                "username" => $user->username,
+                "password" => $user->password,
+                "created_at" => $user->created_at,
+                "updated_at" => $user->updated_at,
+            ],
+            "token" => $token,
             "message" => $message
         ];
         return response()->json($data, HttpStatusCode::$CREATED);

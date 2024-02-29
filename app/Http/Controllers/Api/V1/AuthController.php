@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\ResponseHelper;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,23 +20,17 @@ class AuthController extends Controller
             
         ]);
         $token = $user_data->createToken('barista-token')->plainTextToken;
-        return response([
-            'user' => $user_data,
-            'token' => $token,
-            'message' => 'Register Success!'
-        ], 201);
+        return ResponseHelper::registerResponse($user_data, $token, "Login Success");
             
     }
 
-    public function login (StoreUserRequest $request) {
+    public function login (Request $request) {
         $user_data = User::where('username', $request['username'])->first();
         if(!$user_data || !Hash::check($request['password'], $user_data->password)) {
-            return response([
-                "message" => "Invalid Username and Password!",
-            ], 401);
+            return response()->json(["message" => "Invalid Username and Password!"] ,401);
         } else {
             $token = $user_data->createToken('barista-token')->plainTextToken;
-            return response([
+            return response()->json([
                 "user" => $user_data,
                 "token" => $token,
                 "message" => "Login Success"
