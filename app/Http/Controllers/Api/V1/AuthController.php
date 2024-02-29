@@ -24,7 +24,7 @@ class AuthController extends Controller
             
     }
 
-    public function auth (Request $request) {
+    public function login (Request $request) {
         $user_data = User::where('username', $request['username'])->first();
         if(!$user_data || !Hash::check($request['password'], $user_data->password)) {
             return response()->json(["message" => "Invalid Username and Password!"] ,401);

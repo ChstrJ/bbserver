@@ -22,8 +22,8 @@ use App\Http\Controllers\Api\V1\TransactionController;
 
 
 
-Route::post('/v1/auth', [AuthController::class, 'auth']);
-Route::post('/v1/register', [AuthController::class, 'register']);
+Route::post('/v1/auth/register', [AuthController::class, 'register']);
+Route::post('/v1/auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/v1/products', [ProductController::class, 'index']);
