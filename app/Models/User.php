@@ -13,7 +13,6 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory;
 
     protected $table = "users";
-
     protected $casts = ['is_active' => 'boolean'];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -24,8 +23,8 @@ class User extends Authenticatable
         'is_active',
     ];
 
-    protected function transaction() {
-        return $this->hasMany(Transaction::class);
+    public function transactions() {
+        return $this->hasMany(Transaction::class, 'user_id');
     }
 
 }

@@ -6,11 +6,14 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\GenericMessage;
 use App\Http\Helpers\HttpStatusMessage;
-use App\Http\Helpers\ResponseHelper;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+use App\Http\Resources\V1\TransactionCollection;
+use App\Http\Resources\V1\TransactionResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TransactionController extends Controller
 {
@@ -19,7 +22,11 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        return Transaction::all();
+        $transaction = QueryBuilder::for(Transaction::class)
+            ->allowedSorts(['order_transaction_date', 'order_transaction_time', 'amount_due',  'number_of_items'])
+            ->allowedFilters(['order_transaction_date', 'order_transaction_time', 'amount_due',  'number_of_items'])
+            ->paginate();
+        return new TransactionCollection($transaction);
     }
 
     /**
@@ -36,12 +43,22 @@ class TransactionController extends Controller
     public function store(StoreTransactionRequest $request)
     {
         //check if user is logged in
-        $user = auth()->user();
+        // $user = auth()->user();
+        // $validated_data = $request->validated();
+        // $validated_data['user_id'] = $user->id;
+        // $transaction = Transaction::create($validated_data);
+        // $message = GenericMessage::transactionAdded($user->username);
+        // return new TransactionResource($transaction, $message);
+
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Please login first']);
+        }
+
         $validated_data = $request->validated();
-        $validated_data['user_id'] = $user->id;
-        $transaction = Transaction::create($validated_data);
+        $transaction = $user->transactions()->create($validated_data);
         $message = GenericMessage::transactionAdded($user->username);
-        return ResponseHelper::transactionResponse($transaction,  $message);
+        return new TransactionResource($transaction, $message);
     }
 
     /**
@@ -72,22 +89,19 @@ class TransactionController extends Controller
 
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return response()->json([ "message" => HttpStatusMessage::$NOT_FOUND], 404);
+            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
         }
         $validated_data = $request->validated();
         $transaction->update($validated_data);
-        return response()->json(["data" => $transaction,"message" => "Transaction updated"], 200);
+        return response()->json(["data" => $transaction, "message" => "Transaction updated"], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id)
+    public function destroy(Transaction $transaction)
     {
-        $transaction = Transaction::destroy($id);
-        if (!$transaction) {
-            return response()->json(["message" => HttpStatusMessage::$BAD_REQUEST], 400);
-        }
+       $transaction->delete();
         return response()->json(["message" => 'Deleted Success!'], 200);
     }
 }

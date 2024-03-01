@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->date('order_transaction_date')->default(date('Y-m-d'));
-            $table->time('order_transaction_time')->default(date('H:i:s'));
             $table->float('amount_due');
             $table->integer('number_of_items');
             $table->string('payment_type');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

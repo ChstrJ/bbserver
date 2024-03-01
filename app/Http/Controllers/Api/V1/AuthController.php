@@ -29,7 +29,10 @@ class AuthController extends Controller
     {
         $user_data = User::where('username', $request['username'])->first();
         if (!$user_data || !Hash::check($request['password'], $user_data->password)) {
-            return response()->json(['message' => 'Invalid username or password'], 401);
+            return response()->json(['message' => [
+                "username" => "username is invalid",
+                "password" => "password is invalid",
+            ]], 401);
         } else {
             $token = $user_data->createToken('barista-token')->plainTextToken;
             return new UserResource($user_data, $token, "Login Success");

@@ -21,7 +21,7 @@ class ProductController extends Controller
     {
         $products = QueryBuilder::for(Product::class)
             ->allowedSorts(['id', 'name', 'created_at',  'quantity', 'srp'])
-            ->allowedFilters(['id', 'name', 'created_at', 'category_id', 'srp'])
+            ->allowedFilters(['id', 'name', 'created_at', 'category_id', 'srp', 'is_remove'])
             ->paginate();
         return new ProductCollection($products);
     }
@@ -39,10 +39,19 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
+
+        // check if user is logged in
+        $user = auth()->user();
         $validated_data = $request->validated();
+        $validated_data['user_id'] = $user->id;
         $product = Product::create($validated_data);
         $message = GenericMessage::productAdded($product->name);
         return new ProductResource($product, $message);
+
+        // $validated_data = $request->validated();
+        // $product = Product::create($validated_data);
+        // $message = GenericMessage::productAdded($product->name);
+        // return new ProductResource($product, $message);
     }
 
     /**

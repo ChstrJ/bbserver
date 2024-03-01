@@ -11,17 +11,21 @@ use Laravel\Sanctum\HasApiTokens;
 class Transaction extends Model
 {
     use HasFactory, HasApiTokens;
-    protected $table = "transactions"; 
+    protected $table = "transactions";
     protected $fillable = [
         'user_id',
         'amount_due',
         'number_of_items',
         'payment_type',
     ];
-    
-    protected function transaction()
+
+    public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

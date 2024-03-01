@@ -20,6 +20,7 @@ return new class extends Migration
             $table->float('srp');
             $table->float('member_price');
             $table->boolean('is_remove')->default(false);
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
