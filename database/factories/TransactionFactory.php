@@ -18,9 +18,10 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => $this->faker->numberBetween(1, 10),
             'amount_due' => $this->faker->numberBetween(1, 100),
             'number_of_items' => $this->faker->numberBetween(1, 100),
-            'payment_type' => $this->faker->sentence(),
+            'payment_type' => $this->faker->randomElement(['GCASH', 'PAYMAYA', 'CASH'])
         ];
     }
 }

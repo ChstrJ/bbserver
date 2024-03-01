@@ -7,6 +7,8 @@ use App\Http\Helpers\HttpStatusCode;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\V1\UserCollection;
 
 class UserController extends Controller
 {
@@ -15,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(User::all(), HttpStatusCode::$OK);
+        return new UserCollection(User::paginate());
     }
 
     /**
@@ -29,7 +31,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request)
+    public function store($request)
     {
 
         // $validated_data = $request->validate([

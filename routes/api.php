@@ -22,27 +22,40 @@ use App\Http\Controllers\Api\V1\TransactionController;
 
 
 
-Route::post('/v1/auth/register', [AuthController::class, 'register']);
-Route::post('/v1/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/users/', [UserController::class, 'index']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/v1/products', [ProductController::class, 'index']);
-    Route::get('/v1/users', [UserController::class, 'index']);
-    Route::post('/v1/users', [UserController::class, 'store']);
-    Route::get('/v1/users/{id}', [UserController::class, 'show']);
-    Route::post('/v1/logout', [AuthController::class, 'logout']);
-    Route::get('/v1/products/{id}', [ProductController::class, 'show']);
-    Route::post('/v1/products', [ProductController::class, 'store']);
-    Route::patch('/v1/products/{id}', [ProductController::class, 'edit']);
-    Route::put('/v1/products/{id}', [ProductController::class, 'update']);
-    Route::delete('/v1/products/{id}', [ProductController::class, 'destroy']);
-    Route::post('/v1/pos', [TransactionController::class, 'store']);
-    Route::get('/v1/pos/', [TransactionController::class, 'index']);
-    Route::get('/v1/pos/{id}', [TransactionController::class, 'show']);
-    Route::delete('/v1/pos/{id}', [TransactionController::class, 'destroy']);
-    Route::put('/v1/pos/{id}', [TransactionController::class, 'update']);
-    Route::patch('/v1/pos/{id}', [TransactionController::class, 'update']);
+    Route::apiResource('/products', ProductController::class);
+    Route::apiResource('/pos', TransactionController::class);
+    Route::apiResource('/users', UserController::class);
+
 });
+
+
+
+
+
+
+
+
+// Route::get('/products', [ProductController::class, 'index']);
+//     Route::get('/users', [UserController::class, 'index']);
+//     Route::post('/users', [UserController::class, 'store']);
+//     Route::get('/users/{id}', [UserController::class, 'show']);
+//     Route::post('/logout', [AuthController::class, 'logout']);
+//     Route::get('/products/{id}', [ProductController::class, 'show']);
+//     Route::post('/products', [ProductController::class, 'store']);
+//     Route::patch('/products/{id}', [ProductController::class, 'edit']);
+//     Route::put('/products/{id}', [ProductController::class, 'update']);
+//     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+//     Route::post('/pos', [TransactionController::class, 'store']);
+//     Route::get('/pos/', [TransactionController::class, 'index']);
+//     Route::get('/pos/{id}', [TransactionController::class, 'show']);
+//     Route::delete('/pos/{id}', [TransactionController::class, 'destroy']);
+//     Route::put('/pos/{id}', [TransactionController::class, 'update']);
+//     Route::patch('/pos/{id}', [TransactionController::class, 'update']);
 
 
 

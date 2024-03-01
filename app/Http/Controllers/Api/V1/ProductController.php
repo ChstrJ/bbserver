@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\GenericMessage;
-use App\Http\Helpers\HttpStatusCode;
-use App\Http\Helpers\HttpStatusMessage;
-use App\Http\Helpers\ResponseHelper;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-
+use App\Http\Resources\V1\ProductCollection;
+use App\Http\Resources\V1\ProductResource;
+use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
@@ -19,8 +19,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return response()->json(Product::all());
-    
+        $products = QueryBuilder::for(Product::class)
+            ->allowedSorts(['id', 'name', 'created_at',  'quantity', 'srp'])
+            ->allowedFilters(['id', 'name', 'created_at', 'category_id', 'srp'])
+            ->paginate();
+        return new ProductCollection($products);
     }
 
     /**
@@ -39,56 +42,33 @@ class ProductController extends Controller
         $validated_data = $request->validated();
         $product = Product::create($validated_data);
         $message = GenericMessage::productAdded($product->name);
-        return ResponseHelper::productResponse($product, $message);
+        return new ProductResource($product, $message);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(Product $product)
     {
-        $product = Product::find($id);
-        return response()->json([
-            "product" => $product,
-        ], 200);
+        return new ProductResource($product);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(UpdateProductRequest $request, int $id)
-    {   
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, int $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $product = Product::find($id);
-        if (!$product) {
-            return response()->json([
-                "message" => HttpStatusMessage::$NOT_FOUND
-            ], 404);
-        }
         $validated_data = $request->validated();
         $product->update($validated_data);
-        return response()->json([
-            "data" => $product,
-            "message" => GenericMessage::productUpdated($product->name)
-        ], 200);
+        $message = GenericMessage::productUpdated($product->name);
+        return new ProductResource($product, $message);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id)
+    public function destroy(Product $product)
     {
-        $product = Product::destroy($id);
-        if (!$product) {
-            return response()->json(["message" => HttpStatusMessage::$BAD_REQUEST], 400);
-        }
+        $product->delete();
         return response()->json(["message" => 'Deleted Success!'], 200);
     }
 }

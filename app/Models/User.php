@@ -14,6 +14,8 @@ class User extends Authenticatable
 
     protected $table = "users";
 
+    protected $casts = ['is_active' => 'boolean'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     protected $fillable = [
         'full_name',
@@ -22,8 +24,8 @@ class User extends Authenticatable
         'is_active',
     ];
 
-    protected function user() {
-        return $this->belongsToMany(Transaction::class);
+    protected function transaction() {
+        return $this->hasMany(Transaction::class);
     }
 
 }

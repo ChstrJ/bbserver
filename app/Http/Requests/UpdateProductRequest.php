@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Helpers\ProductCategories;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductRequest extends FormRequest
@@ -21,13 +22,14 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $categories_length = ProductCategories::getCategories();
         return [
-            'category_id' => 'required|int',
-            'name' => 'required|string|min:2|unique:products,name',
-            'description' => 'required|string|min:2',
-            'quantity' => 'required|int',
-            'srp' => 'required|numeric',
-            'member_price' => 'required|numeric',
+            'category_id' => "required|int|min:1|max:$categories_length",
+            'name' => 'sometimes|string|min:2',
+            'description' => 'sometimes|string|min:2',
+            'quantity' => 'sometimes|int|min:1|max:999999',
+            'srp' => 'sometimes|numeric|min:1|max:999999',
+            'member_price' => 'sometimes|numeric|min:1|max:999999',
         ];
     }
 }

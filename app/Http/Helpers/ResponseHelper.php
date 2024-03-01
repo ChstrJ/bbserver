@@ -45,7 +45,7 @@ class ResponseHelper
         return response()->json($data, HttpStatusCode::$CREATED);
     }
 
-    public static function registerResponse(User $user, $token = null, string $message = null,): JsonResponse
+    public static function registerResponse(User $user, $token = null, string $message = null): JsonResponse
     {
         $data = [
             "user" => [

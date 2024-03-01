@@ -8,7 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $table = "products";
+    
+
+    protected $casts = [
+        'is_remove' => 'boolean'
+    ];
+    
     protected $fillable = [
         'category_id',
         'name',

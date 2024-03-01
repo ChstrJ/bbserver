@@ -19,7 +19,7 @@ class Transaction extends Model
         'payment_type',
     ];
     
-    protected function user(): BelongsTo
+    protected function transaction()
     {
         return $this->belongsTo(User::class);
     }
