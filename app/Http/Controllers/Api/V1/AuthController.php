@@ -10,7 +10,6 @@ use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -58,20 +57,11 @@ class AuthController extends Controller
 
         //get the authenticated user and get the token from the user model
         $user = Auth::user();
-
-        //token from jwt
-        $token = JWTAuth::fromUser($user);
-
-        //token from sanctum
-        // $token = $request->user()->createToken('barista-token')->plainTextToken;
-
-        //store jwt in cookie
-        $cookies = cookie('jwt', $token);
+        $token = $request->user()->createToken('barista-token')->plainTextToken;
 
         //return the response with cookies and bearer
         return response()->json(['user' => $user])
-                        ->withCookie($cookies)
-                        ->withHeaders(['Authorization' => "JWT Bearer {$token}"]);
+                        ->withHeaders(['Authorization' => "Bearer {$token}"]);
     }
 
     public function logout(Request $request)
