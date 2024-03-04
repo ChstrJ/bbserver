@@ -23,7 +23,7 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/users/', [UserController::class, 'index']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    //Route::apiResource('/products', ProductController::class);
+    Route::apiResource('/products', ProductController::class);
     Route::apiResource('/pos', TransactionController::class);
     Route::apiResource('/users', UserController::class);
 });
