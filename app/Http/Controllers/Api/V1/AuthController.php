@@ -38,9 +38,9 @@ class AuthController extends Controller
                 ]
             ], HttpStatusCode::$UNAUTHORIZED);
         }
-        $accessToken = $user_data->createToken('barista-token')->plainTextToken;
+        $access_token = $user_data->createToken('barista-token')->plainTextToken;
         return response()->json($user_data)->withHeaders([
-            'Authorization' => 'Bearer ' . $accessToken,
+            'Authorization' => "Bearer {$access_token}"
         ]);
     }
 

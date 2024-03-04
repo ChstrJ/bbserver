@@ -7,13 +7,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    protected $token;
+    protected $accessToken;
     protected $message;
     
-    public function __construct($resource, $token = null, $message = null)
+    public function __construct($resource, $accessToken = null, $message = null)
     {
         parent::__construct($resource);
-        $this->token = $token;
+        $this->accessToken = $accessToken;
         $this->message = $message;
     }
     /**
@@ -23,23 +23,23 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request)
     {
-        // $data = [
-        //     'user' => [
-        //         'id' => $this->id,
-        //         'fullName' => $this->full_name,
-        //         'username' => $this->username,
-        //         'isActive' => $this->is_active,
-        //     ],
-        //     'token' => $this->token,
-        //     'message' => $this->message,
-        // ];
-        // return $data;
-
-        return [
-            'id' => $this->id,
-            'fullName' => $this->full_name,
-            'username' => $this->username,
-            'isActive' => $this->is_active,
+        $data = [
+            'user' => [
+                'id' => $this->id,
+                'fullName' => $this->full_name,
+                'username' => $this->username,
+                'isActive' => $this->is_active,
+            ],
+            'token' => $this->token,
+            'message' => $this->message,
         ];
+        return $data;
+
+        // return [
+        //     'id' => $this->id,
+        //     'fullName' => $this->full_name,
+        //     'username' => $this->username,
+        //     'isActive' => $this->is_active,
+        // ];
     }
 }
