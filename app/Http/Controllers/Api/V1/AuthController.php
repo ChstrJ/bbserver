@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\HttpStatusCode;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
@@ -29,10 +30,13 @@ class AuthController extends Controller
     {
         $user_data = User::where('username', $request['username'])->first();
         if (!$user_data || !Hash::check($request['password'], $user_data->password)) {
-            return response()->json(['message' => [
-                "username" => "username or password is incorrect",
-                "password" => "password or password is incorrect",
-            ]], 401);
+            return response()->json([
+                'message' => "Invalid Credentials",
+                'errors' => [
+                    "username" => "username or password is incorrect",
+                    "password" => "password or password is incorrect",
+                ]
+            ], HttpStatusCode::$UNAUTHORIZED);
         }
         $accessToken = $user_data->createToken('barista-token')->plainTextToken;
         return response()->json($user_data)->withHeaders([
