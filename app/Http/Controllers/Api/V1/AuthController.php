@@ -28,21 +28,6 @@ class AuthController extends Controller
 
     public function login(StoreLoginRequest $request)
     {
-        // $user_data = User::where('username', $request['username'])->first();
-        // if (!$user_data || !Hash::check($request['password'], $user_data->password)) {
-        //     return response()->json([
-        //         'message' => "Invalid Credentials",
-        //         'errors' => [
-        //             "username" => "username or password is incorrect",
-        //             "password" => "password or password is incorrect",
-        //         ]
-        //     ], HttpStatusCode::$UNAUTHORIZED);
-        // }
-        // $access_token = $user_data->createToken('barista-token')->plainTextToken;
-        // return response()->json($user_data)->withHeaders([
-        //     'Authorization' => "Bearer {$access_token}"
-        // ]);
-
         $credentials = $request->validated();
 
         if (!Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
@@ -59,7 +44,7 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $request->user()->createToken('barista-token')->plainTextToken;
 
-        //return the response with cookies and bearer
+        //return the response with bearer
         return response()->json(['user' => $user])
                         ->withHeaders(['Authorization' => "Bearer {$token}"]);
     }
