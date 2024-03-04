@@ -33,10 +33,11 @@ class AuthController extends Controller
                 "username" => "username is invalid",
                 "password" => "password is invalid",
             ]], 401);
-        } else {
-            $token = $user_data->createToken('barista-token')->plainTextToken;
-            return new UserResource($user_data, $token, "Login Success");
         }
+        $accessToken = $user_data->createToken('barista-token')->plainTextToken;
+        return response()->json($user_data)->withHeaders([
+            'Authorization' => 'Bearer ' . $accessToken,
+        ]);
     }
 
     public function logout(Request $request)

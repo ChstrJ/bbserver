@@ -23,16 +23,23 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request)
     {
-        $data = [
-            'user' => [
-                'id' => $this->id,
-                'fullName' => $this->full_name,
-                'username' => $this->username,
-                'isActive' => $this->is_active,
-            ],
-            'token' => $this->token,
-            'message' => $this->message,
+        // $data = [
+        //     'user' => [
+        //         'id' => $this->id,
+        //         'fullName' => $this->full_name,
+        //         'username' => $this->username,
+        //         'isActive' => $this->is_active,
+        //     ],
+        //     'token' => $this->token,
+        //     'message' => $this->message,
+        // ];
+        // return $data;
+
+        return [
+            'id' => $this->id,
+            'fullName' => $this->full_name,
+            'username' => $this->username,
+            'isActive' => $this->is_active,
         ];
-        return $data;
     }
 }

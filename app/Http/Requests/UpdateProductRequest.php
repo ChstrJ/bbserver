@@ -27,9 +27,9 @@ class UpdateProductRequest extends FormRequest
             'category_id' => "required|int|min:1|max:$categories_length",
             'name' => 'sometimes|string|min:2',
             'description' => 'sometimes|string|min:2',
-            'quantity' => 'sometimes|int|min:1|max:999999',
-            'srp' => 'sometimes|numeric|min:1|max:999999',
-            'member_price' => 'sometimes|numeric|min:1|max:999999',
+            'quantity' => 'sometimes|int|min:1|max:9999',
+            'srp' => 'sometimes|numeric|min:1|max:9999',
+            'member_price' => 'sometimes|numeric|min:1|max:9999',
         ];
     }
 }
