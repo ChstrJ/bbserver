@@ -30,6 +30,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 
 
+
+
+
 // Route::get('/products', [ProductController::class, 'index']);
 //     Route::get('/users', [UserController::class, 'index']);
 //     Route::post('/users', [UserController::class, 'store']);
