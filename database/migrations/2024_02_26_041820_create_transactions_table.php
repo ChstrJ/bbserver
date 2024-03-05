@@ -17,7 +17,7 @@ return new class extends Migration
             $table->float('amount_due');
             $table->integer('number_of_items');
             $table->string('payment_type');
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }
