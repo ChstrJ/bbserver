@@ -22,9 +22,4 @@ class Product extends Model
         'member_price',
         'is_remove'
     ];
-
-    public function transaction()
-    {
-        return $this->belongsTo(Transaction::class, 'transaction_id');
-    }
 }

@@ -28,27 +28,9 @@ class TransactionResource extends JsonResource
             "amount_due" => $this->amount_due,
             "number_of_items" => $this->number_of_items,
             "payment_type" => $this->payment_type,
+            "created_by" => $this->user->username,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
-            // "user" => [
-            //     "user_id" => $this->user_id,
-            //     "username" => $this->username
-            // ],
-            // "products" => [
-            //     "Capucino" => [
-            //         "qty" => "2",
-            //         "price" => "232",
-            //     ],
-            //     "Decafe" => [
-            //         "qty" => "5",
-            //         "price" => "232",
-            //     ],
-            //     "Kapeng Barako" => [
-            //         "qty" => "5",
-            //         "price" => "232",
-            //     ],
-            //     "total" => "23123",
-            // ]
         ];
     }
 }
