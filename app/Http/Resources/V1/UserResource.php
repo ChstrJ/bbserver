@@ -9,7 +9,7 @@ class UserResource extends JsonResource
 {
     protected $accessToken;
     protected $message;
-    
+
     public function __construct($resource, $accessToken = null, $message = null)
     {
         parent::__construct($resource);
@@ -23,23 +23,11 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request)
     {
-        $data = [
-            'user' => [
-                'id' => $this->id,
-                'fullName' => $this->full_name,
-                'username' => $this->username,
-                'isActive' => $this->is_active,
-            ],
-            'token' => $this->token,
-            'message' => $this->message,
+        return [
+            'id' => $this->id,
+            'fullName' => $this->full_name,
+            'username' => $this->username,
+            'isActive' => $this->is_active,
         ];
-        return $data;
-
-        // return [
-        //     'id' => $this->id,
-        //     'fullName' => $this->full_name,
-        //     'username' => $this->username,
-        //     'isActive' => $this->is_active,
-        // ];
     }
 }

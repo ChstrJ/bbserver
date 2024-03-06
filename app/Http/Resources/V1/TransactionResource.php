@@ -8,19 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionResource extends JsonResource
 {
-
-    protected $message;
-
-    public function __construct($resource, $message = null)
-    {
-        parent::__construct($resource);
-        $this->message = $message;
-    }
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request)
     {
         return [

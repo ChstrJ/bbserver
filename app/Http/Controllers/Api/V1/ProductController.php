@@ -40,18 +40,9 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
 
-        // check if user is logged in
-        $user = auth()->user();
         $validated_data = $request->validated();
-        $validated_data['user_id'] = $user->id;
         $product = Product::create($validated_data);
-        $message = GenericMessage::productAdded($product->name);
-        return new ProductResource($product, $message);
-
-        // $validated_data = $request->validated();
-        // $product = Product::create($validated_data);
-        // $message = GenericMessage::productAdded($product->name);
-        // return new ProductResource($product, $message);
+        return new ProductResource($product);
     }
 
     /**
@@ -68,8 +59,7 @@ class ProductController extends Controller
     {
         $validated_data = $request->validated();
         $product->update($validated_data);
-        $message = GenericMessage::productUpdated($product->name);
-        return new ProductResource($product, $message);
+        return new ProductResource($product);
     }
 
     /**

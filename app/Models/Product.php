@@ -13,7 +13,6 @@ class Product extends Model
     protected $casts = ['is_remove' => 'boolean'];
 
     protected $fillable = [
-        'user_id', 
         'category_id',
         'name',
         'description',
