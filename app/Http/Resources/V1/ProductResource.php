@@ -25,16 +25,16 @@ class ProductResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "categoryId" => $this->category_id,
+            "category_id" => $this->category_id,
             "name" => $this->name,
             "description" => $this->description,
             "quantity" => $this->quantity,
             "srp" => $this->srp,
-            "memberPrice" => $this->member_price,
-            "isRemove" => $this->is_remove,
-            "userId" => $this->user_id,
-            "createdAt" => $this->created_at,
-            "updatedAt" => $this->updated_at,
+            "member_price" => $this->member_price,
+            "is_remove" => $this->is_remove,
+            "user_id" => $this->user_id,
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
         ];
     }
 }
