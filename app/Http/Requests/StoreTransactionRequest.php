@@ -25,6 +25,10 @@ class StoreTransactionRequest extends FormRequest
             'amount_due' => 'required|numeric',
             'number_of_items' => 'required|int',
             'payment_type' => 'required|string',
+            'product_data' => 'required|array',
+            'product_data.*.product_id' => 'required|int|exists:products,id',
+            'product_data.*.quantity' => 'required|int|min:1',
+            'product_data.*.srp' => 'required|int|min:1',
         ];
     }
 }

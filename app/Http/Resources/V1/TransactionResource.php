@@ -14,8 +14,10 @@ class TransactionResource extends JsonResource
             "id" => $this->id,
             "amount_due" => $this->amount_due,
             "number_of_items" => $this->number_of_items,
-            "payment_type" => $this->payment_type,
-            "created_by" => $this->user->username,
+            "payment_type" => strtoupper($this->payment_type),
+            "product_data" => $this->product_data,
+            "status" => $this->status !== 1 ? "paid" : "pending",
+            "transact_by" => $this->user->username,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
         ];

@@ -11,7 +11,8 @@ use Laravel\Sanctum\HasApiTokens;
 class Transaction extends Model
 {
     use HasFactory, HasApiTokens;
-    protected $table = "transactions";
+    protected $table = 'transactions';
+    protected $casts = ['product_data' => 'array'];
     protected $fillable = [
         'user_id',
         'amount_due',

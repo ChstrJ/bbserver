@@ -23,8 +23,8 @@ class TransactionController extends Controller
     public function index()
     {
         $transaction = QueryBuilder::for(Transaction::class)
-            ->allowedSorts(['order_transaction_date', 'order_transaction_time', 'amount_due',  'number_of_items'])
-            ->allowedFilters(['order_transaction_date', 'order_transaction_time', 'amount_due',  'number_of_items'])
+            ->allowedSorts(['amount_due',  'number_of_items'])
+            ->allowedFilters(['amount_due',  'number_of_items'])
             ->paginate();
         return new TransactionCollection($transaction);
     }
@@ -42,28 +42,12 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request)
     {
-        //check if user is logged in
-        // $user = auth()->user();
-        // $validated_data = $request->validated();
-        // $validated_data['user_id'] = $user->id;
-        // $transaction = Transaction::create($validated_data);
-        // $message = GenericMessage::transactionAdded($user->username);
-        // return new TransactionResource($transaction, $message);
-
         $user = Auth::user();
-        if (!$user) {
-            return response()->json(['message' => 'Please login first']);
-        }
-
         $validated_data = $request->validated();
         $transaction = $user->transactions()->create($validated_data);
-        $message = GenericMessage::transactionAdded($user->username);
-        return new TransactionResource($transaction, $message);
+        return new TransactionResource($transaction);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(int $id)
     {
         $transaction = Transaction::find($id);
@@ -96,12 +80,9 @@ class TransactionController extends Controller
         return response()->json(["data" => $transaction, "message" => "Transaction updated"], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Transaction $transaction)
     {
-       $transaction->delete();
+        $transaction->delete();
         return response()->json(["message" => 'Deleted Success!'], 200);
     }
 }
