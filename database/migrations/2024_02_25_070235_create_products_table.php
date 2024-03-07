@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->float('srp');
             $table->float('member_price');
-            $table->boolean('is_remove')->default(true);
+            $table->boolean('is_removed')->default(false);
             $table->timestamps();
         });
     }

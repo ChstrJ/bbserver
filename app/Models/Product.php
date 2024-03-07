@@ -10,7 +10,7 @@ class Product extends Model
     use HasFactory;
 
 
-    // protected $casts = ['is_remove' => 'boolean'];
+    // protected $casts = ['is_removed' => 'boolean'];
 
     protected $fillable = [
         'category_id',
@@ -19,10 +19,10 @@ class Product extends Model
         'quantity',
         'srp',
         'member_price',
-        'is_remove'
+        'is_removed'
     ];
 
     public function scopeActive ($query) {
-        return $query->where('is_remove', false);
+        return $query->where('is_removed', false);
     }
 }
