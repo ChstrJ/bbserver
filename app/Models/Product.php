@@ -25,4 +25,8 @@ class Product extends Model
     public function scopeActive ($query) {
         return $query->where('is_removed', false);
     }
+
+    public function product(){
+        return $this->belongsTo(Transaction::class);
+    }
 }

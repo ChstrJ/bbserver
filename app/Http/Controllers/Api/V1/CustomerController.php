@@ -36,7 +36,12 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        //
+        $validated_data = $request->validated();
+        $customer = Customer::create($validated_data);
+        return response()->json([
+            'data' => new CustomerResource($customer),
+            'message' => "$customer->name transacted this"
+        ]);
     }
 
     /**

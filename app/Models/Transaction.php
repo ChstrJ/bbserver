@@ -15,6 +15,7 @@ class Transaction extends Model
     protected $casts = ['product_data' => 'array'];
     protected $fillable = [
         'user_id',
+        'customer_id',
         'amount_due',
         'number_of_items',
         'payment_type',
@@ -24,7 +25,12 @@ class Transaction extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function products()

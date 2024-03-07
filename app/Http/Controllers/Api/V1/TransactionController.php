@@ -12,7 +12,6 @@ use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\TransactionResource;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class TransactionController extends Controller
@@ -41,7 +40,10 @@ class TransactionController extends Controller
         $user = Auth::user();
         $validated_data = $request->validated();
         $transaction = $user->transactions()->create($validated_data);
-        return new TransactionResource($transaction);
+        return response()->json([
+            'data' => new TransactionResource($transaction),
+            'message' => 'Transaction succesfully added',
+        ]);
     }
 
     public function show(int $id)

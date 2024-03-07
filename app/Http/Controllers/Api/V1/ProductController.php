@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\GenericMessage;
+use App\Http\Helpers\HttpStatus;
+use App\Http\Helpers\HttpStatusCode;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -47,7 +49,7 @@ class ProductController extends Controller
         return response()->json([
             'data' => new ProductResource($product),
             'message' => $message,
-        ]);
+        ], HttpStatusCode::$CREATED);
     }
 
     /**
@@ -60,6 +62,18 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    // public function edit(UpdateProductRequest $request, Product $product)
+    // {
+    //     $validated_data = $request->validated();
+    //     $product->update($validated_data);
+    //     $message = GenericMessage::productUpdated($product->name);
+    //     return response()->json([
+    //         'data' => new ProductResource($product),
+    //         'message' => $message,
+    //     ]);
+    // }
+
+
     public function update(UpdateProductRequest $request, Product $product)
     {
         $validated_data = $request->validated();

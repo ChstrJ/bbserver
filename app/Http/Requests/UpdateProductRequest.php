@@ -24,12 +24,12 @@ class UpdateProductRequest extends FormRequest
     {
         $categories_length = ProductCategories::getCategories();
         return [
-            'category_id' => "required|int|min:1|max:$categories_length",
+            'category_id' => "sometimes|int|min:1|max:$categories_length",
             'name' => 'sometimes|string|min:2',
             'description' => 'sometimes|string|min:2',
             'quantity' => 'sometimes|int|min:1|max:9999',
             'srp' => 'sometimes|numeric|min:1|max:9999',
-            'is_removed' => 'required|boolean',
+            'is_removed' => 'sometimes|boolean',
             'member_price' => 'sometimes|numeric|min:1|max:9999',
         ];
     }
