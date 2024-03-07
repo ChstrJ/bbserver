@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\TransactionController;
-
+use App\Http\Controllers\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +26,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/pos', TransactionController::class);
     Route::apiResource('/users', UserController::class);
+    Route::apiResource('/customers', CustomerController::class);
 });
 
 

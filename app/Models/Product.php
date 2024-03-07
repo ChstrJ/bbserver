@@ -21,4 +21,8 @@ class Product extends Model
         'member_price',
         'is_remove'
     ];
+
+    public function scopeActive ($query) {
+        return $query->where('is_remove', false);
+    }
 }

@@ -22,6 +22,7 @@ class ProductController extends Controller
         $products = QueryBuilder::for(Product::class)
             ->allowedSorts(['id', 'name', 'created_at',  'quantity', 'srp'])
             ->allowedFilters(['id', 'name', 'created_at', 'category_id', 'srp', 'is_remove'])
+            ->active()
             ->paginate();
         return new ProductCollection($products);
     }
