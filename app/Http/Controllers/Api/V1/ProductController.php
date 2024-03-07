@@ -43,7 +43,11 @@ class ProductController extends Controller
 
         $validated_data = $request->validated();
         $product = Product::create($validated_data);
-        return new ProductResource($product);
+        $message = GenericMessage::productAdded($product->name);
+        return response()->json([
+            'data' => new ProductResource($product),
+            'message' => $message,
+        ]);
     }
 
     /**
@@ -60,12 +64,14 @@ class ProductController extends Controller
     {
         $validated_data = $request->validated();
         $product->update($validated_data);
-        return new ProductResource($product);
+        $message = GenericMessage::productUpdated($product->name);
+        return response()->json([
+            'data' => new ProductResource($product),
+            'message' => $message,
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Product $product)
     {
         if ($product->is_removed) {

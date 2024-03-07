@@ -8,10 +8,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
 {
+
+    
+
     public function toArray($request)
     {
-
-
         return [
             "id" => $this->id,
             "category_id" => $this->category_id,
@@ -20,7 +21,7 @@ class ProductResource extends JsonResource
             "quantity" => $this->quantity,
             "srp" => $this->srp,
             "member_price" => $this->member_price,
-            "is_removed" => $this->is_removed,
+            "is_remove" => $this->is_remove,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
         ];
