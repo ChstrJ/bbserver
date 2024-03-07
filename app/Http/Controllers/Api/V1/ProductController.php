@@ -46,10 +46,7 @@ class ProductController extends Controller
         $validated_data = $request->validated();
         $product = Product::create($validated_data);
         $message = GenericMessage::productAdded($product->name);
-        return response()->json([
-            'data' => new ProductResource($product),
-            'message' => $message,
-        ], HttpStatusCode::$CREATED);
+        return response()->json('Product was succesfully added');
     }
 
     /**
@@ -78,22 +75,18 @@ class ProductController extends Controller
     {
         $validated_data = $request->validated();
         $product->update($validated_data);
-        $message = GenericMessage::productUpdated($product->name);
-        return response()->json([
-            'data' => new ProductResource($product),
-            'message' => $message,
-        ]);
+        return response()->json('Product was succesfully updated');
     }
 
 
     public function destroy(Product $product)
     {
         if ($product->is_removed) {
-            return response()->json(['message' => "Product was already removed."], 200);
+            return response()->json("Product was already removed.");
         }
         $product->is_removed = true;
         $product->save();
 
-        return response()->json(['message' => "{$product->name} was successfully removed."], 200);
+        return response()->json("{$product->name} was successfully removed.");
     }
 }
