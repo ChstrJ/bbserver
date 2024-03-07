@@ -10,7 +10,7 @@ class Product extends Model
     use HasFactory;
 
 
-    protected $casts = ['is_remove' => 'boolean'];
+    // protected $casts = ['is_remove' => 'boolean'];
 
     protected $fillable = [
         'category_id',
