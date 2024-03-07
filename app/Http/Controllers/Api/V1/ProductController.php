@@ -4,14 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\GenericMessage;
-use App\Http\Helpers\HttpStatus;
-use App\Http\Helpers\HttpStatusCode;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
-use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -26,6 +23,7 @@ class ProductController extends Controller
             ->allowedFilters(['id', 'name', 'created_at', 'category_id', 'srp', 'is_removed'])
             ->active()
             ->paginate();
+            
         return new ProductCollection($products);
     }
 
@@ -45,8 +43,8 @@ class ProductController extends Controller
 
         $validated_data = $request->validated();
         $product = Product::create($validated_data);
-        $message = GenericMessage::productAdded($product->name);
-        return response()->json('Product was succesfully added');
+
+        return response()->json("$product->name was succesfully added");
     }
 
     /**
@@ -56,26 +54,13 @@ class ProductController extends Controller
     {
         return new ProductResource($product);
     }
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function edit(UpdateProductRequest $request, Product $product)
-    // {
-    //     $validated_data = $request->validated();
-    //     $product->update($validated_data);
-    //     $message = GenericMessage::productUpdated($product->name);
-    //     return response()->json([
-    //         'data' => new ProductResource($product),
-    //         'message' => $message,
-    //     ]);
-    // }
-
 
     public function update(UpdateProductRequest $request, Product $product)
     {
         $validated_data = $request->validated();
         $product->update($validated_data);
-        return response()->json('Product was succesfully updated');
+
+        return response()->json("$product->name was succesfully updated");
     }
 
 
