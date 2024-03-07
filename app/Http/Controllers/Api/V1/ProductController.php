@@ -68,7 +68,12 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
-        return response()->json(["message" => 'Deleted Success!'], 200);
+        if ($product->is_removed) {
+            return response()->json(['message' => "Product was already removed."], 200);
+        }
+        $product->is_removed = true;
+        $product->save();
+
+        return response()->json(['message' => "{$product->name} was successfully removed."], 200);
     }
 }
