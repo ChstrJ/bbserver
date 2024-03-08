@@ -36,7 +36,6 @@ class CustomerController extends Controller
         $customer = Customer::create($validated_data);
         return response()->json([
             'data' => new CustomerResource($customer),
-            'message' => "$customer->name transacted this"
         ]);
     }
 

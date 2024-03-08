@@ -9,6 +9,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -19,11 +20,20 @@ class ProductController extends Controller
     public function index()
     {
         $products = QueryBuilder::for(Product::class)
-            ->allowedSorts(['id', 'name', 'created_at',  'quantity', 'srp'])
-            ->allowedFilters(['id', 'name', 'created_at', 'category_id', 'srp', 'is_removed'])
-            ->active()
+            ->allowedSorts(['id', 
+                            'name', 
+                            'created_at', 
+                            'added_by',  
+                            'quantity', '
+                            srp'])
+            ->allowedFilters(['id', 
+                            'name', 
+                            'created_at', 
+                            'added_by',
+                            'category_id', 
+                            'srp', 
+                            'is_removed'])
             ->paginate();
-            
         return new ProductCollection($products);
     }
 
@@ -40,10 +50,9 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-
+        $user = Auth::user();
         $validated_data = $request->validated();
-        $product = Product::create($validated_data);
-
+        $product = $user->products()->create($validated_data);
         return response()->json("$product->name was succesfully added");
     }
 
@@ -66,12 +75,15 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product->is_removed) {
-            return response()->json("Product was already removed.");
-        }
-        $product->is_removed = true;
-        $product->save();
+        // if ($product->is_removed) {
+        //     return response()->json("Product was already removed.");
+        // }
+        // $product->is_removed = true;
+        // $product->save();
 
+        // return response()->json("{$product->name} was successfully removed.");
+
+        Product::find($product->id)->delete();
         return response()->json("{$product->name} was successfully removed.");
     }
 }

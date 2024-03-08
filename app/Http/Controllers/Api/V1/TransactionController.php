@@ -50,9 +50,9 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
+            return response()->json(HttpStatusMessage::$NOT_FOUND);
         }
-        return $transaction;
+        return new TransactionResource($transaction);
     }
 
     /**
@@ -80,7 +80,6 @@ class TransactionController extends Controller
 
     public function destroy(Transaction $transaction)
     {
-        $transaction->delete();
-        return response()->json(["message" => 'Deleted Success!'], 200);
+        Transaction::find($transaction->id)->delete();
     }
 }
