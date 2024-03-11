@@ -11,6 +11,8 @@ use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\TransactionResource;
+use App\Models\Product;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -37,9 +39,41 @@ class TransactionController extends Controller
     }
     public function store(StoreTransactionRequest $request)
     {
+        //check if the user is logged in
         $user = Auth::user();
         $validated_data = $request->validated();
+
+        $total_items = 0;
+        $total_amount = 0;
+
+        foreach ($validated_data['product_data'] as $product_data) {
+            //get the product_id 
+            $product = Product::find($product_data['product_id']);
+
+            if(!$product) {
+                return response()->json("$product->id not found");
+            }
+
+            //get the qty and srp from the request 
+            $qty = $product_data['quantity']; 
+            $srp = $product_data['srp']; 
+            
+            //compare if the req qty payload is > product qty from the db
+            if ($qty > $product->quantity) { 
+                return response()->json([HttpStatusMessage::$BAD_REQUEST], 400);
+            } 
+
+            $product->decrement('quantity', $qty);
+
+            $total_items += $qty;
+            $total_amount = $qty * $srp;
+        }
+
+        $validated_data['number_of_items'] = $total_items;
+        $validated_data['amount_due'] = $total_amount;
+        
         $transaction = $user->transactions()->create($validated_data);
+
         return response()->json([
             'data' => new TransactionResource($transaction),
             'message' => 'Transaction succesfully added',

@@ -16,7 +16,9 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return new CustomerResource(Customer::all());
+        $customers = Customer::with('transactions')->get();
+
+        return CustomerResource::collection($customers);
     }
 
     /**
@@ -44,7 +46,7 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        //
+        return new CustomerResource($customer->load('transactions'));
     }
 
     /**

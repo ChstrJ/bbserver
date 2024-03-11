@@ -7,8 +7,8 @@ use App\Http\Helpers\HttpStatusCode;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
-use App\Http\Resources\UserResource;
 use App\Http\Resources\V1\UserCollection;
+use App\Http\Resources\V1\UserResource;
 
 class UserController extends Controller
 {
@@ -53,10 +53,9 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(User $user)
     {
-        $user = User::find($id);        
-        return response($user);
+        return new UserResource($user->load('transactions', 'products'));
     }
 
     /**

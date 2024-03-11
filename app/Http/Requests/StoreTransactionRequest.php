@@ -23,8 +23,8 @@ class StoreTransactionRequest extends FormRequest
     {
         return [
             'customer_id' => 'required|exists:customers,id',
-            'amount_due' => 'required|numeric',
-            'number_of_items' => 'required|int',
+            'amount_due' => 'sometimes|numeric',
+            'number_of_items' => 'sometimes|int',
             'payment_type' => 'required|string',
             'product_data' => 'required|array',
             'product_data.*.product_id' => 'required|int|exists:products,id',

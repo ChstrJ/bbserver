@@ -18,8 +18,8 @@ return new class extends Migration
             $table->float('amount_due');
             $table->integer('number_of_items');
             $table->string('payment_type');
-            $table->json('product_data');
-            $table->boolean('status')->default(true);
+            $table->json('products');
+            $table->enum('status', ['pending', 'paid', 'void'])->default('pending');
             $table->timestamps();
         });
     }

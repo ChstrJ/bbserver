@@ -17,7 +17,7 @@ class CustomerResource extends JsonResource
         return [
             'name' => $this->name,
             'phone_number' => $this->phone_number,
-            "transactions" => TransactionResource::collection($this->whenLoaded('transactions')),
+            'transactions' => TransactionResource::collection($this->whenLoaded('transactions')),
         ];
     }
 }
