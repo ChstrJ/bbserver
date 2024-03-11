@@ -68,7 +68,7 @@ class ProductController extends Controller
     {
         $validated_data = $request->validated();
         $product->update($validated_data);
-
+        
         return response()->json("$product->name was succesfully updated");
     }
 

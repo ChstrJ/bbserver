@@ -11,7 +11,7 @@ class TransactionResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            "id" => $this->id,
+            "transaction_id" => $this->id,
             "amount_due" => $this->amount_due,
             "number_of_items" => $this->number_of_items,
             "payment_type" => strtoupper($this->payment_type),
