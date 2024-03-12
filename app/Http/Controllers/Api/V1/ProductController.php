@@ -18,8 +18,10 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        
+        $per_page = $request->input('per_page', 15);
 
         $products = QueryBuilder::for(Product::class)
             ->allowedSorts([
@@ -28,7 +30,7 @@ class ProductController extends Controller
                 'created_at',
                 'added_by',
                 'quantity', '
-                            srp'
+                srp'
             ])
             ->allowedFilters([
                 'id',
@@ -39,8 +41,10 @@ class ProductController extends Controller
                 'srp',
                 'is_removed'
             ])
-            ->simplePaginate(15);
-        return new ProductCollection($products);
+            ->paginate($per_page); 
+            $products->appends(['per_page' => $per_page]);
+            
+            return new ProductCollection($products);
     }
 
     /**
