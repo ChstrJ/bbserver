@@ -13,7 +13,6 @@ class TransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        $number_of_orders = 30;
-        Transaction::factory()->count($number_of_orders)->create();
+        Transaction::factory()->count(50)->create();
     }
 }
