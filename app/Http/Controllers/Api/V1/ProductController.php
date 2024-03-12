@@ -9,6 +9,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -19,21 +20,26 @@ class ProductController extends Controller
      */
     public function index()
     {
+
         $products = QueryBuilder::for(Product::class)
-            ->allowedSorts(['id', 
-                            'name', 
-                            'created_at', 
-                            'added_by',  
-                            'quantity', '
-                            srp'])
-            ->allowedFilters(['id', 
-                            'name', 
-                            'created_at', 
-                            'added_by',
-                            'category_id', 
-                            'srp', 
-                            'is_removed'])
-            ->paginate();
+            ->allowedSorts([
+                'id',
+                'name',
+                'created_at',
+                'added_by',
+                'quantity', '
+                            srp'
+            ])
+            ->allowedFilters([
+                'id',
+                'name',
+                'created_at',
+                'added_by',
+                'category_id',
+                'srp',
+                'is_removed'
+            ])
+            ->simplePaginate(15);
         return new ProductCollection($products);
     }
 
@@ -68,7 +74,7 @@ class ProductController extends Controller
     {
         $validated_data = $request->validated();
         $product->update($validated_data);
-        
+
         return response()->json("$product->name was succesfully updated");
     }
 

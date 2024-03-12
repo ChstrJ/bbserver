@@ -26,7 +26,7 @@ class TransactionController extends Controller
         $transaction = QueryBuilder::for(Transaction::class)
             ->allowedSorts(['amount_due',  'number_of_items'])
             ->allowedFilters(['amount_due',  'number_of_items'])
-            ->paginate();
+            ->simplePaginate(15);
         return new TransactionCollection($transaction);
     }
 
