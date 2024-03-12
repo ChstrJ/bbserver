@@ -22,7 +22,7 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'sometimes|exists:customers,id',
             'amount_due' => 'sometimes|numeric',
             'number_of_items' => 'sometimes|int',
             'payment_type' => 'required|string',
