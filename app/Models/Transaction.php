@@ -12,14 +12,14 @@ class Transaction extends Model
 {
     use HasFactory, HasApiTokens;
     protected $table = 'transactions';
-    protected $casts = ['product_data' => 'array'];
+    protected $casts = ['products' => 'array'];
     protected $fillable = [
         'user_id',
         'customer_id',
         'amount_due',
         'number_of_items',
         'payment_type',
-        'product_data',
+        'products',
         'status',
     ];
 

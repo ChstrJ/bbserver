@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->integer('category_id');
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->string('description');
             $table->integer('quantity');
@@ -22,6 +21,11 @@ return new class extends Migration
             $table->float('member_price');
             $table->boolean('is_removed')->default(false);
             $table->timestamps();
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
     }
 

@@ -12,7 +12,6 @@ use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\TransactionResource;
 use App\Models\Product;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -46,7 +45,7 @@ class TransactionController extends Controller
         $total_items = 0;
         $total_amount = 0;
 
-        foreach ($validated_data['product_data'] as $product_data) {
+        foreach ($validated_data['products'] as $product_data) {
             //get the product_id 
             $product = Product::find($product_data['product_id']);
 
@@ -60,15 +59,17 @@ class TransactionController extends Controller
             
             //compare if the req qty payload is > product qty from the db
             if ($qty > $product->quantity) { 
-                return response()->json([HttpStatusMessage::$BAD_REQUEST], 400);
+                return response()->json('The selected product is out of stock!');
             } 
 
+            //decrement the qty from the db based on qty request
             $product->decrement('quantity', $qty);
 
+            //update the total amount and total qty
             $total_items += $qty;
-            $total_amount = $qty * $srp;
+            $total_amount += $qty * $srp;
         }
-
+        
         $validated_data['number_of_items'] = $total_items;
         $validated_data['amount_due'] = $total_amount;
         
