@@ -17,7 +17,7 @@ class ApiKeyAuthentication
     public function handle(Request $request, Closure $next): Response
     {
         //get the req header
-        $xApiKey = $request->header('X-API-Key');
+        $xApiKey = $request->header('x-api-key');
 
         //compare the req header if its equal to the env api key
         if($xApiKey !== env('X_API_KEY')) {
