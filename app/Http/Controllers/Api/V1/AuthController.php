@@ -9,6 +9,7 @@ use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -22,31 +23,37 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
 
         ]);
-        $token = $user_data->createToken('barista-token')->plainTextToken;
-        return new UserResource($user_data, $token, "Register Success");
+        return response()->json([
+            'data' => new UserResource($user_data),
+            'message' => 'Register successfully.'
+        ]);
     }
 
     public function login(StoreLoginRequest $request)
     {
         $credentials = $request->validated();
 
-        if (!Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
+        if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => "Invalid Credentials",
+                'message' => 'Invalid credentials',
                 'errors' => [
-                    "username" => "username or password is incorrect",
-                    "password" => "password or password is incorrect",
+                    'username' => 'Username or password is incorrect',
+                    'password' => 'Username or password is incorrect',
                 ]
-            ], HttpStatusCode::$UNAUTHORIZED);
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         //get the authenticated user and get the token from the user model
         $user = Auth::user();
-        $token = $request->user()->createToken('barista-token')->plainTextToken;
+
+        // $request->session()->regenerate();
+
+        //create an access token
+        $access_token = $request->user()->createToken('barista-token')->plainTextToken;
 
         //return the response with bearer
-        return response()->json(['user' => $user, 'token' => $token])
-                        ->withHeaders(['Authorization' => "Bearer {$token}"]);
+        return response()->json(['user' => $user, 'token' => $access_token])
+                        ->withHeaders(['Authorization' => "Bearer {$access_token}"]);
     }
 
     public function logout(Request $request)

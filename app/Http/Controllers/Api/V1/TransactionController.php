@@ -28,6 +28,8 @@ class TransactionController extends Controller
             ->simplePaginate(15);
         return new TransactionCollection($transaction);
     }
+    
+    
 
     /**
      * Show the form for creating a new resource.

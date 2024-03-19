@@ -20,13 +20,13 @@ use App\Http\Controllers\Api\V1\CustomerController;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::get('/users/', [UserController::class, 'index']);
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
+Route::group(['middleware' => ['auth:sanctum', 'api.key']], function () {
     Route::apiResource('/products', ProductController::class);
-    Route::apiResource('/pos', TransactionController::class);
+    Route::apiResource('/pos', TransactionController::class)->except(['update']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
+    Route::get('/users/', [UserController::class, 'index']);
  
 });
 

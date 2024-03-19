@@ -7,15 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    protected $accessToken;
-    protected $message;
-
-    public function __construct($resource, $accessToken = null, $message = null)
-    {
-        parent::__construct($resource);
-        $this->accessToken = $accessToken;
-        $this->message = $message;
-    }
+    // 
     /**
      * Transform the resource into an array.
      *
