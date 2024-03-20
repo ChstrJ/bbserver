@@ -21,7 +21,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        
+        //get the request input per page in query params
         $per_page = $request->input('per_page', 15);
 
         $products = QueryBuilder::for(Product::class)
@@ -30,8 +30,8 @@ class ProductController extends Controller
                 'name',
                 'created_at',
                 'added_by',
-                'quantity', '
-                srp'
+                'quantity',
+                'srp'
             ])
             ->allowedFilters([
                 'id',
@@ -43,6 +43,8 @@ class ProductController extends Controller
                 'is_removed'
             ])
             ->paginate($per_page); 
+
+            //append it to the products variable
             $products->appends(['per_page' => $per_page]);
             
             return new ProductCollection($products);
@@ -63,7 +65,7 @@ class ProductController extends Controller
     {
         $user = Auth::user();
         $validated_data = $request->validated();
-        $product = $user->products()->create($validated_data);
+        $product = $user->products()>create($validated_data);
         return response()->json("$product->name was succesfully added");
     }
 

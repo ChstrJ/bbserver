@@ -17,7 +17,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        return new UserCollection(User::paginate());
+       $user = User::with('transactions', 'products')->get();
+       
+       return new UserCollection($user);
     }
 
     /**

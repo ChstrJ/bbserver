@@ -18,8 +18,8 @@ class ProductFactory extends Factory
     {
         return [
             'category_id' => $this->faker->numberBetween(1, 4), 
-            'name' => $this->faker->randomElement(['Macha', 'Chocolate', 'Watermerlon', 'Cheesecake', 'Kapeng Barako']),
-            'description' => $this->faker->randomElement(['Decafe', 'Chocolate', 'Capucino', 'Bright', 'Cafeeine']),
+            'name' => $this->faker->randomElement(['Matcha', 'Chocolate', 'Watermerlon', 'Cheesecake', 'Kapeng Barako']),
+            'description' => $this->faker->randomElement(['Decafe', 'Chocolate', 'Capucino', 'Bright', 'Caffeine']),
             'quantity' => $this->faker->numberBetween(50, 100),
             'srp' => $this->faker->randomFloat(2, 1, 1000),
             'member_price' => $this->faker->randomFloat(2, 1, 500),
