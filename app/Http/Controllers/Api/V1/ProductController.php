@@ -23,7 +23,6 @@ class ProductController extends Controller
     {
         //get the request input per page in query params
         $per_page = $request->input('per_page', 15);
-
         $products = QueryBuilder::for(Product::class)
             ->allowedSorts([
                 'id',
@@ -65,7 +64,7 @@ class ProductController extends Controller
     {
         $user = Auth::user();
         $validated_data = $request->validated();
-        $product = $user->products()>create($validated_data);
+        $product = $user->products()->create($validated_data);
         return response()->json("$product->name was succesfully added");
     }
 
