@@ -17,7 +17,7 @@ class TransactionResource extends JsonResource
             "payment_type" => strtoupper($this->payment_type),
             "products" => $this->products,
             "status" => $this->status,
-            "transact_by" => $this->user->username,
+            "transacted_by" => $this->user->username,
             "customer_id" => $this->customer_id,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
