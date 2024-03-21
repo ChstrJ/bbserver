@@ -49,18 +49,27 @@ class TransactionController extends Controller
             //get the product_id 
             $product = Product::find($product_data['product_id']);
 
+            //get the product srp from the db
+            $produt_price = $product->srp;
+
             if(!$product) {
                 return response()->json("$product->id not found");
             }
 
             //get the qty and srp from the request 
             $qty = $product_data['quantity']; 
+            //get the product srp from the req
             $srp = $product_data['srp']; 
             
             //compare if the req qty payload is > product qty from the db
             if ($qty > $product->quantity) { 
                 return response()->json('The selected product is out of stock!');
             } 
+
+            //check if the srp is the same in the db
+            if ($srp !== $produt_price) {
+                return response()->json('The selected product has the wrong SRP');
+            }
 
             //decrement the qty from the db based on qty request
             $product->decrement('quantity', $qty);

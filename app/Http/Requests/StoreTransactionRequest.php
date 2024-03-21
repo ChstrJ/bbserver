@@ -28,8 +28,9 @@ class StoreTransactionRequest extends FormRequest
             'payment_type' => 'required|string',
             'products' => 'required|array',
             'products.*.product_id' => 'required|int|exists:products,id',
+            'products.*.name' => 'required|string|exists:products,name',
             'products.*.quantity' => 'required|int|min:1',
-            'products.*.srp' => 'required|int|min:1',
+            'products.*.srp' => 'required|numeric|min:1',
         ];
     }
 }
