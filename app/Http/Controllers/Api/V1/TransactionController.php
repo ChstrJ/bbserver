@@ -49,9 +49,6 @@ class TransactionController extends Controller
             //get the product_id 
             $product = Product::find($product_data['product_id']);
 
-            //get the product srp from the db
-            $produt_price = $product->srp;
-
             if(!$product) {
                 return response()->json("$product->id not found");
             }
@@ -66,10 +63,7 @@ class TransactionController extends Controller
                 return response()->json('The selected product is out of stock!');
             } 
 
-            //check if the srp is the same in the db
-            if ($srp !== $produt_price) {
-                return response()->json('The selected product has the wrong SRP');
-            }
+            
 
             //decrement the qty from the db based on qty request
             $product->decrement('quantity', $qty);
