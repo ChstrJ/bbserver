@@ -9,16 +9,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class TransactionResource extends JsonResource
 {
     public function toArray(Request $request)
+
+    //strtoupper($this->payment_type)
     {
         return [
             "id" => $this->id,
+            "customer" => $this->customer,
+            "checkouts" => $this->checkouts,
             "amount_due" => $this->amount_due,
             "number_of_items" => $this->number_of_items,
-            "payment_type" => strtoupper($this->payment_type),
-            "products" => $this->products,
+            "payment_method" => $this->payment_method,
             "status" => $this->status,
             "transacted_by" => $this->user->username,
-            "customer_id" => $this->customer_id,
+            // "customer_id" => $this->customer_id,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
         ];

@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->json('customer')->nullable();
             $table->float('amount_due');
             $table->integer('number_of_items');
-            $table->string('payment_type');
-            $table->json('products');
+            $table->integer('payment_method');
+            $table->json('checkouts');
             $table->enum('status', ['pending', 'paid', 'void'])->default('pending');
             $table->timestamps();
             
