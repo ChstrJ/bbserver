@@ -16,10 +16,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        # DEFAULT ACCOUNTS
         return [
             'full_name' => $this->faker->unique()->randomElement(['Chester Jazmin', 'Keanno Regino']),
-            'username' => $this->faker->unique()->randomElement(['admin1', 'admin2']),
-            'password' => bcrypt('1234')
+            'username' => $this->faker->unique()->randomElement(['admin1', 'admin2']), //usernames
+            'password' => bcrypt('1234') //password
         ];
     }
 }
