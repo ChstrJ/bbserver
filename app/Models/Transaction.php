@@ -18,8 +18,8 @@ class Transaction extends Model
         'customer_id',
         'amount_due',
         'number_of_items',
-        'payment_type',
-        'products',
+        'payment_method',
+        'checkouts',
         'status',
     ];
 

@@ -15,9 +15,11 @@ class User extends Authenticatable
 
     protected $fillable = [
         'full_name',
-        'username',
         'password',
         'is_active',
+        'username',
+        'last_login_at',
+        'last_logout_at'
     ];
 
     public function transactions()

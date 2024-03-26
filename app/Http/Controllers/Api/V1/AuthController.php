@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\HttpStatusCode;
+use App\Http\Helpers\HttpStatusMessage;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +33,7 @@ class AuthController extends Controller
 
     public function login(StoreLoginRequest $request)
     {
+
         $credentials = $request->validated();
 
         if (!Auth::attempt($credentials)) {
@@ -40,27 +43,31 @@ class AuthController extends Controller
                     'username' => 'Username or password is incorrect',
                     'password' => 'Username or password is incorrect',
                 ]
-            ], Response::HTTP_UNAUTHORIZED);
+            ], HttpStatusMessage::$UNAUTHORIZED);
         }
 
         //get the authenticated user and get the token from the user model
         $user = Auth::user();
 
-        // $request->session()->regenerate();
+        $user->last_login_at = now();
+        $user->save();
 
         //create an access token
         $access_token = $request->user()->createToken('barista-token')->plainTextToken;
 
         //return the response with bearer
         return response()->json(['user' => $user, 'token' => $access_token])
-                        ->withHeaders(['Authorization' => "Bearer {$access_token}"]);
+            ->withHeaders(['Authorization' => "Bearer {$access_token}"]);
     }
 
     public function logout(Request $request)
     {
-        $request->auth()->user()->tokens()->delete();
-        return response([
-            "message" => "Logout Success"
-        ], 200);
+            $user = Auth::user();
+            $user->tokens()->revoke();
+
+            $user->last_logout_at = now();
+            $user->save();
+            
+            return response()->json(["message" => "Logout Success"], HttpStatusCode::$ACCEPTED);
     }
 }

@@ -14,6 +14,8 @@ class UserResource extends JsonResource
             'full_name' => $this->full_name,
             'username' => $this->username,
             'is_active' => $this->is_active,
+            'last_login_at' => $this->last_login_at,
+            'last_logout_at' => $this->last_logout_at,
             'products_added' => ProductResource::collection($this->whenLoaded('products')),
             'transactions_added' => TransactionResource::collection($this->whenLoaded('transactions')),
         ];

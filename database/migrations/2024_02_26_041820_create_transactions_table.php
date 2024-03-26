@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->float('amount_due');
             $table->integer('number_of_items');
-            $table->string('payment_type');
-            $table->json('products');
+            $table->integer('payment_method');
+            $table->json('checkouts');
             $table->enum('status', ['pending', 'paid', 'void'])->default('pending');
             $table->timestamps();
             

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('username');
             $table->string('password');
             $table->boolean('is_active')->default(true);
+            $table->timestamp('last_login_at')->nullable();
+            $table->timestamp('last_logout_at')->nullable();
             $table->timestamps();
         });
     }

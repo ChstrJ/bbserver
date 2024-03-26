@@ -65,9 +65,9 @@ class TransactionController extends Controller
         $total_items = 0;
         $total_amount = 0;
 
-        foreach ($validated_data['products'] as $product_data) {
+        foreach ($validated_data['checkouts'] as $product_data) {
             //get the product_id 
-            $product = Product::find($product_data['product_id']);
+            $product = Product::find($product_data['id']);
 
             //get the product srp from the db
             $produt_price = $product->srp;
