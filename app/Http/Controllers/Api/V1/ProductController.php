@@ -12,6 +12,7 @@ use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -41,12 +42,18 @@ class ProductController extends Controller
                 'srp',
                 'is_removed'
             ])
-            ->paginate($per_page); 
+            ->paginate($per_page);
 
-            //append it to the products variable
-            $products->appends(['per_page' => $per_page]);
+        //append it to the products variable
+        $products->appends(['per_page' => $per_page]);
             
+        //cache the data
+        $cache_data = Cache::remember('products', now()->addHours(2), function () use ($products) {
             return new ProductCollection($products);
+        });
+
+        return $cache_data;
+
     }
 
     /**
