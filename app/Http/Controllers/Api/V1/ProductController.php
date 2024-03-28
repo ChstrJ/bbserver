@@ -48,11 +48,9 @@ class ProductController extends Controller
         $products->appends(['per_page' => $per_page]);
             
         //cache the data
-        $cache_data = Cache::remember('products', now()->addHours(2), function () use ($products) {
+        return Cache::remember('products', now()->addHours(2), function () use ($products) {
             return new ProductCollection($products);
         });
-
-        return $cache_data;
 
     }
 
