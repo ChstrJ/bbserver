@@ -12,6 +12,7 @@ use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -21,7 +22,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        
+
         $per_page = $request->input('per_page', 15);
 
         $products = QueryBuilder::for(Product::class)
@@ -30,7 +31,8 @@ class ProductController extends Controller
                 'name',
                 'created_at',
                 'added_by',
-                'quantity', '
+                'quantity',
+                '
                 srp'
             ])
             ->allowedFilters([
@@ -42,10 +44,13 @@ class ProductController extends Controller
                 'srp',
                 'is_removed'
             ])
-            ->paginate($per_page); 
-            $products->appends(['per_page' => $per_page]);
-            
+            ->paginate($per_page);
+        $products->appends(['per_page' => $per_page]);
+
+        //cache the data
+        return Cache::remember('cache-products', now()->addDay(), function () use ($products) {
             return new ProductCollection($products);
+        });
     }
 
     /**
