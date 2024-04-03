@@ -30,15 +30,16 @@ class ProductController extends Controller
                 'id',
                 'name',
                 'created_at',
+                'updated_at',
                 'added_by',
                 'quantity',
-                '
-                srp'
+                'srp'
             ])
             ->allowedFilters([
                 'id',
                 'name',
                 'created_at',
+                'updated_at',
                 'added_by',
                 'category_id',
                 'srp',
@@ -48,9 +49,11 @@ class ProductController extends Controller
         $products->appends(['per_page' => $per_page]);
 
         //cache the data
-        return Cache::remember('cache-products', now()->addDay(), function () use ($products) {
-            return new ProductCollection($products);
-        });
+        // return Cache::remember('cache-products', now()->addDay(), function () use ($products) {
+        //     return new ProductCollection($products);
+        // });
+
+        return new ProductCollection($products);
     }
 
     /**
