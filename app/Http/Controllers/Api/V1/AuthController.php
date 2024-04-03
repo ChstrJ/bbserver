@@ -49,7 +49,7 @@ class AuthController extends Controller
         //get the authenticated user and get the token from the user model
         $user = Auth::user();
 
-        $user->last_login_at = now();
+        $user->last_login_at = now('Asia/Manila');
         $user->save();
 
         //create an access token
@@ -65,7 +65,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $user->tokens()->delete();
 
-            $user->last_logout_at = now();
+            $user->last_logout_at = now('Asia/Manila');
             $user->save();
             
             return response()->json(["message" => "Logout Success"], HttpStatusCode::$ACCEPTED);
