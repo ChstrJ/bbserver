@@ -19,10 +19,10 @@ class TransactionFactory extends Factory
     {
         return [
             'customer_id' => $this->faker->numberBetween(1, 3),
-            'user_id' => $this->faker->numberBetween(1, 2),
+            'user_id' => $this->faker->numberBetween(1, 3),
             'amount_due' => $this->faker->numberBetween(1, 100),
             'number_of_items' => $this->faker->numberBetween(1, 100),
-            'status' => $this->faker->randomElement(['pending', 'paid']),
+            'status' => $this->faker->randomElement(['approved', 'rejected']),
             'payment_method' => $this->faker->numberBetween(1, 4),
             'checkouts' => json_encode([
                 [
