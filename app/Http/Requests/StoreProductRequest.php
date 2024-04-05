@@ -29,7 +29,7 @@ class StoreProductRequest extends FormRequest
         // $categories_length = ProductCategories::getCategories();
         // 'category_id' => "required|int|min:1|max:$categories_length",
         return [
-            'category_id' => "required|int|exist:categories,id",
+            'category_id' => "required|int|exists:categories,id",
             'name' => 'required|string|min:2|unique:products,name',
             'description' => 'required|string|min:2',
             'quantity' => 'required|int',

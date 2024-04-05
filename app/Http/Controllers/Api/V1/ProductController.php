@@ -10,6 +10,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -22,17 +23,20 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        //get the request input for date range filter
+        $startDate = $request->input('filter.created_at.0');
+        $endDate = $request->input('filter.created_at.1');
+
         //get the request input per page in query params
+        $per_page = $request->input('per_page');
 
-
-        $per_page = $request->input('per_page', 15);
-        $products = QueryBuilder::for(Product::class)
+        $query = QueryBuilder::for(Product::class)
             ->allowedSorts([
                 'id',
                 'name',
                 'created_at',
                 'updated_at',
-                'added_by',
+                'username',
                 'quantity',
                 'srp'
             ])
@@ -41,20 +45,22 @@ class ProductController extends Controller
                 'name',
                 'created_at',
                 'updated_at',
-                'added_by',
+                'username',
                 'category_id',
                 'srp',
                 'is_removed'
-            ])
-            ->paginate($per_page);
+            ]);
+        
 
-        //append it to the products variable
-        $products->appends(['per_page' => $per_page]);
+        if($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate);
+            $endDate = Carbon::parse($endDate);
             
-        //cache the data
-        // return Cache::remember('products', now()->addDay(), function () use ($products) {
-        //     return new ProductCollection($products);
-        // });
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        //paginate the results
+        $products = $query->paginate($per_page);
 
         return new ProductCollection($products);
 
