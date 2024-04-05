@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProductTransaction;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
-class ProductTransactionController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +35,7 @@ class ProductTransactionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ProductTransaction $productTransaction)
+    public function show(Category $category)
     {
         //
     }
@@ -43,7 +43,7 @@ class ProductTransactionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProductTransaction $productTransaction)
+    public function edit(Category $category)
     {
         //
     }
@@ -51,7 +51,7 @@ class ProductTransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ProductTransaction $productTransaction)
+    public function update(Request $request, Category $category)
     {
         //
     }
@@ -59,7 +59,7 @@ class ProductTransactionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductTransaction $productTransaction)
+    public function destroy(Category $category)
     {
         //
     }

@@ -26,14 +26,11 @@ class StoreTransactionRequest extends FormRequest
             'amount_due' => 'sometimes|numeric',
             'number_of_items' => 'sometimes|int',
             'payment_method' => 'required|int',
-            'customer' => 'sometimes|array',
-            'customer.*name' => 'sometimes|string',
-            'customer.*phone_number' => 'sometimes|string',
-            'customer.*address' => 'sometimes|string',
-            'checkouts' => 'required|array',
-            'checkouts.*.id' => 'required|int|exists:products,id',
-            'checkouts.*.quantity' => 'required|int|min:1',
-            'checkouts.*.srp' => 'required|numeric|min:1',
+            'products' => 'required|array',
+            'products.*.id' => 'required|int|exists:products,id',
+            'products.*.name' => 'required|string|exists:products,name',
+            'products.*.quantity' => 'required|int|min:1',
+            'products.*.srp' => 'required|int|min:1',
         ];
     }
 }

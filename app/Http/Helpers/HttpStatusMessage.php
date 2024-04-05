@@ -17,4 +17,8 @@ class HttpStatusMessage {
      static $FORBIDDEN = "Access denied. You don't have permission to view this content.";
      static $NOT_FOUND = "Sorry, the requested resource couldn't be found.";
      static $UNPROCESSABLE_ENTITY = "Sorry, we couldn't process your request. Please check the data and try again.";
+
+     // Server Error
+
+     static $WRONG_KEY = "You are not authorized to use this API";
 }

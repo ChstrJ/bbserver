@@ -7,20 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    protected $accessToken;
-    protected $message;
-
-    public function __construct($resource, $accessToken = null, $message = null)
-    {
-        parent::__construct($resource);
-        $this->accessToken = $accessToken;
-        $this->message = $message;
-    }
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request)
     {
         return [
@@ -28,6 +14,9 @@ class UserResource extends JsonResource
             'full_name' => $this->full_name,
             'username' => $this->username,
             'is_active' => $this->is_active,
+            'last_login_at' => $this->last_login_at,
+            'last_logout_at' => $this->last_logout_at,
+            'role_id' => $this->role_id,
             'products_added' => ProductResource::collection($this->whenLoaded('products')),
             'transactions_added' => TransactionResource::collection($this->whenLoaded('transactions')),
         ];

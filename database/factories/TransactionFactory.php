@@ -18,10 +18,32 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => $this->faker->numberBetween(2),
+            'customer_id' => $this->faker->numberBetween(1, 3),
+            'user_id' => $this->faker->numberBetween(1, 2),
             'amount_due' => $this->faker->numberBetween(1, 100),
             'number_of_items' => $this->faker->numberBetween(1, 100),
-            'payment_type' => $this->faker->randomElement(['GCASH', 'PAYMAYA', 'CASH'])
+            'status' => $this->faker->randomElement(['pending', 'paid']),
+            'payment_method' => $this->faker->numberBetween(1, 4),
+            'checkouts' => json_encode([
+                [
+                    'id' => $this->faker->numberBetween(1, 100),
+                    'name' => $this->faker->randomElement(['Hazelnut', 'Mocha', 'Matcha', 'Italian', 'Supremo', 'Hazelnut', 'Vanilla', 'Chocolate']),
+                    'quantity' => $this->faker->numberBetween(1, 5),
+                    'srp' => $this->faker->randomFloat(2, 1, 100),
+                ],
+                [
+                    'id' => $this->faker->numberBetween(1, 100),
+                    'name' => $this->faker->randomElement(['Hazelnut', 'Mocha', 'Matcha', 'Italian', 'Supremo', 'Hazelnut', 'Vanilla', 'Chocolate']),
+                    'quantity' => $this->faker->numberBetween(1, 5),
+                    'srp' => $this->faker->randomFloat(2, 1, 100),
+                ],
+                [
+                    'id' => $this->faker->numberBetween(1, 100),
+                    'name' => $this->faker->randomElement(['Hazelnut', 'Mocha', 'Matcha', 'Italian', 'Supremo', 'Hazelnut', 'Vanilla', 'Chocolate']),
+                    'quantity' => $this->faker->numberBetween(1, 5),
+                    'srp' => $this->faker->randomFloat(2, 1, 100),
+                ]
+            ])
         ];
     }
 }

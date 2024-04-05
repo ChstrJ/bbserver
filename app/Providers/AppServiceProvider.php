@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->alias(\App\Http\Middleware\ApiKeyAuthentication::class, 'api.key');
     }
 
     /**

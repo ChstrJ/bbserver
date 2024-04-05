@@ -20,7 +20,6 @@ class Transaction extends Model
         'number_of_items',
         'payment_method',
         'checkouts',
-        'customer',
         'status',
     ];
 
