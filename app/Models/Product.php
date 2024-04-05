@@ -14,8 +14,6 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
 
-    // protected $casts = ['is_removed' => 'boolean'];
-
     protected $fillable = [
         'category_id',
         'user_id',
@@ -24,7 +22,6 @@ class Product extends Model
         'quantity',
         'srp',
         'member_price',
-        'is_removed'
     ];
     public function product() : BelongsToMany
     {

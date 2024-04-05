@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\ProductTransaction;
-use Illuminate\Http\Request;
+use App\Models\Role;
+use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 
-class ProductTransactionController extends Controller
+class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class ProductTransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class ProductTransactionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ProductTransaction $productTransaction)
+    public function show(Role $role)
     {
         //
     }
@@ -43,7 +43,7 @@ class ProductTransactionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProductTransaction $productTransaction)
+    public function edit(Role $role)
     {
         //
     }
@@ -51,7 +51,7 @@ class ProductTransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ProductTransaction $productTransaction)
+    public function update(UpdateRoleRequest $request, Role $role)
     {
         //
     }
@@ -59,7 +59,7 @@ class ProductTransactionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductTransaction $productTransaction)
+    public function destroy(Role $role)
     {
         //
     }

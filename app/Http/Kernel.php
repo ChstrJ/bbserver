@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
 
         //custom
         'logs' => \App\Http\Middleware\LogUserActivity::class,
+        'admin' => \App\Http\Middleware\AdminRole::class,
     ];
 }

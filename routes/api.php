@@ -29,10 +29,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/orders', TransactionController::class)->except(['update']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
-    Route::get('/users/', [UserController::class, 'index']);
-    
+
+
     Route::post('/auth/logout', [AuthController::class, 'logout']);
- 
+
+
+    Route::get('/users/', [UserController::class, 'index'])->middleware('admin');
+
 });
 
 

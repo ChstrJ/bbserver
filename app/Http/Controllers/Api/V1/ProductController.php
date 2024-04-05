@@ -36,7 +36,7 @@ class ProductController extends Controller
                 'name',
                 'created_at',
                 'updated_at',
-                'username',
+                'user_id',
                 'quantity',
                 'srp'
             ])
@@ -45,7 +45,7 @@ class ProductController extends Controller
                 'name',
                 'created_at',
                 'updated_at',
-                'username',
+                'user_id',
                 'category_id',
                 'srp',
                 'is_removed'

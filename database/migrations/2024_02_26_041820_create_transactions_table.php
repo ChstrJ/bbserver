@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('number_of_items');
             $table->integer('payment_method');
             $table->json('checkouts');
-            $table->enum('status', ['pending', 'paid', 'void'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
             
             $table->foreignId('user_id')
