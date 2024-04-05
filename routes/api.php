@@ -26,7 +26,7 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/products', ProductController::class);
-    Route::apiResource('/pos', TransactionController::class)->except(['update']);
+    Route::apiResource('/orders', TransactionController::class)->except(['update']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
     Route::get('/users/', [UserController::class, 'index']);
