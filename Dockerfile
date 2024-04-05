@@ -14,12 +14,6 @@ ENV APP_ENV production
 ENV APP_DEBUG false
 ENV LOG_CHANNEL stderr
 
-ENV DB_CONNECTION mysql
-ENV DB_HOST mysql-db-api-cheschesj-5a36.a.aivencloud.com
-ENV DB_PORT 24766
-ENV DB_DATABASE defaultdb
-ENV DB_USERNAME avnadmin
-ENV DB_PASSWORD AVNS_iiVi7t8SwS-K-rWPhw6
 
 # Allow composer to run as root
 ENV COMPOSER_ALLOW_SUPERUSER 1

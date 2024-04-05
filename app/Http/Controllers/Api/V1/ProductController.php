@@ -23,7 +23,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         //get the request input per page in query params
-        $dates = request()->query('filter.created_at');
+
 
         $per_page = $request->input('per_page', 15);
         $products = QueryBuilder::for(Product::class)
