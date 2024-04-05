@@ -16,7 +16,7 @@ class TransactionResource extends JsonResource
             "number_of_items" => $this->number_of_items,
             "payment_method" => $this->payment_method,
             "checkouts" => $this->checkouts,
-            "status" => strtoupper($this->status),
+            "status" => $this->status,
             "transacted_by" => $this->user->username,
             "customer_id" => $this->customer_id,
             "created_at" => $this->created_at,
