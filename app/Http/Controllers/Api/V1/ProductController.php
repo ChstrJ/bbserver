@@ -23,6 +23,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         //get the request input per page in query params
+        $dates = request()->query('filter.created_at');
+
         $per_page = $request->input('per_page', 15);
         $products = QueryBuilder::for(Product::class)
             ->allowedSorts([
@@ -50,9 +52,11 @@ class ProductController extends Controller
         $products->appends(['per_page' => $per_page]);
             
         //cache the data
-        return Cache::remember('products', now()->addDay(), function () use ($products) {
-            return new ProductCollection($products);
-        });
+        // return Cache::remember('products', now()->addDay(), function () use ($products) {
+        //     return new ProductCollection($products);
+        // });
+
+        return new ProductCollection($products);
 
     }
 
