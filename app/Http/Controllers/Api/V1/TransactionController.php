@@ -71,11 +71,9 @@ class TransactionController extends Controller
         //attach to the payload
         $validated_data['number_of_items'] = $data['total_items'];
         $validated_data['amount_due'] = $data['total_amount'];
-
-        json_encode($validated_data['checkouts'], true);
-
-        $user->transactions()->create($validated_data);
         
+        $user->transactions()->create($validated_data);
+
         return response()->json([
             'message' => DynamicMessage::transactionAdded($user->username),
         ]);
@@ -115,7 +113,7 @@ class TransactionController extends Controller
         $data = $transaction->checkouts;
 
         TransactionService::decrementQty($data);
-        
+
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
         
