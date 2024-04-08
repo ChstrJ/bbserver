@@ -16,7 +16,3 @@ class DynamicMessage {
         return "{$username}'s transaction successfully added.";
     }
   }
-
-class GenericMessage {
-    public static $TRANSACT = "Transaction successfully added";
-}

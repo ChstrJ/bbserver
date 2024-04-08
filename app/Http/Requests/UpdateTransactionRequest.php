@@ -24,7 +24,7 @@ class UpdateTransactionRequest extends FormRequest
         return [
             'amount_due' => 'sometimes|numeric',
             'number_of_items' => 'sometimes|int',
-            'payment_type' => 'sometimes|string',
+            'payment_method' => 'sometimes|string',
         ];
     }
 }

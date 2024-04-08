@@ -12,13 +12,13 @@ class TransactionResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "amount_due" => $this->amount_due,
+            "amount_due" => number_format($this->amount_due, 2),
             "number_of_items" => $this->number_of_items,
             "payment_method" => $this->payment_method,
             "checkouts" => $this->checkouts,
             "status" => $this->status,
             "transacted_by" => $this->user->username,
-            "customer_id" => $this->customer_id,
+            "customer" => new CustomerResource($this->whenLoaded('customer')),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
         ];
