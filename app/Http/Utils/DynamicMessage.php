@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Helpers;
+namespace App\Http\Utils;
 
 class DynamicMessage {
     public static function productAdded(string $product_name)

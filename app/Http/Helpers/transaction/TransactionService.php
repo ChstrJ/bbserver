@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Helpers\utils\transaction;
+namespace App\Http\Helpers\transaction;
 use App\Models\Product;
 use Exception;
 

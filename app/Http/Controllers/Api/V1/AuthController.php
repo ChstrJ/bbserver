@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Helpers\HttpStatusCode;
-use App\Http\Helpers\HttpStatusMessage;
+use App\Http\Utils\HttpStatusCode;
+use App\Http\Utils\HttpStatusMessage;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;

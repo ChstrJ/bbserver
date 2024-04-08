@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Helpers\utils;
+namespace App\Http\Utils;
 
 class Roles {
     static $ADMIN = 1;

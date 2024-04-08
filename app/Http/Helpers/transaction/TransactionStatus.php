@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Helpers\utils\transaction;
+namespace App\Http\Helpers\transaction;
 
 class TransactionStatus {
     static $APPROVE = "approved";
