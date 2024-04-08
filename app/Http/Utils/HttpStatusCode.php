@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Helpers;
+namespace App\Http\Utils;
 class HttpStatusCode {
       // Informational 1xx
     static $CONTINUE = 100;

@@ -1,5 +1,5 @@
 <?php
-namespace App\Helpers;
+namespace App\Http\Utils;
 
 class ResponseFormatter
 {

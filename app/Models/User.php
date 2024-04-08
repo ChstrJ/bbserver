@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Helpers\utils\Roles;
+use App\Http\Utils\Roles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
