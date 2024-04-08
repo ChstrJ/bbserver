@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Helpers\HttpStatusCode;
+use App\Http\Utils\HttpStatusCode;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index()
     {
        $user = User::with('transactions', 'products')->get();
-       
+
        return new UserCollection($user);
     }
 

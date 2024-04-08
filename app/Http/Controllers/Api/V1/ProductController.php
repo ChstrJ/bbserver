@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Helpers\GenericMessage;
+use App\Http\Utils\DynamicMessage;
+use App\Http\Utils\GenericMessage;
 use App\Models\Product;
-use App\Models\User;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\V1\ProductCollection;
@@ -66,28 +66,14 @@ class ProductController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreProductRequest $request)
     {
         $user = Auth::user();
         $validated_data = $request->validated();
         $product = $user->products()->create($validated_data);
-        return response()->json("$product->name was succesfully added");
+        return response()->json(DynamicMessage::productAdded($product->name));
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Product $product)
     {
         return new ProductResource($product);
@@ -100,7 +86,6 @@ class ProductController extends Controller
 
         return response()->json("$product->name was succesfully updated");
     }
-
 
     public function destroy(Product $product)
     {

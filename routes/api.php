@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProductController;
@@ -31,10 +32,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/customers', CustomerController::class);
 
 
+    
+    
+    Route::patch('/orders/approve/{id}', [TransactionController::class, 'approve']);
+    Route::patch('/orders/reject/{id}', [TransactionController::class, 'reject']);
+    
     Route::post('/auth/logout', [AuthController::class, 'logout']);
-
-
     Route::get('/users/', [UserController::class, 'index'])->middleware('admin');
+    Route::get('/summary', [AdminController::class, 'getAllTotal'])->middleware('admin');
+    
 
 });
 

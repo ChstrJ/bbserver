@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Helpers;
+namespace App\Http\Utils;
 
-class GenericMessage {
+class DynamicMessage {
     public static function productAdded(string $product_name)
     {
         return "{$product_name} successfully added to inventory.";
@@ -15,5 +15,4 @@ class GenericMessage {
     {
         return "{$username}'s transaction successfully added.";
     }
-    
   }

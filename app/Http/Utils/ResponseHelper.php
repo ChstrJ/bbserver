@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Helpers;
+namespace App\Http\Utils;
 
 use App\Models\Product;
 use App\Models\Transaction;

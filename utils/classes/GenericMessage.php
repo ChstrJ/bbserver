@@ -8,4 +8,5 @@ class GenericMessage {
     static $PRODUCT_CREATED = "Product succesfully added to inventory.";
     static $PRODUCT_UPDATED = "Product succesfully updated to inventory.";
     static $PRODUCT_DELETED = "Product succesfully deleted to inventory.";
+
 }

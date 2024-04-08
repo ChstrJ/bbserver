@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Helpers\HttpStatusMessage;
-use App\Http\Helpers\utils\Roles;
+use App\Http\Utils\HttpStatusMessage;
+use App\Http\Utils\Roles;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
