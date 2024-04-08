@@ -31,9 +31,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/customers', CustomerController::class);
 
 
+    
+    
+    Route::patch('orders/approve/{id}', [TransactionController::class, 'approve']);
+    Route::patch('orders/reject/{id}', [TransactionController::class, 'reject']);
+    
     Route::post('/auth/logout', [AuthController::class, 'logout']);
-
-
     Route::get('/users/', [UserController::class, 'index'])->middleware('admin');
 
 });

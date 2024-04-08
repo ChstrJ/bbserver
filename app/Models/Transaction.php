@@ -6,13 +6,14 @@ use App\Http\Middleware\Authenticate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class Transaction extends Model
 {
     use HasFactory, HasApiTokens;
     protected $table = 'transactions';
-    protected $casts = ['checkouts' => 'array', 'customer' => 'array'];
+    protected $casts = ['checkouts' => 'array'];
     protected $fillable = [
         'user_id',
         'customer_id',
@@ -23,17 +24,17 @@ class Transaction extends Model
         'status',
     ];
 
-    public function user()
+    public function user() : BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function customer()
+    public function customer() : BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function products()
+    public function products() : HasMany
     {
         return $this->hasMany(Product::class);
     }

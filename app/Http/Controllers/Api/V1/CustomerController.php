@@ -21,17 +21,6 @@ class CustomerController extends Controller
         return CustomerResource::collection($customers);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreCustomerRequest $request)
     {
         $validated_data = $request->validated();
@@ -41,9 +30,6 @@ class CustomerController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Customer $customer)
     {
         return new CustomerResource($customer->load('transactions'));

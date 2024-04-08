@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\DynamicMessage;
 use App\Http\Helpers\GenericMessage;
 use App\Models\Product;
 use App\Models\User;
@@ -82,7 +83,7 @@ class ProductController extends Controller
         $user = Auth::user();
         $validated_data = $request->validated();
         $product = $user->products()->create($validated_data);
-        return response()->json("$product->name was succesfully added");
+        return response()->json(DynamicMessage::productAdded($product->name));
     }
 
     /**
