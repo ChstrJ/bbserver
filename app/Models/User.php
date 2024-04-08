@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory;
 
     protected $table = "users";
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'is_active'];
 
     protected $fillable = [
         'full_name',
