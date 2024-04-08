@@ -12,7 +12,9 @@ class Customer extends Model
 
     protected $fillable = [
         'name',
-        'phone_number'
+        'phone_number',
+        'address',
+        'email'
     ];
 
     public function transactions() : HasMany

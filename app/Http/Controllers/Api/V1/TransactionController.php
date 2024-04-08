@@ -6,8 +6,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Utils\DynamicMessage;
+use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusMessage;
 use App\Http\Helpers\transaction\TransactionService;
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
@@ -108,17 +110,31 @@ class TransactionController extends Controller
         if (!$transaction) { 
             return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND], 404);
         }
+
+        $qty = $transaction->checkouts;
+
+
+       
+
+
+        
+
+
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
+        
+        return response()->json(["message"=> GenericMessage::$APPROVE]);
     }   
 
     public function reject(Transaction $transaction, int $id) {
         $transaction = Transaction::find($id);
         if (!$transaction) { 
-            return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND],404);
+            return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND], 404);
         }
         $transaction->status = TransactionStatus::$REJECT;
         $transaction->save();
+
+        return response()->json(["message"=> GenericMessage::$REJECT]);
     }
     
 }

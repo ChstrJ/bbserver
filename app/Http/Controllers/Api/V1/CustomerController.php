@@ -11,9 +11,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $customers = Customer::with('transactions')->get();
@@ -25,9 +22,7 @@ class CustomerController extends Controller
     {
         $validated_data = $request->validated();
         $customer = Customer::create($validated_data);
-        return response()->json([
-            'data' => new CustomerResource($customer),
-        ]);
+        return new CustomerResource($customer); 
     }
 
     public function show(Customer $customer)
@@ -35,27 +30,4 @@ class CustomerController extends Controller
         return new CustomerResource($customer->load('transactions'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Customer $customer)
-    {
-        //
-    }
 }

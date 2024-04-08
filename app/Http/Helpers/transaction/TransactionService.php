@@ -50,4 +50,23 @@ class TransactionService {
 
         return ['total_amount' => $total_amount, 'total_items' => $total_items];
     }
+
+    public static function decrementQty ($data) {
+
+        $totalQty = 0;
+
+        foreach ($data as $checkouts) {
+            $product = Product::find($checkouts['id']);
+
+            if(!$product) {
+                throw new Exception('Product ID not found.');
+            }
+
+            $qty = $checkouts['quantity'];
+
+            $totalQty += $qty;
+        }
+
+        Product::decrement('quantity', $totalQty);  
+    }
 }
