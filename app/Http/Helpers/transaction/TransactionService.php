@@ -39,9 +39,7 @@ class TransactionService {
             if ($srp !== $produt_price) {
                 throw new Exception('Invalid product SRP');
             }
-
-            //decrement the qty from the db based on qty request
-            $product->decrement('quantity', $qty);
+        
 
             //update the total amount and total qty
             $total_items += $qty;
@@ -63,7 +61,6 @@ class TransactionService {
             }
 
             $qty = $checkouts['quantity'];
-
             $totalQty += $qty;
         }
 

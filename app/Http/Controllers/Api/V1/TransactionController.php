@@ -52,7 +52,7 @@ class TransactionController extends Controller
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $query->with('customer');
+        $query->with('customer', 'user');
 
         $transaction = $query->paginate($per_page);
 
@@ -72,10 +72,11 @@ class TransactionController extends Controller
         $validated_data['number_of_items'] = $data['total_items'];
         $validated_data['amount_due'] = $data['total_amount'];
 
-        $transaction = $user->transactions()->create($validated_data);
+        json_encode($validated_data['checkouts'], true);
+
+        $user->transactions()->create($validated_data);
         
         return response()->json([
-            'data' => new TransactionResource($transaction),
             'message' => DynamicMessage::transactionAdded($user->username),
         ]);
     }
@@ -111,15 +112,10 @@ class TransactionController extends Controller
             return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND], 404);
         }
 
-        $qty = $transaction->checkouts;
+        $data = $transaction->checkouts;
 
-
-       
-
-
+        TransactionService::decrementQty($data);
         
-
-
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
         
