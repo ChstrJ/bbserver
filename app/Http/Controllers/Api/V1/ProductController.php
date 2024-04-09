@@ -52,6 +52,7 @@ class ProductController extends Controller
             ])
             ->orderByDesc('created_at')
             ->orderByDesc('updated_at');
+            // ->where('is_removed', 0);
 
 
         if ($startDate && $endDate) {
@@ -100,6 +101,6 @@ class ProductController extends Controller
         // return response()->json("{$product->name} was successfully removed.");
 
         Product::find($product->id)->delete();
-        return response()->json("{$product->name} was successfully removed.");
+        return response()->json(DynamicMessage::productRemove($product->name));
     }
 }
