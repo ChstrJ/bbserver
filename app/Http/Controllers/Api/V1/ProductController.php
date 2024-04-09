@@ -49,13 +49,15 @@ class ProductController extends Controller
                 'category_id',
                 'srp',
                 'is_removed'
-            ]);
-        
+            ])
+            ->orderByDesc('created_at')
+            ->orderByDesc('updated_at');
 
-        if($startDate && $endDate) {
+
+        if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
             $endDate = Carbon::parse($endDate);
-            
+
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
