@@ -36,13 +36,13 @@ class TransactionController extends Controller
                 'amount_due',
                 'number_of_items',
                 'created_at',
-                'status'
+                'status',
             ])
             ->allowedFilters([
                 'amount_due',
                 'number_of_items',
                 'created_at',
-                'status'
+                'status',
             ])
             ->orderByDesc('created_at');
 

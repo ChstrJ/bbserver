@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusCode;
 use App\Http\Utils\HttpStatusMessage;
 use App\Http\Requests\StoreLoginRequest;
@@ -38,11 +39,7 @@ class AuthController extends Controller
 
         if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'Invalid credentials',
-                'errors' => [
-                    'username' => 'Username or password is incorrect',
-                    'password' => 'Username or password is incorrect',
-                ]
+                'message' => GenericMessage::$INVALID_CREDENTIALS,
             ], HttpStatusMessage::$UNAUTHORIZED);
         }
 
@@ -62,12 +59,12 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-            $user = Auth::user();
-            $user->tokens()->delete();
+        $user = Auth::user();
+        $user->tokens()->delete();
 
-            $user->last_logout_at = now('Asia/Manila');
-            $user->save();
-            
-            return response()->json(["message" => "Logout Success"], HttpStatusCode::$ACCEPTED);
+        $user->last_logout_at = now('Asia/Manila');
+        $user->save();
+
+        return response()->json(["message" => "Logout Success"], HttpStatusCode::$ACCEPTED);
     }
 }
