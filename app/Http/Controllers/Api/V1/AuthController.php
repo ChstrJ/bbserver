@@ -40,7 +40,7 @@ class AuthController extends Controller
         if (!Auth::attempt($credentials)) {
             return response()->json([
                 'message' => GenericMessage::$INVALID_CREDENTIALS,
-            ], HttpStatusMessage::$UNAUTHORIZED);
+            ], 401);
         }
 
         //get the authenticated user and get the token from the user model
