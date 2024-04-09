@@ -13,7 +13,7 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
-
+    protected $hidden = ['is_removed'];
     protected $fillable = [
         'category_id',
         'user_id',

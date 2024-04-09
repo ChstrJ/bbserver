@@ -6,8 +6,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Utils\DynamicMessage;
+use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusMessage;
 use App\Http\Helpers\transaction\TransactionService;
+use App\Models\Product;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
@@ -34,14 +36,15 @@ class TransactionController extends Controller
                 'amount_due',
                 'number_of_items',
                 'created_at',
-                'status'
+                'status',
             ])
             ->allowedFilters([
                 'amount_due',
                 'number_of_items',
                 'created_at',
-                'status'
-            ]);
+                'status',
+            ])
+            ->orderByDesc('created_at');
 
         if($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
@@ -50,7 +53,7 @@ class TransactionController extends Controller
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $query->with('customer');
+        $query->with('customer', 'user');
 
         $transaction = $query->paginate($per_page);
 
@@ -69,11 +72,10 @@ class TransactionController extends Controller
         //attach to the payload
         $validated_data['number_of_items'] = $data['total_items'];
         $validated_data['amount_due'] = $data['total_amount'];
-
-        $transaction = $user->transactions()->create($validated_data);
         
+        $user->transactions()->create($validated_data);
+
         return response()->json([
-            'data' => new TransactionResource($transaction),
             'message' => DynamicMessage::transactionAdded($user->username),
         ]);
     }
@@ -108,17 +110,26 @@ class TransactionController extends Controller
         if (!$transaction) { 
             return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND], 404);
         }
+
+        $data = $transaction->checkouts;
+
+        TransactionService::decrementQty($data);
+
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
+        
+        return response()->json(["message"=> GenericMessage::$APPROVE]);
     }   
 
     public function reject(Transaction $transaction, int $id) {
         $transaction = Transaction::find($id);
         if (!$transaction) { 
-            return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND],404);
+            return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND], 404);
         }
         $transaction->status = TransactionStatus::$REJECT;
         $transaction->save();
+
+        return response()->json(["message"=> GenericMessage::$REJECT]);
     }
     
 }

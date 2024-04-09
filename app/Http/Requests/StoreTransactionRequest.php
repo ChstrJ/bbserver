@@ -23,10 +23,10 @@ class StoreTransactionRequest extends FormRequest
     {
         return [
             'customer_id' => 'sometimes|exists:customers,id',
-            // 'customer_name' => 'sometimes|exists:customers,name',
-            // 'customer_phone_number' => 'sometimes|exists:customers,phone_number',
-            // 'customer_address' => 'sometimes|exists:customers,address',
-            // 'customer_email' => 'sometimes|exists:customers,email',
+            'customer_name' => 'sometimes|exists:customers,name',
+            'customer_phone_number' => 'sometimes|exists:customers,phone_number',
+            'customer_address' => 'sometimes|exists:customers,address',
+            'customer_email' => 'sometimes|exists:customers,email',
             'amount_due' => 'sometimes|numeric',
             'number_of_items' => 'sometimes|int',
             'payment_method' => 'required|int',

@@ -27,12 +27,9 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/products', ProductController::class);
-    Route::apiResource('/orders', TransactionController::class)->except(['update']);
+    Route::apiResource('/orders', TransactionController::class)->except(['update', 'destroy']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
-
-
-    
     
     Route::patch('/orders/approve/{id}', [TransactionController::class, 'approve']);
     Route::patch('/orders/reject/{id}', [TransactionController::class, 'reject']);

@@ -49,13 +49,16 @@ class ProductController extends Controller
                 'category_id',
                 'srp',
                 'is_removed'
-            ]);
-        
+            ])
+            ->orderByDesc('created_at')
+            ->orderByDesc('updated_at');
+            // ->where('is_removed', 0);
 
-        if($startDate && $endDate) {
+
+        if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
             $endDate = Carbon::parse($endDate);
-            
+
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
@@ -98,6 +101,6 @@ class ProductController extends Controller
         // return response()->json("{$product->name} was successfully removed.");
 
         Product::find($product->id)->delete();
-        return response()->json("{$product->name} was successfully removed.");
+        return response()->json(DynamicMessage::productRemove($product->name));
     }
 }

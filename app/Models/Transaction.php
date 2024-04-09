@@ -13,7 +13,7 @@ class Transaction extends Model
 {
     use HasFactory, HasApiTokens;
     protected $table = 'transactions';
-    protected $casts = ['checkouts' => 'array'];
+    protected $casts = ['checkouts' => 'json'];
     protected $fillable = [
         'user_id',
         'customer_id',
@@ -37,5 +37,10 @@ class Transaction extends Model
     public function products() : HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function getCheckoutsAttribute($value)
+    {
+        return json_decode($value, true);
     }
 }

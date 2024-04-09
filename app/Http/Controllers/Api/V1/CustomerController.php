@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Utils\DynamicMessage;
+use App\Http\Utils\GenericMessage;
 use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
@@ -11,13 +13,9 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $customers = Customer::with('transactions')->get();
-
         return CustomerResource::collection($customers);
     }
 
@@ -25,37 +23,33 @@ class CustomerController extends Controller
     {
         $validated_data = $request->validated();
         $customer = Customer::create($validated_data);
-        return response()->json([
-            'data' => new CustomerResource($customer),
-        ]);
+        return new CustomerResource($customer); 
     }
 
     public function show(Customer $customer)
     {
+        if(!$customer) {
+            return response()->json(GenericMessage::$UNDEFINED_USER);
+        }
         return new CustomerResource($customer->load('transactions'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Customer $customer)
-    {
-        //
+    public function update(UpdateCustomerRequest $request, Customer $customer) {
+        $data = $request->validated(); 
+        $customer->update($data);
+        if (!$customer->update($data)) {
+            return response()->json(GenericMessage::$INVALID, 422);
+        }
+        return response()->json(DynamicMessage::customerUpdated($data['name']));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
-    {
-        //
+    public function destroy (Customer $customer) {
+        $user = Customer::find($customer->id);
+        if(!$user) {
+            return response()->json(GenericMessage::$UNDEFINED_USER);
+        }
+        $user->delete();
+        return response()->json(DynamicMessage::customerRemove($customer->name));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Customer $customer)
-    {
-        //
-    }
 }

@@ -22,9 +22,9 @@ class UpdateProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $categories_length = ProductCategories::getCategories();
+        $categories_length = \App\Http\Utils\ProductCategories::getCategories();
         return [
-            'category_id' => "sometimes|int|min:1|max:$categories_length",
+            'category_id' => "sometimes|int|min:1|exists:categories,id",
             'name' => 'sometimes|string|min:2',
             'description' => 'sometimes|string|min:2',
             'quantity' => 'sometimes|int|min:1|max:9999',

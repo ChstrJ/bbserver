@@ -17,10 +17,10 @@ class TransactionResource extends JsonResource
             "payment_method" => $this->payment_method,
             "checkouts" => $this->checkouts,
             "status" => $this->status,
-            "transacted_by" => $this->user->username,
-            "customer" => new CustomerResource($this->whenLoaded('customer')),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
+            "employee" => new UserResource($this->whenLoaded('user')),
+            "customer" => new CustomerResource($this->whenLoaded('customer')),
         ];
     }
 }

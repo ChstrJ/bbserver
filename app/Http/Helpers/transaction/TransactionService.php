@@ -39,9 +39,7 @@ class TransactionService {
             if ($srp !== $produt_price) {
                 throw new Exception('Invalid product SRP');
             }
-
-            //decrement the qty from the db based on qty request
-            $product->decrement('quantity', $qty);
+        
 
             //update the total amount and total qty
             $total_items += $qty;
@@ -49,5 +47,23 @@ class TransactionService {
         }
 
         return ['total_amount' => $total_amount, 'total_items' => $total_items];
+    }
+
+    public static function decrementQty ($data) {
+
+        $totalQty = 0;
+
+        foreach ($data as $checkouts) {
+            $product = Product::find($checkouts['id']);
+
+            if(!$product) {
+                throw new Exception('Product ID not found.');
+            }
+
+            $qty = $checkouts['quantity'];
+            $totalQty += $qty;
+        }
+
+        Product::decrement('quantity', $totalQty);  
     }
 }
