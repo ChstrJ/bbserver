@@ -43,7 +43,8 @@ class TransactionController extends Controller
                 'number_of_items',
                 'created_at',
                 'status'
-            ]);
+            ])
+            ->orderByDesc('created_at');
 
         if($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);

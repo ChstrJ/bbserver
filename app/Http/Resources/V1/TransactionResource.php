@@ -17,7 +17,7 @@ class TransactionResource extends JsonResource
             "amount_due" => number_format($this->amount_due, 2),
             "number_of_items" => $this->number_of_items,
             "payment_method" => $this->payment_method,
-            "checkouts" => json_decode($this->checkouts, true),
+            "checkouts" => $this->checkouts,
             "status" => $this->status,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,

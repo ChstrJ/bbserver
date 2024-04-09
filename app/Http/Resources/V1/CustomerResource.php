@@ -13,8 +13,10 @@ class CustomerResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'phone_number' => $this->phone_number,
-            'email' => $this->email,
+            'email_address' => $this->email,
             'address' => $this->address,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
             'transactions' => TransactionResource::collection($this->whenLoaded('transactions')),
         ];
     }
