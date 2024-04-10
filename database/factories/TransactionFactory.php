@@ -24,7 +24,7 @@ class TransactionFactory extends Factory
             'number_of_items' => $this->faker->numberBetween(1, 100),
             'status' => $this->faker->randomElement(['approved', 'rejected']),
             'payment_method' => $this->faker->numberBetween(1, 4),
-            'checkouts' => json_encode([
+            'checkouts' => [
                 [
                     'id' => $this->faker->numberBetween(1, 100),
                     'name' => $this->faker->randomElement(['Hazelnut', 'Mocha', 'Matcha', 'Italian', 'Supremo', 'Hazelnut', 'Vanilla', 'Chocolate']),
@@ -43,7 +43,7 @@ class TransactionFactory extends Factory
                     'quantity' => $this->faker->numberBetween(1, 5),
                     'srp' => $this->faker->randomFloat(2, 1, 100),
                 ]
-            ])
+            ]
         ];
     }
 }

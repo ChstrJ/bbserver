@@ -16,6 +16,7 @@ use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\TransactionResource;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -80,8 +81,12 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function show(Transaction $transaction)
+    public function show(int $id)
     {
+        $transaction = Transaction::find($id);
+        if(!$transaction) {
+            return response()->json(GenericMessage::$TRANSACT_NOT_FOUND, 404);
+        }
         return new TransactionResource($transaction->load('customer'));
     }
 
