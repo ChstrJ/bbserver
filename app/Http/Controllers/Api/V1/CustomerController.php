@@ -9,13 +9,32 @@ use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\V1\CustomerResource;
+use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::with('transactions')->get();
+        $per_page = $request->input('per_page');
+
+        $customers = QueryBuilder::for(Customer::class)
+            ->allowedFilters([
+                'name',
+                'address',
+                'phone_number',
+                'address'
+            ])
+            ->allowedSorts([
+                'name',
+                'address',
+                'phone_number',
+                'address'
+            ])
+            ->with('transactions')
+            ->orderByDesc('created_at');
+
+        $customers = $customers->paginate($per_page);
         return CustomerResource::collection($customers);
     }
 
@@ -23,19 +42,21 @@ class CustomerController extends Controller
     {
         $validated_data = $request->validated();
         $customer = Customer::create($validated_data);
-        return new CustomerResource($customer); 
+        return new CustomerResource($customer);
     }
 
-    public function show(Customer $customer)
-    {
+    public function show(int $id)
+    { 
+        $customer = Customer::find($id);    
         if(!$customer) {
-            return response()->json(GenericMessage::$UNDEFINED_USER);
+            return response()->json(GenericMessage::$UNDEFINED_USER, 404);
         }
         return new CustomerResource($customer->load('transactions'));
     }
 
-    public function update(UpdateCustomerRequest $request, Customer $customer) {
-        $data = $request->validated(); 
+    public function update(UpdateCustomerRequest $request, Customer $customer)
+    {
+        $data = $request->validated();
         $customer->update($data);
         if (!$customer->update($data)) {
             return response()->json(GenericMessage::$INVALID, 422);
@@ -43,9 +64,10 @@ class CustomerController extends Controller
         return response()->json(DynamicMessage::customerUpdated($data['name']));
     }
 
-    public function destroy (Customer $customer) {
+    public function destroy(Customer $customer)
+    {
         $user = Customer::find($customer->id);
-        if(!$user) {
+        if (!$user) {
             return response()->json(GenericMessage::$UNDEFINED_USER);
         }
         $user->delete();

@@ -5,6 +5,7 @@ namespace App\Http\Utils;
 class GenericMessage
 {
     public static $TRANSACT = "Transaction successfully added";
+    public static $TRANSACT_NOT_FOUND = "Transaction not found";
     static $APPROVE = "Transaction approved.";
     static $REJECT = "Transaction rejected.";
     static $INVALID = "There's something wrong in your request";

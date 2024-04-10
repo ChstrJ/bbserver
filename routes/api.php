@@ -30,15 +30,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/orders', TransactionController::class)->except(['update', 'destroy']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
-    
+
     Route::patch('/orders/approve/{id}', [TransactionController::class, 'approve']);
     Route::patch('/orders/reject/{id}', [TransactionController::class, 'reject']);
-    
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::get('/users/', [UserController::class, 'index'])->middleware('admin');
-    Route::get('/summary', [AdminController::class, 'getAllTotal'])->middleware('admin');
-    
 
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    Route::group(['middleware' => 'admin'], function () {
+        Route::get('/users', [UserController::class, 'index'])->middleware('admin');
+        Route::get('/summary', [AdminController::class, 'getAllTotal'])->middleware('admin');
+    });
 });
 
 
