@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\user\UserService;
+use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\GenericMessage;
 use App\Models\Customer;
@@ -33,18 +34,30 @@ class CustomerController extends Controller
                 'phone_number',
                 'address'
             ])
-            ->with('transactions')
+            ->with('transactions', 'user')
             ->orderByDesc('created_at');
 
         $customers = $customers->paginate($per_page);
-        return CustomerResource::collection($customers);
+        return new CustomerCollection($customers);
     }
 
-    public function store(StoreCustomerRequest $request)
+    // public function store(StoreCustomerRequest $request)
+    // {
+    //     $user = UserService::getUserId();
+    //     $validated_data = $request->validated();
+    //     $validated_data['added_by'] = $user;
+    //     $customer = Customer::create($validated_data);
+    //     return new CustomerResource($customer);
+    // }
+
+    public function store(StoreCustomerRequest $request, Customer $customer)
     {
+        $user = UserService::getUserId();
         $validated_data = $request->validated();
-        $customer = Customer::create($validated_data);
-        return new CustomerResource($customer);
+        $validated_data['added_by'] = $user;
+        $validated_data['user_id'] = $user;
+        $customer->create($validated_data);
+        return response()->json(DynamicMessage::customerAdded($validated_data['full_name']));
     }
 
     public function show(int $id)
@@ -53,17 +66,19 @@ class CustomerController extends Controller
         if(!$customer) {
             return response()->json(GenericMessage::$UNDEFINED_USER, 404);
         }
-        return new CustomerResource($customer->load('transactions'));
+        return new CustomerResource($customer->load('transactions', 'user'));
     }
 
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
-        $data = $request->validated();
-        $customer = Customer::update($data);
+        $user = UserService::getUserId();
+        $validated_data = $request->validated();
+        $validated_data['updated_by'] = $user;
+        $customer->update($validated_data);
         if (!$customer) {
             return response()->json(GenericMessage::$INVALID, 422);
         }
-        return response()->json(DynamicMessage::customerUpdated($data['name']));
+        return response()->json(DynamicMessage::customerUpdated($validated_data['full_name']));
     }
 
     public function destroy(Customer $customer)

@@ -22,7 +22,7 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
+            'full_name' => 'required|string',
             'address' => 'required|string',
             'email_address' => 'required|string|email|unique:customers,email_address',
             'phone_number' => 'required|string|regex:/^09\d{2}\d{3}\d{4}$/'

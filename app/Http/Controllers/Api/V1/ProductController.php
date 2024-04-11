@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\GenericMessage;
 use App\Models\Product;
@@ -51,8 +52,8 @@ class ProductController extends Controller
                 'is_removed'
             ])
             ->orderByDesc('created_at')
-            ->orderByDesc('updated_at');
-            // ->where('is_removed', 0);
+            ->orderByDesc('updated_at')
+            ->with('user');
 
 
         if ($startDate && $endDate) {
@@ -71,7 +72,7 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $user = Auth::user();
+        $user = UserService::getUser();
         $validated_data = $request->validated();
         $product = $user->products()->create($validated_data);
         return response()->json(DynamicMessage::productAdded($product->name));
@@ -79,15 +80,16 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return new ProductResource($product);
+        return new ProductResource($product->load('user'));
     }
 
     public function update(UpdateProductRequest $request, Product $product)
     {
+        $user = UserService::getUserId();
         $validated_data = $request->validated();
+        $validated_data['updated_by'] = $user;
         $product->update($validated_data);
-
-        return response()->json("$product->name was succesfully updated");
+        return new ProductResource($product);
     }
 
     public function destroy(Product $product)

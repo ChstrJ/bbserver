@@ -56,6 +56,7 @@ class AdminController extends Controller
 
         $query = QueryBuilder::for(Transaction::class)
             ->allowedSorts([
+                'reference_number',
                 'amount_due',
                 'number_of_items',
                 'created_at',
@@ -64,6 +65,7 @@ class AdminController extends Controller
                 'customer_id'
             ])
             ->allowedFilters([
+                'reference_number',
                 'amount_due',
                 'number_of_items',
                 'created_at',
@@ -79,7 +81,8 @@ class AdminController extends Controller
 
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
- 
+
+        $query->with('customer','user');
 
         $transaction = $query->paginate($per_page);
 

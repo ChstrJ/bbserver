@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
+use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusMessage;
@@ -47,7 +48,8 @@ class TransactionController extends Controller
                 'created_at',
                 'status',
             ])
-            ->orderByDesc('created_at');
+            ->orderByDesc('created_at')
+            ->where('user_id', UserService::getUserId());
 
         if($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);

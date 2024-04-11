@@ -12,4 +12,6 @@ class GenericMessage
     static $UNDEFINED_USER = "Undefined user, please try again.";
     static $INVALID_INPUT = "Oops! some of your input has a problem.";
     static $INVALID_CREDENTIALS = "Please check your username or password.";
+
+    static $NOT_UPDATED = "Not yet updated.";
 }

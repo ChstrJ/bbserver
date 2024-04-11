@@ -31,6 +31,7 @@ class UpdateProductRequest extends FormRequest
             'srp' => 'sometimes|numeric|min:1|max:9999',
             'is_removed' => 'sometimes|boolean',
             'member_price' => 'sometimes|numeric|min:1|max:9999',
+            'updated_by' => "sometimes|int|exists:users,id",
         ];
     }
 }
