@@ -79,6 +79,7 @@ class AdminController extends Controller
 
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
+ 
 
         $transaction = $query->paginate($per_page);
 

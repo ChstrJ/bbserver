@@ -12,7 +12,7 @@ class Customer extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'full_name',
         'phone_number',
         'address',
         'email_address'
@@ -22,4 +22,5 @@ class Customer extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+
 }

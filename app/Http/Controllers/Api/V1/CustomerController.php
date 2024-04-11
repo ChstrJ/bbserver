@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\GenericMessage;
 use App\Models\Customer;
@@ -10,6 +11,7 @@ use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\V1\CustomerResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
@@ -20,13 +22,13 @@ class CustomerController extends Controller
 
         $customers = QueryBuilder::for(Customer::class)
             ->allowedFilters([
-                'name',
+                'full_name',
                 'address',
                 'phone_number',
                 'address'
             ])
             ->allowedSorts([
-                'name',
+                'full_name',
                 'address',
                 'phone_number',
                 'address'
@@ -57,8 +59,8 @@ class CustomerController extends Controller
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
         $data = $request->validated();
-        $customer->update($data);
-        if (!$customer->update($data)) {
+        $customer = Customer::update($data);
+        if (!$customer) {
             return response()->json(GenericMessage::$INVALID, 422);
         }
         return response()->json(DynamicMessage::customerUpdated($data['name']));

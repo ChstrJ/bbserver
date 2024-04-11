@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->json('customer')->nullable();
+            $table->string('reference_number');
             $table->float('amount_due');
             $table->integer('number_of_items');
             $table->integer('payment_method');
@@ -22,14 +22,10 @@ return new class extends Migration
             $table->timestamps();
             
             $table->foreignId('user_id')
-                    ->constrained('users')
-                    ->restrictOnDelete()
-                    ->cascadeOnUpdate();
+                    ->constrained('users');
             $table->foreignId('customer_id')
                     ->nullable()
-                    ->constrained('customers')
-                    ->cascadeOnDelete()
-                    ->cascadeOnUpdate();
+                    ->constrained('customers');
         });
     }
 

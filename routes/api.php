@@ -37,8 +37,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
     Route::group(['middleware' => 'admin'], function () {
-        Route::get('/users', [UserController::class, 'index'])->middleware('admin');
-        Route::get('/summary', [AdminController::class, 'getAllTotal'])->middleware('admin');
+        Route::get('/users', [UserController::class, 'index']);
+        Route::get('/summary', [AdminController::class, 'getAllTotal']);
+        Route::get('/sales', [AdminController::class, 'filterSales']);
     });
 });
 

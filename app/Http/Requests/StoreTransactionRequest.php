@@ -27,6 +27,7 @@ class StoreTransactionRequest extends FormRequest
             'customer_phone_number' => 'sometimes|exists:customers,phone_number',
             'customer_address' => 'sometimes|exists:customers,address',
             'customer_email' => 'sometimes|exists:customers,email',
+            'reference_number' => 'sometimes|string|unique:transactions,reference_number',
             'amount_due' => 'sometimes|numeric',
             'number_of_items' => 'sometimes|int',
             'payment_method' => 'required|int',
