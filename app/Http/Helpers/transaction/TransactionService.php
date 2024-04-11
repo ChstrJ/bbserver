@@ -66,4 +66,9 @@ class TransactionService {
 
         Product::decrement('quantity', $totalQty);  
     }
+
+    public static function generateReference() {
+        $rand = strtoupper(substr(uniqid(), 7));
+        return 'BB' . now()->format('Ymd') . $rand;
+    }
 }

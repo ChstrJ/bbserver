@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Http\Helpers\transaction\TransactionService;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,6 +19,7 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
+            'reference_number' => TransactionService::generateReference(),
             'customer_id' => $this->faker->numberBetween(1, 3),
             'user_id' => $this->faker->numberBetween(1, 3),
             'amount_due' => $this->faker->numberBetween(1, 100),

@@ -15,6 +15,7 @@ class Transaction extends Model
     protected $table = 'transactions';
     protected $casts = ['checkouts' => 'json'];
     protected $fillable = [
+        'reference_number',
         'user_id',
         'customer_id',
         'amount_due',

@@ -34,12 +34,14 @@ class TransactionController extends Controller
 
         $query = QueryBuilder::for(Transaction::class)
             ->allowedSorts([
+                'reference_id',
                 'amount_due',
                 'number_of_items',
                 'created_at',
                 'status',
             ])
             ->allowedFilters([
+                'reference_id',
                 'amount_due',
                 'number_of_items',
                 'created_at',
@@ -67,12 +69,17 @@ class TransactionController extends Controller
         $user = Auth::user();
         $validated_data = $request->validated();
 
+
+
         //reduce the qty from db and auto compute items & amount
-        $data = TransactionService::ProcessTransaction($validated_data);
+        $total = TransactionService::ProcessTransaction($validated_data);
+        $reference_number = TransactionService::generateReference();
+       
 
         //attach to the payload
-        $validated_data['number_of_items'] = $data['total_items'];
-        $validated_data['amount_due'] = $data['total_amount'];
+        $validated_data['reference_number'] = $reference_number;
+        $validated_data['number_of_items'] = $total['total_items'];
+        $validated_data['amount_due'] = $total['total_amount'];
         
         $user->transactions()->create($validated_data);
 
