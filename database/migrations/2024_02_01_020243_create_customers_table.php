@@ -18,12 +18,11 @@ return new class extends Migration
             $table->string('email_address');
             $table->string('address');
             $table->timestamps();
-            $table->tinyInteger('added_by')->constrained('user_id')->on('users')->nullable();
-            $table->tinyInteger('updated_by')->constrained('user_id')->on('users')->nullable();
+            $table->tinyText('added_by')->nullable();
+            $table->tinyText('updated_by')->nullable();
 
-            // $table->foreignId('user_id')
-            //     ->constrained('users')
-            //     ->cascadeOnUpdate();
+            $table->foreignId('user_id')
+                ->constrained('users');
         });
     }
 
