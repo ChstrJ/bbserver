@@ -19,7 +19,8 @@ return new class extends Migration {
             $table->float('member_price');
             $table->boolean('is_removed')->default(false);
             $table->timestamps();
-            $table->tinyInteger('updated_by')->constrained('user_id')->on('users')->nullable();
+            $table->tinyText('added_by')->nullable();
+            $table->tinyText('updated_by')->nullable();
             
             $table->foreignId('category_id')
                     ->constrained('categories')

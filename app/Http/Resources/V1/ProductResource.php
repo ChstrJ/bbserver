@@ -19,11 +19,11 @@ class ProductResource extends JsonResource
             "quantity" => $this->quantity,
             "srp" => $this->srp,
             "member_price" => $this->member_price,
-            // "added_by" => UserService::getUsernameById($this->added_by),
-            // "updated_by" => UserService::getUsernameById($this->updated_by),
             "is_removed" => $this->is_removed,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,   
+            "added_by" => $this->added_by,
+            "updated_by" => $this->updated_by,
             "employee" => new UserResource($this->whenLoaded('user')),
         ];
     }

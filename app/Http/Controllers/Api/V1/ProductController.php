@@ -74,6 +74,7 @@ class ProductController extends Controller
     {
         $user = UserService::getUser();
         $validated_data = $request->validated();
+        $validated_data['added_by'] = $user->username;
         $product = $user->products()->create($validated_data);
         return response()->json(DynamicMessage::productAdded($product->name));
     }
@@ -85,9 +86,9 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
-        $user = UserService::getUserId();
+        $user = UserService::getUser();
         $validated_data = $request->validated();
-        $validated_data['updated_by'] = $user;
+        $validated_data['updated_by'] = $user->username;
         $product->update($validated_data);
         return new ProductResource($product);
     }

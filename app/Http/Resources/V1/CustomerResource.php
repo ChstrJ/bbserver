@@ -18,6 +18,8 @@ class CustomerResource extends JsonResource
             "address" => $this->address,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
+            "added_by" => $this->added_by,
+            "updated_by" => $this->updated_by,
             // "added_by" => UserService::getUsernameById($this->added_by),
             "employee" => new UserResource($this->whenLoaded('user')),
             "transactions" => TransactionResource::collection($this->whenLoaded("transactions")),
