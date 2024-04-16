@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['middleware' => 'admin'], function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::get('/summary', [AdminController::class, 'getAllTotal']);
+        Route::get('/employee', [AdminController::class, 'filterEmployees']);
         Route::get('/sales', [AdminController::class, 'filterSales']);
     });
 });

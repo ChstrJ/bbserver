@@ -52,9 +52,9 @@ class CustomerController extends Controller
 
     public function store(StoreCustomerRequest $request, Customer $customer)
     {
-        $user = UserService::getUser();
+        $user = UserService::getUserId();
         $validated_data = $request->validated();
-        $validated_data['added_by'] = $user->username;
+        $validated_data['added_by'] = $user;
         $user->customers()->create($validated_data);
         return response()->json(DynamicMessage::customerAdded($validated_data['full_name']));
     }
@@ -70,9 +70,9 @@ class CustomerController extends Controller
 
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
-        $user = UserService::getUser();
+        $user = UserService::getUserId();
         $validated_data = $request->validated();
-        $validated_data['updated_by'] = $user->username;
+        $validated_data['updated_by'] = $user;
         $customer->update($validated_data);
         if (!$customer) {
             return response()->json(GenericMessage::$INVALID, 422);

@@ -10,6 +10,7 @@ class CustomerResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+
         return [
             "id" => $this->id,
             "full_name" => $this->full_name,
@@ -21,6 +22,7 @@ class CustomerResource extends JsonResource
             "added_by" => $this->added_by,
             "updated_by" => $this->updated_by,
             // "added_by" => UserService::getUsernameById($this->added_by),
+            // "updated_by" => UserService::getUsernameById($this->updated_by),
             "employee" => new UserResource($this->whenLoaded('user')),
             "transactions" => TransactionResource::collection($this->whenLoaded("transactions")),
         ];
