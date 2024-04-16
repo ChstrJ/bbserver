@@ -39,9 +39,4 @@ class Transaction extends Model
     {
         return $this->hasMany(Product::class);
     }
-
-    public function getCheckoutsAttribute($value)
-    {
-        return json_decode($value, true);
-    }
 }

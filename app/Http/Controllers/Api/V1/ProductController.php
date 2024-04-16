@@ -74,7 +74,7 @@ class ProductController extends Controller
     {
         $user = UserService::getUser();
         $validated_data = $request->validated();
-        $validated_data['added_by'] = $user->username;
+        $validated_data['added_by'] = $user->id;
         $product = $user->products()->create($validated_data);
         return response()->json(DynamicMessage::productAdded($product->name));
     }
