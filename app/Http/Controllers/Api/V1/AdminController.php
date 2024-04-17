@@ -30,28 +30,28 @@ class AdminController extends Controller
         $pending = Transaction::where('status', TransactionStatus::$PENDING)->sum('amount_due');
         $reject = Transaction::where('status', TransactionStatus::$REJECT)->sum('amount_due');
         
-        $salesCount = Transaction::where('status', 'approved')->count();
-        $pendingCount = Transaction::where('status', 'pending')->count();
-        $rejectCount = Transaction::where('status', 'rejected')->count();
+        $sales_count = Transaction::where('status', 'approved')->count();
+        $pending_count = Transaction::where('status', 'pending')->count();
+        $reject_count = Transaction::where('status', 'rejected')->count();
 
-        $todaySales = Transaction::where('status', TransactionStatus::$APPROVE)
+        $today_sales = Transaction::where('status', TransactionStatus::$APPROVE)
                                 ->whereDate('created_at', $today)
                                 ->sum('amount_due');
 
         return response()->json([
-            "totalProducts" => $products,
-            "totalCustomers" => $customer,
-            "totalEmployees" => $employee,
-            "transactionCounts" => [
-                "salesCount" => $salesCount,
-                "pendingCount" => $pendingCount,
-                "rejectCount" => $rejectCount,
+            "total_products" => $products,
+            "total_customers" => $customer,
+            "total_employees" => $employee,
+            "transaction_counts" => [
+                "sales_count" => $sales_count,
+                "pending_count" => $pending_count,
+                "reject_count" => $reject_count,
             ],
-            "transactionsTotal" => [
-                "todaySales" => floatval($todaySales),
-                "totalSales" => floatval($sales),
-                "totalPending" => floatval($pending),
-                "totalRejected" => floatval($reject),
+            "transactions_total" => [
+                "today_sales" => floatval($today_sales),
+                "total_sales" => floatval($sales),
+                "total_pending" => floatval($pending),
+                "total_rejected" => floatval($reject),
             ],
         ]);
     }
