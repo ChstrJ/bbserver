@@ -20,10 +20,6 @@ return new class extends Migration {
             $table->tinyInteger('added_by')->nullable();
             $table->tinyInteger('updated_by')->nullable();
 
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnUpdate();
-
             $table->softDeletes();
         });
     }

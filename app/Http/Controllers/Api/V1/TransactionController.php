@@ -10,6 +10,7 @@ use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusMessage;
 use App\Http\Helpers\transaction\TransactionService;
+use App\Http\Utils\ResponseHelper;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
@@ -24,6 +25,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class TransactionController extends Controller
 {
+    use ResponseHelper;
     public function index(Request $request)
     {
         //filter date range
@@ -71,13 +73,10 @@ class TransactionController extends Controller
         $user = Auth::user();
         $validated_data = $request->validated();
 
-
-
         //reduce the qty from db and auto compute items & amount
         $total = TransactionService::ProcessTransaction($validated_data);
         $reference_number = TransactionService::generateReference();
-       
-
+    
         //attach to the payload
         $validated_data['reference_number'] = $reference_number;
         $validated_data['number_of_items'] = $total['total_items'];
@@ -85,9 +84,7 @@ class TransactionController extends Controller
         
         $user->transactions()->create($validated_data);
 
-        return response()->json([
-            'message' => DynamicMessage::transactionAdded($user->username),
-        ]);
+        return $this->json(['message' => DynamicMessage::transactionAdded($user->username)]);
     }
 
     public function show(int $id)
@@ -101,7 +98,6 @@ class TransactionController extends Controller
 
     // public function update(UpdateTransactionRequest $request, int $id)
     // {
-
     //     $transaction = Transaction::find($id);
     //     if (!$transaction) {
     //         return response()->json(["message" => HttpStatusMessage::$NOT_FOUND], 404);
@@ -122,9 +118,9 @@ class TransactionController extends Controller
 
         $transaction = Transaction::find($id);
         if (!$transaction) { 
-            return response()->json(["message"=> HttpStatusMessage::$NOT_FOUND], 404);
+            return $this->json([["message"=> HttpStatusMessage::$NOT_FOUND], 404]);
         }
-
+        
         $data = $transaction->checkouts;
 
         TransactionService::decrementQty($data);
@@ -132,7 +128,7 @@ class TransactionController extends Controller
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
         
-        return response()->json(["message"=> GenericMessage::$APPROVE]);
+        return $this->json(["message"=> GenericMessage::$APPROVE]);
     }   
 
     public function reject(Transaction $transaction, int $id) {
@@ -143,7 +139,7 @@ class TransactionController extends Controller
         $transaction->status = TransactionStatus::$REJECT;
         $transaction->save();
 
-        return response()->json(["message"=> GenericMessage::$REJECT]);
+        return $this->json(["message"=> GenericMessage::$REJECT]);
     }
     
 }

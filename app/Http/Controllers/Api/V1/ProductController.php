@@ -88,7 +88,7 @@ class ProductController extends Controller
     {
         $user = UserService::getUser();
         $validated_data = $request->validated();
-        $validated_data['updated_by'] = $user->username;
+        $validated_data['updated_by'] = $user->id;
         $product->update($validated_data);
         return new ProductResource($product);
     }
