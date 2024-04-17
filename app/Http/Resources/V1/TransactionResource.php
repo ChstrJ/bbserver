@@ -13,7 +13,7 @@ class TransactionResource extends JsonResource
         return [
                 "id" => $this->id,
                 "reference_number" => $this->reference_number,
-                "amount_due" => number_format($this->amount_due, 2),
+                "amount_due" => $this->amount_due,
                 "number_of_items" => $this->number_of_items,
                 "payment_method" => $this->payment_method,
                 "checkouts" => $this->checkouts,
