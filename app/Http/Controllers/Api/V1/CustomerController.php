@@ -45,7 +45,7 @@ class CustomerController extends Controller
     // {
     //     $user = UserService::getUserId();
     //     $validated_data = $request->validated();
-    //     $validated_data['added_by'] = $user;
+    //     $validated_data['created_by'] = $user;
     //     $customer = Customer::create($validated_data);
     //     return new CustomerResource($customer);
     // }
@@ -54,7 +54,7 @@ class CustomerController extends Controller
     {
         $user = UserService::getUser();
         $validated_data = $request->validated();
-        $validated_data['added_by'] = $user->id;
+        $validated_data['created_by'] = $user->id;
         $user = Customer::create($validated_data);
         return response()->json(DynamicMessage::customerAdded($validated_data['full_name']));
     }

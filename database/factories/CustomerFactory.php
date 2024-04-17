@@ -22,7 +22,7 @@ class CustomerFactory extends Factory
             'phone_number' => $this->faker->phoneNumber(),
             'email_address' => $this->faker->safeEmail(),
             'address' => $this->faker->address(),
-            'added_by' => $this->faker->numberBetween(1,3)
+            'created_by' => $this->faker->numberBetween(1,3)
         ];
     }
 }

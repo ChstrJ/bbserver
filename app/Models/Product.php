@@ -22,7 +22,7 @@ class Product extends Model
         'quantity',
         'srp',
         'member_price',
-        'added_by',
+        'created_by',
         'updated_by'
     ];
     public function product() : BelongsToMany
