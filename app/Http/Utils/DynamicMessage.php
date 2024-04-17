@@ -3,18 +3,18 @@
 namespace App\Http\Utils;
 
 class DynamicMessage {
-    public static function productAdded(string $product_name)
+    public static function productAdded(string $product)
     {
-        return "{$product_name} successfully added to inventory.";
+        return "{$product} successfully added to inventory.";
     }
-    public static function productUpdated(string $product_name)
+    public static function productUpdated(string $product)
     {
-        return "{$product_name} successfully updated to inventory.";
+        return "{$product} successfully updated to inventory.";
     }
 
-    public static function productRemove(string $product_name)
+    public static function productRemove(string $product)
     {
-        return "{$product_name} successfully removed to inventory.";
+        return "{$product} successfully removed to inventory.";
     }
     public static function transactionAdded(string $username)
     {

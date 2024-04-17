@@ -20,26 +20,26 @@ use App\Http\Controllers\Api\V1\CustomerController;
 */
 
 
-Route::post('/auth/register', [AuthController::class, 'register']);
-
+//public routes
 Route::post('/auth/login', [AuthController::class, 'login']);
-
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/orders', TransactionController::class)->except(['update', 'destroy']);
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
-
-    Route::patch('/orders/approve/{id}', [TransactionController::class, 'approve']);
-    Route::patch('/orders/reject/{id}', [TransactionController::class, 'reject']);
-
+    
     Route::post('/auth/logout', [AuthController::class, 'logout']);
-
+    
     Route::group(['middleware' => 'admin'], function () {
-        Route::get('/users', [UserController::class, 'index']);
-        Route::get('/summary', [AdminController::class, 'getAllTotal']);
-        Route::get('/sales', [AdminController::class, 'filterSales']);
+        Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
+        Route::get('/admin/employees', [AdminController::class, 'filterEmployees']);
+        Route::get('/admin/sales', [AdminController::class, 'filterSales']);
+        
+        Route::post('/auth/register', [AuthController::class, 'register']);
+        
+        Route::patch('/orders/approve/{id}', [TransactionController::class, 'approve']);
+        Route::patch('/orders/reject/{id}', [TransactionController::class, 'reject']);
     });
 });
 

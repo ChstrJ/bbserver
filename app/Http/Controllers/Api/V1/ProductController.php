@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\GenericMessage;
+use App\Http\Utils\ResponseHelper;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -19,6 +20,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
+    use ResponseHelper;
     /**
      * Display a listing of the resource.
      */
@@ -74,9 +76,9 @@ class ProductController extends Controller
     {
         $user = UserService::getUser();
         $validated_data = $request->validated();
-        $validated_data['added_by'] = $user->username;
+        $validated_data['added_by'] = $user->id;
         $product = $user->products()->create($validated_data);
-        return response()->json(DynamicMessage::productAdded($product->name));
+        return $this->json(DynamicMessage::productAdded($product->name));
     }
 
     public function show(Product $product)
@@ -88,9 +90,9 @@ class ProductController extends Controller
     {
         $user = UserService::getUser();
         $validated_data = $request->validated();
-        $validated_data['updated_by'] = $user->username;
+        $validated_data['updated_by'] = $user->id;
         $product->update($validated_data);
-        return new ProductResource($product);
+        return $this->json(DynamicMessage::productUpdated($product->name));
     }
 
     public function destroy(Product $product)
@@ -104,6 +106,6 @@ class ProductController extends Controller
         // return response()->json("{$product->name} was successfully removed.");
 
         Product::find($product->id)->delete();
-        return response()->json(DynamicMessage::productRemove($product->name));
+        return $this->json(DynamicMessage::productRemove($product->name));
     }
 }

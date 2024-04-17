@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\transaction\TransactionStatus;
+use App\Http\Helpers\user\UserService;
 use App\Http\Resources\V1\TransactionCollection;
+use App\Http\Resources\V1\UserCollection;
+use App\Http\Utils\Roles;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -16,31 +20,39 @@ class AdminController extends Controller
 {
     public function getAllTotal()
     {
+        $today = UserService::getDate();
+ 
+
         $products = Product::count();
         $customer = Customer::count();
-        $employee = User::where('role_id', 2)->count();
+        $employee = User::where('role_id', Roles::$EMPLOYEE)->count();
 
-        $sales = Transaction::where('status', 'approved')->sum('amount_due');
-        $pending = Transaction::where('status', 'pending')->sum('amount_due');
-        $reject = Transaction::where('status', 'rejected')->sum('amount_due');
-
+        $sales = Transaction::where('status', TransactionStatus::$APPROVE)->sum('amount_due');
+        $pending = Transaction::where('status', TransactionStatus::$PENDING)->sum('amount_due');
+        $reject = Transaction::where('status', TransactionStatus::$REJECT)->sum('amount_due');
+        
         $salesCount = Transaction::where('status', 'approved')->count();
         $pendingCount = Transaction::where('status', 'pending')->count();
         $rejectCount = Transaction::where('status', 'rejected')->count();
 
+        $todaySales = Transaction::where('status', TransactionStatus::$APPROVE)
+                                ->whereDate('created_at', $today)
+                                ->sum('amount_due');
+
         return response()->json([
             "totalProducts" => $products,
             "totalCustomers" => $customer,
-            "totalEmployee" => $employee,
+            "totalEmployees" => $employee,
             "transactionCounts" => [
                 "salesCount" => $salesCount,
                 "pendingCount" => $pendingCount,
                 "rejectCount" => $rejectCount,
             ],
             "transactionsTotal" => [
-                'totalSales' => number_format($sales, 2),
-                'totalPending' => number_format($pending, 2),
-                'totalRejected' => number_format($reject, 2),
+                "todaySales" => $todaySales,
+                "totalSales" => floatval($sales),
+                "totalPending" => floatval($pending),
+                "totalRejected" => floatval($reject),
             ],
         ]);
     }
@@ -82,11 +94,39 @@ class AdminController extends Controller
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $query->with('customer','user');
+        $query->with('customer', 'user');
 
         $transaction = $query->paginate($per_page);
 
         return new TransactionCollection($transaction);
+    }
+
+    public function filterEmployees(Request $request)
+    {
+
+        $per_page = $request->input('per_page');
+
+        $user = QueryBuilder::for(User::class)
+            ->allowedFilters([
+                'full_name',
+                'is_active',
+                'username',
+                'last_login_at',
+                'last_logout_at',
+            ])
+            ->allowedSorts([
+                'full_name',
+                'is_active',
+                'username',
+                'last_login_at',
+                'last_logout_at',
+            ])
+            ->whereNot('role_id', Roles::$ADMIN)
+            ->orderByDesc('last_login_at')
+            ->with('products', 'transactions')
+            ->paginate($per_page);
+
+        return new UserCollection($user);
     }
 
 

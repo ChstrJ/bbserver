@@ -26,6 +26,8 @@ return new class extends Migration
             $table->foreignId('customer_id')
                     ->nullable()
                     ->constrained('customers');
+
+            $table->softDeletes();
         });
     }
 

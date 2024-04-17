@@ -10,6 +10,7 @@ class CustomerResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+
         return [
             "id" => $this->id,
             "full_name" => $this->full_name,
@@ -18,10 +19,8 @@ class CustomerResource extends JsonResource
             "address" => $this->address,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
-            "added_by" => $this->added_by,
-            "updated_by" => $this->updated_by,
-            // "added_by" => UserService::getUsernameById($this->added_by),
-            "employee" => new UserResource($this->whenLoaded('user')),
+            "added_by" => $this->added_by ? UserService::getUsernameById($this->added_by) : null,
+            "updated_by" => $this->updated_by ? UserService::getUsernameById($this->updated_by) : null,
             "transactions" => TransactionResource::collection($this->whenLoaded("transactions")),
         ];
     }

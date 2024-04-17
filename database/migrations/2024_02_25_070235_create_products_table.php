@@ -19,17 +19,19 @@ return new class extends Migration {
             $table->float('member_price');
             $table->boolean('is_removed')->default(false);
             $table->timestamps();
-            $table->tinyText('added_by')->nullable();
-            $table->tinyText('updated_by')->nullable();
-            
+            $table->tinyInteger('added_by')->nullable();
+            $table->tinyInteger('updated_by')->nullable();
+
             $table->foreignId('category_id')
-                    ->constrained('categories')
-                    ->cascadeOnUpdate();
+                ->constrained('categories')
+                ->cascadeOnUpdate();
 
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
+
+            $table->softDeletes();
         });
     }
 
