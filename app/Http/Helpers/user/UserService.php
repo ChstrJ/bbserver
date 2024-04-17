@@ -25,7 +25,5 @@ class UserService {
     public static function getDate(){
         return Carbon::today()->format("Y-m-d");
     }
-
-
    
 }

@@ -35,9 +35,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
         Route::get('/admin/employees', [AdminController::class, 'filterEmployees']);
         Route::get('/admin/sales', [AdminController::class, 'filterSales']);
-
+        
         Route::post('/auth/register', [AuthController::class, 'register']);
-
+        
         Route::patch('/orders/approve/{id}', [TransactionController::class, 'approve']);
         Route::patch('/orders/reject/{id}', [TransactionController::class, 'reject']);
     });

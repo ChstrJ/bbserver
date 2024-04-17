@@ -9,8 +9,8 @@ use Illuminate\Http\JsonResponse;
 
 trait ResponseHelper
 {
-    public static function json($data): JsonResponse 
+    public static function json($data, $code = 200): JsonResponse 
     {
-        return response()->json($data); 
+        return response()->json($data, $code); 
     }
 }
