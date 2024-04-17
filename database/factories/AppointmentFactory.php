@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Appointment>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
-class AppointmentFactory extends Factory
+class UserFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,10 @@ class AppointmentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'full_name' => $this->faker->name(),
+            'username' => $this->faker->name(),
+            'password' => $this->faker->password(), 
+            'is_active' => $this->faker->boolean(), 
         ];
     }
 }
