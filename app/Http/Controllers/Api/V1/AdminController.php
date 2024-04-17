@@ -21,7 +21,6 @@ class AdminController extends Controller
     public function getAllTotal()
     {
         $today = UserService::getDate();
- 
 
         $products = Product::count();
         $customer = Customer::count();
@@ -49,7 +48,7 @@ class AdminController extends Controller
                 "rejectCount" => $rejectCount,
             ],
             "transactionsTotal" => [
-                "todaySales" => $todaySales,
+                "todaySales" => floatval($todaySales),
                 "totalSales" => floatval($sales),
                 "totalPending" => floatval($pending),
                 "totalRejected" => floatval($reject),
