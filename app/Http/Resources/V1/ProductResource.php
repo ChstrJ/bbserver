@@ -22,7 +22,7 @@ class ProductResource extends JsonResource
             "is_removed" => $this->is_removed,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,   
-            "added_by" => $this->added_by ? UserService::getUsernameById($this->added_by) : null,
+            "created_by" => $this->created_by ? UserService::getUsernameById($this->created_by) : null,
             "updated_by" => $this->updated_by ? UserService::getUsernameById($this->updated_by) : null,
             "employee" => new UserResource($this->whenLoaded('user')),
         ];

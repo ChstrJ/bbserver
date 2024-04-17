@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('email_address')->unique();
             $table->string('address');
             $table->timestamps();
-            $table->tinyInteger('added_by')->nullable();
+            $table->tinyInteger('created_by')->nullable();
             $table->tinyInteger('updated_by')->nullable();
 
             $table->softDeletes();
