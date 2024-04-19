@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\GenericMessage;
+use App\Http\Utils\HttpStatusCode;
+use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
@@ -81,8 +83,12 @@ class ProductController extends Controller
         return $this->json(DynamicMessage::productAdded($product->name));
     }
 
-    public function show(Product $product)
+    public function show(int $id)
     {
+        $product = Product::find($id);
+        if (!$product) {
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+        }
         return new ProductResource($product->load('user'));
     }
 
@@ -92,10 +98,13 @@ class ProductController extends Controller
         $validated_data = $request->validated();
         $validated_data['updated_by'] = $user->id;
         $product->update($validated_data);
+        if (!$product) {
+            return $this->json(Message::invalid(), HttpStatusCode::$UNPROCESSABLE_ENTITY);
+        }
         return $this->json(DynamicMessage::productUpdated($product->name));
     }
 
-    public function destroy(Product $product)
+    public function destroy(int $id)
     {
         // if ($product->is_removed) {
         //     return response()->json("Product was already removed.");
@@ -104,8 +113,12 @@ class ProductController extends Controller
         // $product->save();
 
         // return response()->json("{$product->name} was successfully removed.");
+        $product = Product::find($id);
+        if (!$product) {
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+        }
+        $product->delete();
 
-        Product::find($product->id)->delete();
         return $this->json(DynamicMessage::productRemove($product->name));
     }
 }

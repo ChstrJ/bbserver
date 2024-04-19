@@ -30,9 +30,9 @@ class StoreProductRequest extends FormRequest
         // 'category_id' => "required|int|min:1|max:$categories_length",
         return [
             'category_id' => "required|int|exists:categories,id",
-            'name' => 'required|string|min:2|unique:products,name',
-            'description' => 'required|string|min:2',
-            'quantity' => 'required|int',
+            'name' => 'required|string',
+            'description' => 'required|string',
+            'quantity' => 'required|int|min:1',
             'srp' => 'required|numeric',
             'member_price' => 'required|numeric',
         ];

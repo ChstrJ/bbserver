@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->integer('quantity');
+            $table->integer('quantity')->check('quantity >= 0');
             $table->float('srp');
             $table->float('member_price');
             $table->boolean('is_removed')->default(false);
@@ -33,6 +33,8 @@ return new class extends Migration {
 
             $table->softDeletes();
         });
+
+        DB::statement('ALTER TABLE products ADD CONSTRAINT chck_products_qty CHECK (quantity >= 0)');
     }
 
     /**

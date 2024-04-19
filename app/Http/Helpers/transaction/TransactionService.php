@@ -5,7 +5,7 @@ use App\Models\Product;
 use Exception;
 
 class TransactionService {
-    public static function ProcessTransaction ($data) {
+    public static function processTransaction ($data) {
 
         $total_items = 0;
         $total_amount = 0;

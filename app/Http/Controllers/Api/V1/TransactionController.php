@@ -76,7 +76,7 @@ class TransactionController extends Controller
         $validated_data = $request->validated();
 
         //reduce the qty from db and auto compute items & amount
-        $total = TransactionService::ProcessTransaction($validated_data);
+        $total = TransactionService::processTransaction($validated_data);
         $reference_number = TransactionService::generateReference();
 
         //attach to the payload
@@ -93,7 +93,7 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return $this->json(Message::NotFound(), HttpStatusCode::$NOT_FOUND);
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         return new TransactionResource($transaction->load('customer'));
     }
@@ -108,7 +108,7 @@ class TransactionController extends Controller
 
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return $this->json(Message::NotFound(), HttpStatusCode::$NOT_FOUND);
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
 
         $data = $transaction->checkouts;
@@ -116,11 +116,11 @@ class TransactionController extends Controller
         TransactionService::decrementQty($data);
 
         if($transaction->status === TransactionStatus::$APPROVE) {
-            return $this->json(Message::AlreadyApproved(), HttpStatusCode::$CONFLICT);
+            return $this->json(Message::alreadyApproved(), HttpStatusCode::$CONFLICT);
         }
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
-        return $this->json(Message::Approve());
+        return $this->json(Message::approve());
 
     }
 
@@ -128,14 +128,14 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return $this->json(Message::NotFound(), HttpStatusCode::$NOT_FOUND);
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if($transaction->status === TransactionStatus::$REJECT) {
-            return $this->json(Message::AlreadyRejected(), HttpStatusCode::$CONFLICT);
+            return $this->json(Message::alreadyRejected(), HttpStatusCode::$CONFLICT);
         }
         $transaction->status = TransactionStatus::$REJECT;
         $transaction->save();
-        return $this->json(Message::Reject());
+        return $this->json(Message::reject());
     }
 
 }

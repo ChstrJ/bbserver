@@ -9,6 +9,8 @@ use App\Http\Utils\HttpStatusMessage;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
+use App\Http\Utils\Message;
+use App\Http\Utils\ResponseHelper;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    use ResponseHelper;
     public function register(StoreRegisterRequest $request)
     {
         $data = $request->validated();
@@ -38,9 +41,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => GenericMessage::$INVALID_CREDENTIALS,
-            ], 401);
+            return $this->json(Message::invalidCredentials(), HttpStatusCode::$UNAUTHORIZED);
         }
 
         //get the authenticated user and get the token from the user model
@@ -60,11 +61,11 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = Auth::user();
-        $user->tokens()->delete();
+        $user->currentAccessToken()->delete();
 
         $user->last_logout_at = now('Asia/Manila');
         $user->save();
 
-        return response()->json(["message" => "Logout Success"], HttpStatusCode::$ACCEPTED);
+        return response('', 204);
     }
 }
