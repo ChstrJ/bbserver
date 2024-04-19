@@ -56,8 +56,7 @@ class ProductController extends Controller
                 'is_removed'
             ])
             ->orderByDesc('created_at')
-            ->orderByDesc('updated_at')
-            ->with('user');
+            ->orderByDesc('updated_at');
 
 
         if ($startDate && $endDate) {

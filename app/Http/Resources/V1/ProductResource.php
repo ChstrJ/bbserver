@@ -24,7 +24,6 @@ class ProductResource extends JsonResource
             "updated_at" => $this->updated_at,   
             "created_by" => $this->created_by ? UserService::getUsernameById($this->created_by) : null,
             "updated_by" => $this->updated_by ? UserService::getUsernameById($this->updated_by) : null,
-            "employee" => new UserResource($this->whenLoaded('user')),
         ];
     }
 }
