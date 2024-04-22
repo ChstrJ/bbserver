@@ -20,7 +20,7 @@ class TransactionResource extends JsonResource
                 "payment_method" => $this->payment_method,
                 "checkouts" => $this->checkouts,
                 "status" => $this->status,
-                "commission" => $this->commission,
+                "commission" => floatval($this->commission),
                 "image" => $this->image ?? null,
                 "created_at" => $this->created_at,
                 "updated_at" => $this->updated_at,
