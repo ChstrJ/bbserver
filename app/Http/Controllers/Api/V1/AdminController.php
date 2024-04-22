@@ -14,6 +14,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class AdminController extends Controller
@@ -25,18 +26,18 @@ class AdminController extends Controller
         $products = Product::count();
         $customer = Customer::count();
         $employee = User::where('role_id', Roles::$EMPLOYEE)->count();
-
-        $sales = Transaction::where('status', TransactionStatus::$APPROVE)->sum('amount_due');
-        $pending = Transaction::where('status', TransactionStatus::$PENDING)->sum('amount_due');
-        $reject = Transaction::where('status', TransactionStatus::$REJECT)->sum('amount_due');
         
-        $sales_count = Transaction::where('status', 'approved')->count();
-        $pending_count = Transaction::where('status', 'pending')->count();
-        $reject_count = Transaction::where('status', 'rejected')->count();
+        $sales = Transaction::where('status', TransactionStatus::$APPROVE)->sum('amount_due');
+        $reject = Transaction::where('status', TransactionStatus::$REJECT)->sum('amount_due');
+        $pending = Transaction::where('status', TransactionStatus::$PENDING)->sum('amount_due');
+        
+        $sales_count = Transaction::where('status', TransactionStatus::$APPROVE)->count();
+        $reject_count = Transaction::where('status', TransactionStatus::$REJECT)->count();
+        $pending_count = Transaction::where('status', TransactionStatus::$PENDING)->count();
 
         $today_sales = Transaction::where('status', TransactionStatus::$APPROVE)
-                                ->whereDate('created_at', $today)
-                                ->sum('amount_due');
+                                    ->whereDate('created_at', $today)
+                                    ->sum('amount_due');
 
         return response()->json([
             "total_products" => $products,
@@ -73,7 +74,8 @@ class AdminController extends Controller
                 'created_at',
                 'status',
                 'user_id',
-                'customer_id'
+                'customer_id',
+                'commission'
             ])
             ->allowedFilters([
                 'reference_number',
@@ -82,7 +84,8 @@ class AdminController extends Controller
                 'created_at',
                 'status',
                 'user_id',
-                'customer_id'
+                'customer_id',
+                'commission'
             ])
             ->orderByDesc('created_at');
 
@@ -120,7 +123,7 @@ class AdminController extends Controller
                 'last_login_at',
                 'last_logout_at',
             ])
-            ->whereNot('role_id', Roles::$ADMIN)
+            // ->whereNot('role_id', Roles::$ADMIN)
             ->orderByDesc('last_login_at')
             ->with('products', 'transactions')
             ->paginate($per_page);

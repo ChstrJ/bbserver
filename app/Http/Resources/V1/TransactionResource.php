@@ -10,7 +10,7 @@ class TransactionResource extends JsonResource
 {
     public function toArray(Request $request)
 
-    //strtoupper($this->payment_type)
+
     {
         return [
                 "id" => $this->id,
@@ -20,6 +20,8 @@ class TransactionResource extends JsonResource
                 "payment_method" => $this->payment_method,
                 "checkouts" => $this->checkouts,
                 "status" => $this->status,
+                "commission" => $this->commission,
+                "image" => $this->image ?? null,
                 "created_at" => $this->created_at,
                 "updated_at" => $this->updated_at,
                 "employee" => new UserResource($this->whenLoaded('user')),

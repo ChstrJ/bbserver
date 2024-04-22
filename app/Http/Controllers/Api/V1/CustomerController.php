@@ -45,15 +45,6 @@ class CustomerController extends Controller
         return new CustomerCollection($customers);
     }
 
-    // public function store(StoreCustomerRequest $request)
-    // {
-    //     $user = UserService::getUserId();
-    //     $validated_data = $request->validated();
-    //     $validated_data['created_by'] = $user;
-    //     $customer = Customer::create($validated_data);
-    //     return new CustomerResource($customer);
-    // }
-
     public function store(StoreCustomerRequest $request, Customer $customer)
     {
         $user = UserService::getUser();

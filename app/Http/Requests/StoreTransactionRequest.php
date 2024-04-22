@@ -31,11 +31,15 @@ class StoreTransactionRequest extends FormRequest
             'amount_due' => 'sometimes|numeric',
             'number_of_items' => 'sometimes|int',
             'payment_method' => 'required|int',
+            'commission' => 'sometimes|int|min:1',
+            'image' => 'sometimes|image|mimes:png,jpg,jpeg|max:1024',
             'checkouts' => 'required|array',
             'checkouts.*.id' => 'required|int|exists:products,id',
             'checkouts.*.name' => 'required|string|exists:products,name',
             'checkouts.*.quantity' => 'required|int|min:1',
             'checkouts.*.srp' => 'required|numeric|min:1',
+            'checkouts.*.member_price' => 'required|numeric|min:1',
+            
         ];
     }
 }

@@ -26,6 +26,7 @@ class TransactionFactory extends Factory
             'number_of_items' => $this->faker->numberBetween(1, 100),
             'status' => $this->faker->randomElement(['approved', 'rejected']),
             'payment_method' => $this->faker->numberBetween(1, 4),
+            'commission' => $this->faker->numberBetween(100, 500),
             'checkouts' => [
                 [
                     'id' => $this->faker->numberBetween(1, 100),

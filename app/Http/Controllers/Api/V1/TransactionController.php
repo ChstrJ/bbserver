@@ -27,7 +27,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class TransactionController extends Controller
 {
-    use ResponseHelper;
+    use ResponseHelper, TransactionService;
     public function index(Request $request)
     {
         //filter date range
@@ -78,11 +78,14 @@ class TransactionController extends Controller
         //reduce the qty from db and auto compute items & amount
         $total = TransactionService::processTransaction($validated_data);
         $reference_number = TransactionService::generateReference();
+        $image = TransactionService::uploadPayment($request);
 
-        //attach to the payload
+        //attach to payload
         $validated_data['reference_number'] = $reference_number;
         $validated_data['number_of_items'] = $total['total_items'];
         $validated_data['amount_due'] = $total['total_amount'];
+        $validated_data['commission'] = $total['commission'];
+        $validated_data['image'] = $image;
 
         $user->transactions()->create($validated_data);
 
@@ -137,5 +140,6 @@ class TransactionController extends Controller
         $transaction->save();
         return $this->json(Message::reject());
     }
+
 
 }

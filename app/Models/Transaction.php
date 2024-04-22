@@ -23,6 +23,8 @@ class Transaction extends Model
         'payment_method',
         'checkouts',
         'status',
+        'commission',
+        'image'
     ];
 
     public function user() : BelongsTo

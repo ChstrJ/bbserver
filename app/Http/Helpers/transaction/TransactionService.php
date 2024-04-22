@@ -1,18 +1,24 @@
 <?php
 
 namespace App\Http\Helpers\transaction;
+
 use App\Models\Product;
 use Exception;
 
-class TransactionService {
-    public static function processTransaction ($data) {
+trait TransactionService
+{
+    public static function processTransaction($data)
+    {
 
         $total_items = 0;
         $total_amount = 0;
+        $commission = 0;
 
         foreach ($data['checkouts'] as $product_data) {
             //get the product_id 
             $product = Product::find($product_data['id']);
+
+            $mem_price = $product->member_price;
 
             //get the product srp from the db
             $produt_price = $product->srp;
@@ -24,7 +30,7 @@ class TransactionService {
             //get the qty and srp from the request 
             $qty = $product_data['quantity'];
             $srp = $product_data['srp'];
-            $name = $product_data['name'];  
+            $name = $product_data['name'];
 
             //compare if the req qty payload is > product qty from the db
             if ($qty > $product->quantity) {
@@ -34,29 +40,33 @@ class TransactionService {
             if ($product->name !== $name) {
                 throw new Exception('Invalid product name');
             }
-            
+
             //check if the srp is the same in the db
             if ($srp !== $produt_price) {
                 throw new Exception('Invalid product SRP');
             }
-        
+
 
             //update the total amount and total qty
             $total_items += $qty;
             $total_amount += $qty * $srp;
+
+            //compute the commission
+            $commission += $srp - $mem_price;
         }
 
-        return ['total_amount' => $total_amount, 'total_items' => $total_items];
+        return ['total_amount' => $total_amount, 'total_items' => $total_items, 'commission' => $commission];
     }
 
-    public static function decrementQty ($data) {
+    public static function decrementQty($data)
+    {
 
         $totalQty = 0;
 
         foreach ($data as $checkouts) {
             $product = Product::find($checkouts['id']);
 
-            if(!$product) {
+            if (!$product) {
                 throw new Exception('Product ID not found.');
             }
 
@@ -64,11 +74,27 @@ class TransactionService {
             $totalQty += $qty;
         }
 
-        Product::decrement('quantity', $totalQty);  
+        Product::decrement('quantity', $totalQty);
     }
 
-    public static function generateReference() {
+    public static function generateReference()
+    {
         $rand = strtoupper(substr(uniqid(), 7));
         return 'BB' . now()->format('Ymd') . $rand;
+    }
+
+    public static function uploadPayment($image)
+    {
+        if($image->has('image')) {
+            $file = $image->file('image');
+
+            $extension = $file->getClientOriginalExtension();
+            $filename = time(). '.' .$extension;
+
+            $path = 'uploads/image/';
+            $file->move($path, $filename);
+
+            return $path.$filename;
+        }
     }
 }
