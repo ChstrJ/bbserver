@@ -97,8 +97,8 @@ class AdminController extends Controller
                 'customer.full_name',
                 'commission'
             ])
-            ->join('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->join('users', 'transactions.user_id', '=', 'users.id')
+            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->select('transactions.*')
             ->orderBy('transactions.status')
             ->orderByDesc('transactions.created_at');
