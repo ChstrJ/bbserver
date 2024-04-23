@@ -87,21 +87,23 @@ class AdminController extends Controller
                 'created_at',
                 'status',
                 'payment_method',
-                'employee_name',
-                'customer_name',
+                'user_id',
+                'customer_id',
+                'users.full_name',
+                'customer.full_name',
                 'commission'
             ])
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->orderByDesc('transactions.created_at');
 
-        if($request->has('filter.customer_name')) {
-            $customerName = $request->input('filter.customer_name');
-            $query->where('customers.full_name', 'LIKE', "%$customerName%");
+        if($request->has('filter.customer.full_name')) {
+            $customerName = $request->input('filter.customer.full_name');
+            $query->where('customer.full_name', 'LIKE', "%$customerName%");
         }
 
-        if($request->has('filter.employee_name')) {
-            $employeeName = $request->input('filter.employee_name');
+        if($request->has('filter.users.full_name')) {
+            $employeeName = $request->input('filter.users.full_name');
             $query->where('users.full_name', 'LIKE', "%$employeeName%");
         }
 
