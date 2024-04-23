@@ -100,8 +100,7 @@ class AdminController extends Controller
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->select('transactions.*')
-            ->orderBy('transactions.status')
-            ->orderByDesc('transactions.created_at');
+            ->orderBy('transactions.status');
 
         //filtering by customer fullname
         if($request->has('filter.customer.full_name')) {
@@ -118,11 +117,13 @@ class AdminController extends Controller
         //filtering by date range
         if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
+            dd($startDate);
             $endDate = Carbon::parse($endDate);
-
+            
             $query->whereBetween('transactions.created_at', [$startDate, $endDate]);
         }
-
+        
+       
         $query->with('customer', 'user');
 
         $transaction = $query->paginate($per_page);

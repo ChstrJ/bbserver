@@ -13,6 +13,7 @@ class Transaction extends Model
 {
     use HasFactory, HasApiTokens;
     protected $table = 'transactions';
+    protected $timezone = 'Asia/Manila';
     protected $casts = ['checkouts' => 'json'];
     protected $fillable = [
         'reference_number',
@@ -27,17 +28,17 @@ class Transaction extends Model
         'image'
     ];
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function customer() : BelongsTo
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function products() : HasMany
+    public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
