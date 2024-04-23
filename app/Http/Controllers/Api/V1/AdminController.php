@@ -120,7 +120,7 @@ class AdminController extends Controller
             $startDate = Carbon::parse($startDate);
             $endDate = Carbon::parse($endDate);
 
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+            $query->whereBetween('transactions.created_at', [$startDate, $endDate]);
         }
 
         $query->with('customer', 'user');
