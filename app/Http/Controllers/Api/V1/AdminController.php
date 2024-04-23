@@ -66,8 +66,8 @@ class AdminController extends Controller
     public function filterSales(Request $request)
     {
         //filter date range
-        $startDate = $request->input('filter.created_at.0');
-        $endDate = $request->input('filter.created_at.1');
+        $startDate = urldecode($request->input('filter.created_at.0'));
+        $endDate = urldecode($request->input('filter.created_at.1'));
 
         //get the request input per page in query params
         $per_page = $request->input('per_page');
