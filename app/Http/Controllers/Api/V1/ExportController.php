@@ -10,6 +10,6 @@ class ExportController extends Controller
 {
     public function exportSales() {
         $filename = TransactionService::generateFilename();
-        return Excel::store(new SalesExport, $filename);
+        return Excel::download(new SalesExport, $filename);
     }
 }
