@@ -117,7 +117,6 @@ class AdminController extends Controller
         //filtering by date range
         if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
-            dd($startDate);
             $endDate = Carbon::parse($endDate);
             
             $query->whereBetween('transactions.created_at', [$startDate, $endDate]);
