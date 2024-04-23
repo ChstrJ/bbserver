@@ -33,6 +33,7 @@ class AdminController extends Controller
         $sales = Transaction::where('status', TransactionStatus::$APPROVE)->sum('amount_due');
         $reject = Transaction::where('status', TransactionStatus::$REJECT)->sum('amount_due');
         $pending = Transaction::where('status', TransactionStatus::$PENDING)->sum('amount_due');
+        $commission = Transaction::where('status', TransactionStatus::$APPROVE)->sum('commission');
         
         $sales_count = Transaction::where('status', TransactionStatus::$APPROVE)->count();
         $reject_count = Transaction::where('status', TransactionStatus::$REJECT)->count();
@@ -53,6 +54,7 @@ class AdminController extends Controller
             ],
             "transactions_total" => [
                 "today_sales" => floatval($today_sales),
+                "total_commission" => floatval($commission),
                 "total_sales" => floatval($sales),
                 "total_pending" => floatval($pending),
                 "total_rejected" =>floatval($reject),
@@ -98,6 +100,7 @@ class AdminController extends Controller
             ->join('customers', 'transactions.customer_id', '=', 'customers.id')
             ->join('users', 'transactions.user_id', '=', 'users.id')
             ->select('transactions.*')
+            ->orderBy('transactions.status')
             ->orderByDesc('transactions.created_at');
 
         //filtering by customer fullname
