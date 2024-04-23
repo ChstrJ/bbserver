@@ -60,6 +60,7 @@ class AdminController extends Controller
         ]);
     }
 
+
     public function filterSales(Request $request)
     {
         //filter date range
@@ -94,20 +95,24 @@ class AdminController extends Controller
                 'customer.full_name',
                 'commission'
             ])
-            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
+            ->join('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->join('users', 'transactions.user_id', '=', 'users.id')
+            ->select('transactions.*')
             ->orderByDesc('transactions.created_at');
 
+        //filtering by customer fullname
         if($request->has('filter.customer.full_name')) {
             $customerName = $request->input('filter.customer.full_name');
             $query->where('customer.full_name', 'LIKE', "%$customerName%");
         }
 
+         //filtering by user fullname
         if($request->has('filter.user.full_name')) {
             $employeeName = $request->input('filter.user.full_name');
             $query->where('user.full_name', 'LIKE', "%$employeeName%");
         }
 
+        //filtering by date range
         if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
             $endDate = Carbon::parse($endDate);
