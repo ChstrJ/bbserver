@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Exports\Sales;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
+use App\Http\Helpers\user\Userervice;
 use App\Http\Helpers\user\UserService;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
@@ -89,7 +90,7 @@ class AdminController extends Controller
                 'payment_method',
                 'user_id',
                 'customer_id',
-                'users.full_name',
+                'user.full_name',
                 'customer.full_name',
                 'commission'
             ])
@@ -102,9 +103,9 @@ class AdminController extends Controller
             $query->where('customer.full_name', 'LIKE', "%$customerName%");
         }
 
-        if($request->has('filter.users.full_name')) {
-            $employeeName = $request->input('filter.users.full_name');
-            $query->where('users.full_name', 'LIKE', "%$employeeName%");
+        if($request->has('filter.user.full_name')) {
+            $employeeName = $request->input('filter.user.full_name');
+            $query->where('user.full_name', 'LIKE', "%$employeeName%");
         }
 
         if ($startDate && $endDate) {
