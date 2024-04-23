@@ -18,7 +18,7 @@ class CustomerFactory extends Factory
     public function definition(): array
     {
         return [
-            'full_name' => $this->faker->randomElement(['Karl Clarence Rivera', 'Charles Artillero', 'Jim Henson Cordero', 'Joyce Juat', 'Albert Jaro']),
+            'full_name' => $this->faker->unique()->randomElement(['Karl Clarence Rivera', 'Charles Artillero', 'Jim Henson Cordero', 'Joyce Juat', 'Albert Jaro']),
             'phone_number' => $this->faker->phoneNumber(),
             'email_address' => $this->faker->safeEmail(),
             'address' => $this->faker->address(),
