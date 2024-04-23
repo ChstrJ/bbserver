@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AdminController;
+use App\Http\Controllers\Api\V1\ExportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProductController;
@@ -35,6 +36,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
         Route::get('/admin/employees', [AdminController::class, 'filterEmployees']);
         Route::get('/admin/sales', [AdminController::class, 'filterSales']);
+        Route::get('/admin/export', [ExportController::class, 'exportSales']);
         
         Route::post('/auth/register', [AuthController::class, 'register']);
         

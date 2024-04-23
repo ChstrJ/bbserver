@@ -2,6 +2,7 @@
 
 namespace App\Http\Helpers\transaction;
 
+use App\Http\Helpers\user\UserService;
 use App\Models\Product;
 use Exception;
 
@@ -81,6 +82,13 @@ trait TransactionService
     {
         $rand = strtoupper(substr(uniqid(), 7));
         return 'BB' . now()->format('Ymd') . $rand;
+    }
+
+    public static function generateFilename()
+    {
+        $date = UserService::getDate();
+        $rand = substr(uniqid(), 9);
+        return "sales{$date}-{$rand}.xlsx";
     }
 
     public static function uploadPayment($image)

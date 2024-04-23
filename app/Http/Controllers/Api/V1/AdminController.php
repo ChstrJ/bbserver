@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Exports\Sales;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
@@ -15,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Excel;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class AdminController extends Controller
@@ -52,7 +54,7 @@ class AdminController extends Controller
                 "today_sales" => floatval($today_sales),
                 "total_sales" => floatval($sales),
                 "total_pending" => floatval($pending),
-                "total_rejected" => floatval($reject),
+                "total_rejected" =>floatval($reject),
             ],
         ]);
     }
@@ -74,6 +76,7 @@ class AdminController extends Controller
                 'created_at',
                 'status',
                 'user_id',
+                'payment_method',
                 'customer_id',
                 'commission'
             ])
@@ -83,11 +86,24 @@ class AdminController extends Controller
                 'number_of_items',
                 'created_at',
                 'status',
-                'user_id',
-                'customer_id',
+                'payment_method',
+                'employee_name',
+                'customer_name',
                 'commission'
             ])
-            ->orderByDesc('created_at');
+            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
+            ->orderByDesc('transactions.created_at');
+
+        if($request->has('filter.customer_name')) {
+            $customerName = $request->input('filter.customer_name');
+            $query->where('customers.full_name', 'LIKE', "%$customerName%");
+        }
+
+        if($request->has('filter.employee_name')) {
+            $employeeName = $request->input('filter.employee_name');
+            $query->where('users.full_name', 'LIKE', "%$employeeName%");
+        }
 
         if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
@@ -130,6 +146,4 @@ class AdminController extends Controller
 
         return new UserCollection($user);
     }
-
-
 }
