@@ -29,19 +29,19 @@ class AdminController extends Controller
         $products = Product::count();
         $customer = Customer::count();
         $employee = User::where('role_id', Roles::$EMPLOYEE)->count();
-        
+
         $sales = Transaction::where('status', TransactionStatus::$APPROVE)->sum('amount_due');
         $reject = Transaction::where('status', TransactionStatus::$REJECT)->sum('amount_due');
         $pending = Transaction::where('status', TransactionStatus::$PENDING)->sum('amount_due');
         $commission = Transaction::where('status', TransactionStatus::$APPROVE)->sum('commission');
-        
+
         $sales_count = Transaction::where('status', TransactionStatus::$APPROVE)->count();
         $reject_count = Transaction::where('status', TransactionStatus::$REJECT)->count();
         $pending_count = Transaction::where('status', TransactionStatus::$PENDING)->count();
 
         $today_sales = Transaction::where('status', TransactionStatus::$APPROVE)
-                                    ->whereDate('created_at', $today)
-                                    ->sum('amount_due');
+            ->whereDate('created_at', $today)
+            ->sum('amount_due');
 
         return response()->json([
             "total_products" => $products,
@@ -57,7 +57,7 @@ class AdminController extends Controller
                 "total_commission" => floatval($commission),
                 "total_sales" => floatval($sales),
                 "total_pending" => floatval($pending),
-                "total_rejected" =>floatval($reject),
+                "total_rejected" => floatval($reject),
             ],
         ]);
     }
@@ -65,9 +65,25 @@ class AdminController extends Controller
 
     public function filterSales(Request $request)
     {
-        //filter date range
-        $startDate = urldecode($request->input('filter.created_at.0'));
-        $endDate = urldecode($request->input('filter.created_at.1'));
+
+        // //filter date range
+        // $startDate = null;
+        // $endDate = null;
+
+        // if ($request->input('filter.created_at')) {
+        //     $date = explode(',', urldecode($request->input('filter.created_at')));
+        //     if (count($date) >= 2) {
+        //         $startDate = $date[0];
+        //         $endDate = $date[1];
+        //     } else {
+        //         $startDate = $date[0];
+        //         $endDate = $date[0];
+        //     }
+        // }
+
+        $startDate = $request->input('filter.created_at.0');
+        $endDate = $request->input('filter.created_at.1');
+
 
         //get the request input per page in query params
         $per_page = $request->input('per_page');
@@ -103,26 +119,26 @@ class AdminController extends Controller
             ->orderBy('transactions.status');
 
         //filtering by customer fullname
-        if($request->has('filter.customer.full_name')) {
+        if ($request->has('filter.customer.full_name')) {
             $customerName = $request->input('filter.customer.full_name');
             $query->where('customer.full_name', 'LIKE', "%$customerName%");
         }
 
-         //filtering by user fullname
-        if($request->has('filter.user.full_name')) {
+        //filtering by user fullname
+        if ($request->has('filter.user.full_name')) {
             $employeeName = $request->input('filter.user.full_name');
             $query->where('user.full_name', 'LIKE', "%$employeeName%");
         }
 
         //filtering by date range
         if ($startDate && $endDate) {
-            $startDate = Carbon::parse($startDate);
-            $endDate = Carbon::parse($endDate);
-            
+            $startDate = Carbon::parse($startDate)->toDateString();
+            $endDate = Carbon::parse($endDate)->toDateString();
+
             $query->whereBetween('transactions.created_at', [$startDate, $endDate]);
         }
-        
-       
+
+
         $query->with('customer', 'user');
 
         $transaction = $query->paginate($per_page);
