@@ -66,24 +66,9 @@ class AdminController extends Controller
     public function filterSales(Request $request)
     {
 
-        // //filter date range
-        // $startDate = null;
-        // $endDate = null;
-
-        // if ($request->input('filter.created_at')) {
-        //     $date = explode(',', urldecode($request->input('filter.created_at')));
-        //     if (count($date) >= 2) {
-        //         $startDate = $date[0];
-        //         $endDate = $date[1];
-        //     } else {
-        //         $startDate = $date[0];
-        //         $endDate = $date[0];
-        //     }
-        // }
-
+        //filter date range
         $startDate = $request->input('filter.created_at.0');
         $endDate = $request->input('filter.created_at.1');
-
 
         //get the request input per page in query params
         $per_page = $request->input('per_page');
@@ -118,6 +103,16 @@ class AdminController extends Controller
             ->select('transactions.*')
             ->orderBy('transactions.status');
 
+        //filter by commission
+        if ($request->has('filter.commission')) {
+
+        }
+
+        //filter by sales
+        if ($request->has('filter.amount_due')) {
+
+        }
+
         //filtering by customer fullname
         if ($request->has('filter.customer.full_name')) {
             $customerName = $request->input('filter.customer.full_name');
@@ -130,14 +125,11 @@ class AdminController extends Controller
             $query->where('user.full_name', 'LIKE', "%$employeeName%");
         }
 
+
         //filtering by date range
         if ($startDate && $endDate) {
-            $startDate = Carbon::parse($startDate)->toDateString();
-            $endDate = Carbon::parse($endDate)->toDateString();
-
-            $query->whereBetween('transactions.created_at', [$startDate, $endDate]);
+            $query->whereBetween('transactions.created_at', [$startDate,$endDate]);
         }
-
 
         $query->with('customer', 'user');
 

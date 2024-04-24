@@ -21,7 +21,8 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->float('commission')->nullable();
             $table->string('image')->nullable();
-            $table->timestamps();
+            $table->date('created_at')->now();
+            $table->date('updated_at')->nullable();
             
             $table->foreignId('user_id')
                     ->constrained('users');
