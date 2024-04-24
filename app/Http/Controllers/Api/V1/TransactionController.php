@@ -50,10 +50,19 @@ class TransactionController extends Controller
                 'amount_due',
                 'number_of_items',
                 'created_at',
+                'customer.full_name',
                 'status',
             ])
-            ->orderByDesc('created_at')
+            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->orderBy('transactions.status')
+            ->orderByDesc('transactions.status')
             ->where('user_id', UserService::getUserId());
+
+        //filtering by customer fullname
+        if ($request->has('filter.customer.full_name')) {
+            $customerName = $request->input('filter.customer.full_name');
+            $query->where('customer.full_name', 'LIKE', "%$customerName%");
+        }
 
         if ($startDate && $endDate) {
             $startDate = Carbon::parse($startDate);
@@ -118,7 +127,7 @@ class TransactionController extends Controller
 
         TransactionService::decrementQty($data);
 
-        if($transaction->status === TransactionStatus::$APPROVE) {
+        if ($transaction->status === TransactionStatus::$APPROVE) {
             return $this->json(Message::alreadyApproved(), HttpStatusCode::$CONFLICT);
         }
         $transaction->status = TransactionStatus::$APPROVE;
@@ -133,7 +142,7 @@ class TransactionController extends Controller
         if (!$transaction) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
-        if($transaction->status === TransactionStatus::$REJECT) {
+        if ($transaction->status === TransactionStatus::$REJECT) {
             return $this->json(Message::alreadyRejected(), HttpStatusCode::$CONFLICT);
         }
         $transaction->status = TransactionStatus::$REJECT;
