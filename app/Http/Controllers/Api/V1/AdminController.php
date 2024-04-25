@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Exports\Sales;
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\Userervice;
 use App\Http\Helpers\user\UserService;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
+use App\Http\Utils\HttpStatusCode;
+use App\Http\Utils\Message;
 use App\Http\Utils\Roles;
 use App\Models\Customer;
 use App\Models\Product;
@@ -62,107 +65,41 @@ class AdminController extends Controller
         ]);
     }
 
+   
 
-    public function filterSales(Request $request)
+    public function approve(Transaction $transaction, int $id)
     {
 
-        //filter date range
-        $startDate = $request->input('filter.created_at.0');
-        $endDate = $request->input('filter.created_at.1');
-
-        //get the request input per page in query params
-        $per_page = $request->input('per_page');
-
-        $query = QueryBuilder::for(Transaction::class)
-            ->allowedSorts([
-                'reference_number',
-                'amount_due',
-                'number_of_items',
-                'created_at',
-                'status',
-                'user_id',
-                'payment_method',
-                'customer_id',
-                'commission'
-            ])
-            ->allowedFilters([
-                'reference_number',
-                'amount_due',
-                'number_of_items',
-                'created_at',
-                'status',
-                'payment_method',
-                'user_id',
-                'customer_id',
-                'user.full_name',
-                'customer.full_name',
-                'commission'
-            ])
-            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
-            ->select('transactions.*')
-            ->orderBy('transactions.status');
-
-        //filter by commission
-        if ($request->has('filter.commission')) {
-
+        $transaction = Transaction::find($id);
+        if (!$transaction) {
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
 
-        //filter by sales
-        if ($request->has('filter.amount_due')) {
+        $data = $transaction->checkouts;
 
+        TransactionService::decrementQty($data);
+
+        if ($transaction->status === TransactionStatus::$APPROVE) {
+            return $this->json(Message::alreadyApproved(), HttpStatusCode::$CONFLICT);
         }
+        $transaction->status = TransactionStatus::$APPROVE;
+        $transaction->save();
+        return $this->json(Message::approve());
 
-        //filtering by customer fullname
-        if ($request->has('filter.customer.full_name')) {
-            $customerName = $request->input('filter.customer.full_name');
-            $query->where('customer.full_name', 'LIKE', "%$customerName%");
-        }
-
-        //filtering by user fullname
-        if ($request->has('filter.user.full_name')) {
-            $employeeName = $request->input('filter.user.full_name');
-            $query->where('user.full_name', 'LIKE', "%$employeeName%");
-        }
-
-
-        //filtering by date range
-        if ($startDate && $endDate) {
-            $query->whereBetween('transactions.created_at', [$startDate,$endDate]);
-        }
-
-        $query->with('customer', 'user');
-
-        $transaction = $query->paginate($per_page);
-
-        return new TransactionCollection($transaction);
     }
 
-    public function filterEmployees(Request $request)
+    public function reject(Transaction $transaction, int $id)
     {
-
-        $per_page = $request->input('per_page');
-
-        $user = QueryBuilder::for(User::class)
-            ->allowedFilters([
-                'full_name',
-                'is_active',
-                'username',
-                'last_login_at',
-                'last_logout_at',
-            ])
-            ->allowedSorts([
-                'full_name',
-                'is_active',
-                'username',
-                'last_login_at',
-                'last_logout_at',
-            ])
-            // ->whereNot('role_id', Roles::$ADMIN)
-            ->orderByDesc('last_login_at')
-            ->with('products', 'transactions')
-            ->paginate($per_page);
-
-        return new UserCollection($user);
+        $transaction = Transaction::find($id);
+        if (!$transaction) {
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+        }
+        if ($transaction->status === TransactionStatus::$REJECT) {
+            return $this->json(Message::alreadyRejected(), HttpStatusCode::$CONFLICT);
+        }
+        $transaction->status = TransactionStatus::$REJECT;
+        $transaction->save();
+        return $this->json(Message::reject());
     }
+
 }

@@ -32,7 +32,7 @@ class StoreTransactionRequest extends FormRequest
             'number_of_items' => 'sometimes|int',
             'payment_method' => 'required|int',
             'commission' => 'sometimes|int|min:1',
-            'image' => 'sometimes|image|mimes:png,jpg,jpeg|max:1024',
+            // 'image' => 'sometimes|image|mimes:png,jpg,jpeg|max:1024',
             'checkouts' => 'required|array',
             'checkouts.*.id' => 'required|int|exists:products,id',
             'checkouts.*.name' => 'required|string|exists:products,name',

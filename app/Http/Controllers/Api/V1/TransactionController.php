@@ -64,12 +64,12 @@ class TransactionController extends Controller
             $query->where('customer.full_name', 'LIKE', "%$customerName%");
         }
 
-        if ($startDate && $endDate) {
-            $startDate = Carbon::parse($startDate);
-            $endDate = Carbon::parse($endDate);
+        // if ($startDate && $endDate) {
+        //     $startDate = Carbon::parse($startDate)->endOfDay();
+        //     $endDate = Carbon::parse($endDate)->startOfDay();
 
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
+        //     $query->whereBetween('created_at', [$startDate, $endDate]);
+        // }
 
         $query->with('customer', 'user');
 
@@ -87,14 +87,12 @@ class TransactionController extends Controller
         //reduce the qty from db and auto compute items & amount
         $total = TransactionService::processTransaction($validated_data);
         $reference_number = TransactionService::generateReference();
-        $image = TransactionService::uploadPayment($request);
 
         //attach to payload
         $validated_data['reference_number'] = $reference_number;
         $validated_data['number_of_items'] = $total['total_items'];
         $validated_data['amount_due'] = $total['total_amount'];
         $validated_data['commission'] = $total['commission'];
-        $validated_data['image'] = $image;
 
         $user->transactions()->create($validated_data);
 
@@ -113,42 +111,5 @@ class TransactionController extends Controller
     {
         Transaction::find($transaction->id)->delete();
     }
-
-
-    public function approve(Transaction $transaction, int $id)
-    {
-
-        $transaction = Transaction::find($id);
-        if (!$transaction) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
-        }
-
-        $data = $transaction->checkouts;
-
-        TransactionService::decrementQty($data);
-
-        if ($transaction->status === TransactionStatus::$APPROVE) {
-            return $this->json(Message::alreadyApproved(), HttpStatusCode::$CONFLICT);
-        }
-        $transaction->status = TransactionStatus::$APPROVE;
-        $transaction->save();
-        return $this->json(Message::approve());
-
-    }
-
-    public function reject(Transaction $transaction, int $id)
-    {
-        $transaction = Transaction::find($id);
-        if (!$transaction) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
-        }
-        if ($transaction->status === TransactionStatus::$REJECT) {
-            return $this->json(Message::alreadyRejected(), HttpStatusCode::$CONFLICT);
-        }
-        $transaction->status = TransactionStatus::$REJECT;
-        $transaction->save();
-        return $this->json(Message::reject());
-    }
-
 
 }

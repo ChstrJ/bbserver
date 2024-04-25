@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\CustomerController;
+use App\Http\Controllers\Api\V1\FilterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,14 +35,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     
     Route::group(['middleware' => 'admin'], function () {
         Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
-        Route::get('/admin/employees', [AdminController::class, 'filterEmployees']);
-        Route::get('/admin/sales', [AdminController::class, 'filterSales']);
+        Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
+        Route::get('/admin/sales', [FilterController::class, 'filterSales']);
+        Route::get('/admin/orders', [FilterController::class, 'filterOrders']);
+        Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
+        Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
         Route::get('/admin/export', [ExportController::class, 'exportSales']);
         
         Route::post('/auth/register', [AuthController::class, 'register']);
         
-        Route::patch('/orders/approve/{id}', [TransactionController::class, 'approve']);
-        Route::patch('/orders/reject/{id}', [TransactionController::class, 'reject']);
     });
 });
 
