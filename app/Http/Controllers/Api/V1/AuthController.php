@@ -27,11 +27,10 @@ class AuthController extends Controller
             'full_name' => $data['full_name'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
-
+            'role_id' => 2,
         ]);
         return response()->json([
             'data' => new UserResource($user_data),
-            'message' => 'Register successfully.'
         ]);
     }
 
