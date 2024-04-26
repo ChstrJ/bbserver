@@ -2,7 +2,7 @@
 
 namespace App\Http\Helpers\enums;
 
-enum PaymentMethod {
-   case CASH = 1;
-   case PAYMAYA = 2;
+class PaymentMethod {
+  static $CASH = 'Cash';
+  static $COD = 'Cash On Delivery';
 }

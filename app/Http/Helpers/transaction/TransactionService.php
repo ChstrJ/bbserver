@@ -2,6 +2,7 @@
 
 namespace App\Http\Helpers\transaction;
 
+use App\Http\Helpers\enums\PaymentMethod;
 use App\Http\Helpers\user\UserService;
 use App\Models\Product;
 use Exception;
@@ -104,5 +105,17 @@ trait TransactionService
 
             return $path.$filename;
         }
+    }
+
+    public static function toMethod(int $payments) {
+            switch($payments) {
+                case 1:
+                    return $payments = PaymentMethod::$CASH; 
+                case 2:
+                    return $payments = PaymentMethod::$COD;
+                default:
+                    return 'N/A';
+            }
+        
     }
 }

@@ -21,9 +21,8 @@ class TransactionResource extends JsonResource
                 "checkouts" => $this->checkouts,
                 "status" => $this->status,
                 "commission" => floatval($this->commission),
-                "image" => $this->image ?? null,
-                "created_at" => $this->created_at->setTimeZone('Asia/Manila'),
-                "updated_at" => $this->updated_at->setTimeZone('Asia/Manila'),
+                "created_at" => $this->created_at->format('m-d-Y'),
+                "updated_at" => $this->updated_at->format('m-d-Y'),
                 "employee" => new UserResource($this->whenLoaded('user')),
                 "customer" => new CustomerResource($this->whenLoaded('customer')),
         ];

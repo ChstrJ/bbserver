@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -16,7 +17,7 @@ return new class extends Migration
             $table->string('reference_number');
             $table->float('amount_due');
             $table->integer('number_of_items');
-            $table->integer('payment_method');
+            $table->tinyInteger('payment_method');
             $table->json('checkouts');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->float('commission')->nullable();
@@ -30,6 +31,8 @@ return new class extends Migration
 
             $table->softDeletes();
         });
+
+        DB::statement('ALTER TABLE transactions ADD CONSTRAINT chk_commision CHECK(commission >= 0)');
     }
 
     /**

@@ -20,8 +20,8 @@ class ProductResource extends JsonResource
             "srp" => $this->srp,
             "member_price" => $this->member_price,
             "is_removed" => $this->is_removed,
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,   
+            "created_at" => $this->created_at->format('m-d-Y'),
+            "updated_at" => $this->updated_at->format('m-d-Y'),
             "created_by" => $this->created_by ? UserService::getUsernameById($this->created_by) : null,
             "updated_by" => $this->updated_by ? UserService::getUsernameById($this->updated_by) : null,
         ];

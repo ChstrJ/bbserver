@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\user\UserService;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\TransactionResource;
@@ -20,12 +21,15 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
-    /**
-     * @return \Illuminate\Support\Collection
-     */
+    protected $transactions;
+
+    public function __construct($transaction){
+        $this->transactions = $transaction;
+    }
+
     public function collection()
     {
-        return Transaction::all();
+        return $this->transactions;
     }
 
     public function styles(Worksheet $sheet)
@@ -35,26 +39,25 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
         ];
     }
 
-    
+
 
     public function map($transaction): array
     {
         $employee = UserService::getFullnameById($transaction->user_id);
         $customer = CustomerService::getFullnameById($transaction->customer_id);
-        $amount = floatval($transaction->amount_due); 
+        $payment_method = TransactionService::toMethod($transaction->payment_method);
+        $amount = floatval($transaction->amount_due);
         return [
             $transaction->reference_number,
             $transaction->amount_due,
             $transaction->number_of_items,
-            $transaction->payment_method,
+            $transaction->payment_method = $payment_method,
             $transaction->status,
             // $transaction->checkouts,
-            $transaction->image,
             $transaction->commission,
             $transaction->customer_id = $customer,
             $transaction->user_id = $employee,
             $transaction->created_at->format('Y-m-d'),
-            $transaction->updated_at->format('Y-m-d'),
         ];
     }
 
@@ -68,12 +71,10 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             'Payment Method',
             'Status',
             // 'Checkouts',
-            'Image',
             'Commission',
             'Customer',
             'Employee',
-            'Created at',
-            'Updated at',
+            'Date Created',
         ];
     }
 }
