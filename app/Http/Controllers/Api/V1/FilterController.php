@@ -24,6 +24,7 @@ class FilterController extends Controller
         $sortByDateAsc = $request->input('sort_date_asc');
         $sortByDateDesc = $request->input('sort_date_desc');
         $commission = $request->input('commission');
+        $sales = $request->input('sales');
 
         $query = Transaction::query()
             ->select('transactions.*')
@@ -59,11 +60,19 @@ class FilterController extends Controller
             $query->where('users.full_name', 'LIKE', "%$employeeName%");
         }
 
+
         $perPage = $perPage ?: 15;
 
         $transactions = $query->paginate($perPage);
 
-        return new TransactionCollection($transactions);
+        $transactionCollection = new TransactionCollection($transactions);
+
+        $additionalData = [
+            'commission' => floatval($commission),
+            'sales' => floatval($sales),
+        ];
+
+        return $transactionCollection->additional($additionalData);
     }
 
     public function filterEmployees(Request $request)
@@ -95,6 +104,7 @@ class FilterController extends Controller
         $perPage = $request->input('per_page');
         $employeeName = $request->input('employee');
         $customerName = $request->input('customer');
+        $searchByRefNo = $request->input('search_by_ref');
         $sortByDateAsc = $request->input('sort_date_asc');
         $sortByDateDesc = $request->input('sort_date_desc');
 
@@ -112,6 +122,10 @@ class FilterController extends Controller
 
         if($customerName) {
             $query->where('user.full_name', 'LIKE', "%$customerName%");
+        }
+
+        if ($searchByRefNo) {
+            $query->where('transactions.reference_number', 'LIKE', "%$searchByRefNo%");
         }
 
         // if ($sortByDateDesc === null) {

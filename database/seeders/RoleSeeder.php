@@ -17,11 +17,13 @@ class RoleSeeder extends Seeder
         DB::table('roles')->insert([
             [
                 "id" => 1,
-                "role" => "admin"
+                "role" => "admin",
+                "created_at" => now()
             ],
             [
                 "id"=> 2,
-                "role"=> "employee"
+                "role"=> "employee",
+                "created_at" => now()
             ]
         ]);
     }

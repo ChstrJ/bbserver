@@ -87,8 +87,8 @@ trait TransactionService
     public static function generateFilename()
     {
         $date = UserService::getDate();
-        $rand = substr(uniqid(), 9);
-        return "sales{$date}-{$rand}.xlsx";
+        $rand = substr(uniqid(), 10);
+        return "sales-{$date}-{$rand}.xlsx";
     }
 
     public static function uploadPayment($image)

@@ -19,7 +19,7 @@ class ProductFactory extends Factory
     {
         $description = Category::pluck('name')->toArray();
         return [
-            'category_id' => $this->faker->numberBetween(1, 4), 
+            'category_id' => $this->faker->numberBetween(1, 8), 
             'name' => $this->faker->randomElement(['Hazelnut', 'Mocha', 'Matcha', 'Italian', 'Supremo', 'Hazelnut', 'Vanilla', 'Chocolate']),
             'description' => $this->faker->randomElement($description),
             'quantity' => $this->faker->numberBetween(50, 100),

@@ -4,23 +4,17 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
-use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusCode;
-use App\Http\Utils\HttpStatusMessage;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
-use App\Models\Product;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\TransactionResource;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -30,9 +24,6 @@ class TransactionController extends Controller
     use ResponseHelper, TransactionService;
     public function index(Request $request)
     {
-        //filter date range
-        $startDate = $request->input('filter.created_at.0');
-        $endDate = $request->input('filter.created_at.1');
 
         //get the request input per page in query params
         $per_page = $request->input('per_page');
