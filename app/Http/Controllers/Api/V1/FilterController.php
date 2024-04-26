@@ -23,6 +23,7 @@ class FilterController extends Controller
         $searchByRefNo = $request->input('search_by_ref');
         $sortByDateAsc = $request->input('sort_date_asc');
         $sortByDateDesc = $request->input('sort_date_desc');
+        $commission = $request->input('commission');
 
         $query = Transaction::query()
             ->select('transactions.*')
@@ -98,11 +99,12 @@ class FilterController extends Controller
         $sortByDateDesc = $request->input('sort_date_desc');
 
         $query = Transaction::query()
-            ->select('transactions.*')
+            ->select('transactions.*', 'customers.full_name', 'users.full_name')
             ->with('customer', 'user')
-            ->leftJoin('users', 'transactions.users_id', '=', 'user.id')
-            ->leftJoin('customers', 'transactions.customer_id', '=', 'customer.id')
-            ->orderBy('transactions.status');
+            ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
+            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->where('transactions.status', 'pending')
+            ->orderByDesc('transactions.created_at');
 
         if($employeeName) {
             $query->where('user.full_name', 'LIKE', "%$employeeName%");
@@ -112,13 +114,13 @@ class FilterController extends Controller
             $query->where('user.full_name', 'LIKE', "%$customerName%");
         }
 
-        if ($sortByDateDesc === null) {
-            $query->orderBy('transactions.created_at', 'DESC');
-        }
+        // if ($sortByDateDesc === null) {
+        //     $query->orderBy('transactions.created_at', 'DESC');
+        // }
 
-        if ($sortByDateAsc === null) {
-            $query->orderBy('transactions.created_at', 'ASC');
-        }
+        // if ($sortByDateAsc === null) {
+        //     $query->orderBy('transactions.created_at', 'ASC');
+        // }
 
         $perPage ?: 15;
 

@@ -64,13 +64,6 @@ class TransactionController extends Controller
             $query->where('customer.full_name', 'LIKE', "%$customerName%");
         }
 
-        // if ($startDate && $endDate) {
-        //     $startDate = Carbon::parse($startDate)->endOfDay();
-        //     $endDate = Carbon::parse($endDate)->startOfDay();
-
-        //     $query->whereBetween('created_at', [$startDate, $endDate]);
-        // }
-
         $query->with('customer', 'user');
 
         $transaction = $query->paginate($per_page);
