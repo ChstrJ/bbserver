@@ -18,12 +18,10 @@ class RoleSeeder extends Seeder
             [
                 "id" => 1,
                 "role" => "admin",
-                "created_at" => now()
             ],
             [
                 "id"=> 2,
                 "role"=> "employee",
-                "created_at" => now()
             ]
         ]);
     }
