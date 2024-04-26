@@ -13,7 +13,7 @@ class GenericMessage
     static $INVALID = "There's something wrong in your request";
     static $UNDEFINED_USER = "Undefined user, please try again.";
     static $INVALID_INPUT = "Oops! some of your input has a problem.";
-    static $INVALID_CREDENTIALS = "Invalid credentials, please check your username or password.";
+    static $INVALID_CREDENTIALS = "Invalid credentials. Please verify your credentials and try again.";
     static $NOT_UPDATED = "Not yet updated.";
 
 }

@@ -46,6 +46,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
         $employee = UserService::getFullnameById($transaction->user_id);
         $customer = CustomerService::getFullnameById($transaction->customer_id);
         $payment_method = TransactionService::toMethod($transaction->payment_method);
+        $checkouts = TransactionService::processCheckouts($transaction->checkouts);
         $amount = floatval($transaction->amount_due);
         return [
             $transaction->reference_number,
@@ -53,7 +54,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             $transaction->number_of_items,
             $transaction->payment_method = $payment_method,
             $transaction->status,
-            // $transaction->checkouts,
+            $transaction->checkouts = $checkouts,
             $transaction->commission,
             $transaction->customer_id = $customer,
             $transaction->user_id = $employee,
@@ -70,7 +71,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             'No. of items',
             'Payment Method',
             'Status',
-            // 'Checkouts',
+            'Checkouts',
             'Commission',
             'Customer',
             'Employee',

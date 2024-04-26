@@ -94,28 +94,41 @@ trait TransactionService
 
     public static function uploadPayment($image)
     {
-        if($image->has('image')) {
+        if ($image->has('image')) {
             $file = $image->file('image');
 
             $extension = $file->getClientOriginalExtension();
-            $filename = time(). '.' .$extension;
+            $filename = time() . '.' . $extension;
 
             $path = 'uploads/image/';
             $file->move($path, $filename);
 
-            return $path.$filename;
+            return $path . $filename;
         }
     }
 
-    public static function toMethod(int $payments) {
-            switch($payments) {
-                case 1:
-                    return $payments = PaymentMethod::$CASH; 
-                case 2:
-                    return $payments = PaymentMethod::$COD;
-                default:
-                    return 'N/A';
-            }
-        
+    public static function toMethod(int $payments)
+    {
+        switch ($payments) {
+            case 1:
+                return $payments = PaymentMethod::$CASH;
+            case 2:
+                return $payments = PaymentMethod::$COD;
+            default:
+                return 'N/A';
+        }
+
+    }
+
+    public static function processCheckouts($data)
+    {
+
+        $names = [];
+
+        for ($i = 0; $i < count($data); $i++) {
+            $names[] = $data[$i]['name'];
+        }
+
+        return implode(', ', $names);
     }
 }

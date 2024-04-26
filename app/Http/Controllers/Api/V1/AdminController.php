@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Exports\Sales;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
-use App\Http\Helpers\user\Userervice;
 use App\Http\Helpers\user\UserService;
-use App\Http\Resources\V1\TransactionCollection;
-use App\Http\Resources\V1\UserCollection;
 use App\Http\Utils\HttpStatusCode;
 use App\Http\Utils\Message;
 use App\Http\Utils\Roles;
@@ -17,11 +13,6 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Excel;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class AdminController extends Controller
 {
@@ -69,19 +60,18 @@ class AdminController extends Controller
 
     public function approve(Transaction $transaction, int $id)
     {
-
         $transaction = Transaction::find($id);
         if (!$transaction) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
 
-        $data = $transaction->checkouts;
-
-        TransactionService::decrementQty($data);
-
         if ($transaction->status === TransactionStatus::$APPROVE) {
             return $this->json(Message::alreadyApproved(), HttpStatusCode::$CONFLICT);
         }
+
+        $data = $transaction->checkouts;
+        TransactionService::decrementQty($data);
+
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
         return $this->json(Message::approve());

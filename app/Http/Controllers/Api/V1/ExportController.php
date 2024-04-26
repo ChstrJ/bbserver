@@ -27,6 +27,10 @@ class ExportController extends Controller
         $transactions = $query->get();
 
         $filename = TransactionService::generateFilename();
+
+        // --for testing
+        //return Excel::store(new SalesExport($transactions), $filename);
+
         $excelFile = Excel::download(new SalesExport($transactions), $filename)->getFile();
 
         $fileContent = base64_encode(file_get_contents($excelFile));
