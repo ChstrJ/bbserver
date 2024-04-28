@@ -102,8 +102,7 @@ class TransactionController extends Controller
         }
         $order->is_removed = TransactionStatus::$REMOVED;
         $order->save();
-
-        return $this->json(Message::orderRemoved(), HttpStatusCode::$ACCEPTED);
+        return $this->json(Message::deleteResource(), HttpStatusCode::$ACCEPTED);
     }
 
 }

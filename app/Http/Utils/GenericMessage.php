@@ -18,5 +18,9 @@ class GenericMessage
     static $ORDER_ADD = "Order was successfully added to the records.";
     static $ORDER_REMOVE = "Order was successfully removed to the records.";
     static $ALREADY_CHANGED = "The requested action has already been completed.";
+    static $CREATE = "The resource has been successfully added.";
+    static $UPDATE = "The resource has been successfully updated.";
+    static $RESTORE = "The resource has been successfully restored.";
+    static $DELETE = "The resource has been successfully removed.";
 
 }

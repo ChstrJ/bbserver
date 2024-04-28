@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AdminController;
 use App\Http\Controllers\Api\V1\ExportController;
+use App\Http\Controllers\Api\V1\RestoreController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProductController;
@@ -26,14 +27,16 @@ use App\Http\Controllers\Api\V1\FilterController;
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    //employee scope
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/orders', TransactionController::class)->except(['update']);
-    Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
-    
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     
     Route::group(['middleware' => 'admin'], function () {
+        Route::apiResource('/users', UserController::class);
+
+        //admin scope
         Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
         Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
@@ -41,10 +44,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/admin/export', [ExportController::class, 'exportSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
-
         
-        Route::post('/auth/register', [AuthController::class, 'register']);
-        
+        //for restoring resources
+        Route::get('/admin/deleted-customer', [RestoreController::class, 'getAllDeletedCustomer']);
+        Route::get('/admin/deleted-orders', [RestoreController::class, 'getAllDeletedTransactions']);
+        Route::get('/admin/deleted-employee', [RestoreController::class, 'getAllDeletedEmployee']);
+        Route::patch('/admin/restore/customer/{id}', [RestoreController::class, 'restoreCustomer']);
+        Route::patch('/admin/restore/order/{id}', [RestoreController::class, 'restoreTransactions']);
+        Route::patch('/admin/restore/employee/{id}', [RestoreController::class, 'restoreEmployee']);
+    
     });
 });
 

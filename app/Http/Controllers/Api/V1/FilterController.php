@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
 use App\Models\Transaction;
@@ -30,6 +31,7 @@ class FilterController extends Controller
             ->select('transactions.*')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
+            ->whereNot('transactions.status', TransactionStatus::$REMOVED)
             ->orderBy('transactions.status')
             ->with('user', 'customer');
 

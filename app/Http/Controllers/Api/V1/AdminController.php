@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
+use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Utils\HttpStatusCode;
 use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
@@ -94,5 +95,6 @@ class AdminController extends Controller
         $transaction->save();
         return $this->json(Message::reject());
     }
+
 
 }

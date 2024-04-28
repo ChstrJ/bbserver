@@ -7,6 +7,24 @@ namespace App\Http\Utils;
 class Message
 {
     use ResponseHelper;
+
+    public static function createResource()
+    {
+        return ["message" => GenericMessage::$CREATE];
+    }
+
+    public static function updateResource()
+    {
+        return ["message" => GenericMessage::$UPDATE];
+    }
+
+    public static function restoreResource() {
+        return ["message" => GenericMessage::$RESTORE];
+    }
+
+    public static function deleteResource() {
+        return ["message" => GenericMessage::$DELETE];
+    }
     public static function approve()
     {
         return ["message" => GenericMessage::$APPROVE];
@@ -59,4 +77,8 @@ class Message
     public static function orderRemoved() {
         return ["message" => GenericMessage::$ORDER_REMOVE];
     }
+
+    
+
+   
 }
