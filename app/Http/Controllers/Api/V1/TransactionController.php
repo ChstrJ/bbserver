@@ -45,8 +45,7 @@ class TransactionController extends Controller
                 'status',
             ])
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->orderBy('transactions.status')
-            ->orderByDesc('transactions.status')
+            ->orderByDesc('transactions.created_at')
             ->where('user_id', UserService::getUserId());
 
         //filtering by customer fullname

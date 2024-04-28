@@ -38,9 +38,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
         Route::get('/admin/orders', [FilterController::class, 'filterOrders']);
+        Route::get('/admin/export', [ExportController::class, 'exportSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
-        Route::get('/admin/export', [ExportController::class, 'exportSales']);
         
         Route::post('/auth/register', [AuthController::class, 'register']);
         

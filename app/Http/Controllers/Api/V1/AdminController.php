@@ -72,6 +72,7 @@ class AdminController extends Controller
         }
 
         $data = $transaction->checkouts;
+        
         TransactionService::decrementQty($data);
 
         $transaction->status = TransactionStatus::$APPROVE;

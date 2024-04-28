@@ -33,6 +33,7 @@ return new class extends Migration
         });
 
         DB::statement('ALTER TABLE transactions ADD CONSTRAINT chk_commision CHECK(commission >= 0)');
+        
     }
 
     /**

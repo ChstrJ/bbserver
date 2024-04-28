@@ -63,20 +63,18 @@ trait TransactionService
     public static function decrementQty($data)
     {
 
-        $totalQty = 0;
-
         foreach ($data as $checkouts) {
             $product = Product::find($checkouts['id']);
+
+            $qty = $checkouts['quantity'];
 
             if (!$product) {
                 throw new Exception('Product ID not found.');
             }
 
-            $qty = $checkouts['quantity'];
-            $totalQty += $qty;
+            $product->decrement('quantity', $qty);
         }
 
-        Product::decrement('quantity', $totalQty);
     }
 
     public static function generateReference()
@@ -117,12 +115,10 @@ trait TransactionService
             default:
                 return 'N/A';
         }
-
     }
 
     public static function processCheckouts($data)
     {
-
         $names = [];
 
         for ($i = 0; $i < count($data); $i++) {
