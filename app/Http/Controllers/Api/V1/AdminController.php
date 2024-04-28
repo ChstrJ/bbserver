@@ -8,6 +8,7 @@ use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\HttpStatusCode;
 use App\Http\Utils\Message;
+use App\Http\Utils\ResponseHelper;
 use App\Http\Utils\Roles;
 use App\Models\Customer;
 use App\Models\Product;
@@ -16,6 +17,7 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
+    use ResponseHelper;
     public function getAllTotal()
     {
         $today = UserService::getDate();
