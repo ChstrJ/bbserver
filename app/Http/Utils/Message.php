@@ -46,4 +46,8 @@ class Message
     {
         return ["message" => GenericMessage::$INVALID_CREDENTIALS];
     }
+
+    public static function orderSuccess() {
+        return ["message" => GenericMessage::$SUCCESS_ORDER];
+    }
 }

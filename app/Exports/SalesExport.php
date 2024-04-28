@@ -50,7 +50,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
         $amount = floatval($transaction->amount_due);
         return [
             $transaction->reference_number,
-            $transaction->amount_due,
+            $transaction->amount_due = $amount,
             $transaction->number_of_items,
             $transaction->payment_method = $payment_method,
             $transaction->status,
@@ -58,7 +58,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             $transaction->commission,
             $transaction->customer_id = $customer,
             $transaction->user_id = $employee,
-            $transaction->created_at->format('Y-m-d'),
+            $transaction->created_at->format('m-d-Y'),
         ];
     }
 
@@ -75,7 +75,7 @@ class SalesExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             'Commission',
             'Customer',
             'Employee',
-            'Date Created',
+            'Date Ordered',
         ];
     }
 }

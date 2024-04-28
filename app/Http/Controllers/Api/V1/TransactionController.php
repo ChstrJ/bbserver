@@ -79,7 +79,7 @@ class TransactionController extends Controller
 
         $user->transactions()->create($validated_data);
 
-        return $this->json(['message' => DynamicMessage::transactionAdded($user->username)]);
+        return $this->json(Message::orderSuccess(), HttpStatusCode::$ACCEPTED);
     }
 
     public function show(int $id)
