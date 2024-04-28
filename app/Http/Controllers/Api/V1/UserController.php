@@ -17,9 +17,11 @@ class UserController extends Controller
      */
     public function index()
     {
-       $user = User::with('transactions', 'products')->get();
+        $user = User::with('transactions', 'products')
+            ->where('is_active', 1)
+            ->get();
 
-       return new UserCollection($user);
+        return new UserCollection($user);
     }
 
     public function show(User $user)

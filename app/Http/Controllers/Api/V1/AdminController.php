@@ -68,11 +68,11 @@ class AdminController extends Controller
         }
 
         if ($transaction->status === TransactionStatus::$APPROVE) {
-            return $this->json(Message::alreadyApproved(), HttpStatusCode::$CONFLICT);
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
         $data = $transaction->checkouts;
-        
+
         TransactionService::decrementQty($data);
 
         $transaction->status = TransactionStatus::$APPROVE;
@@ -88,7 +88,7 @@ class AdminController extends Controller
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if ($transaction->status === TransactionStatus::$REJECT) {
-            return $this->json(Message::alreadyRejected(), HttpStatusCode::$CONFLICT);
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
         $transaction->status = TransactionStatus::$REJECT;
         $transaction->save();

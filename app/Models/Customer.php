@@ -19,6 +19,7 @@ class Customer extends Model
         'email_address',
         'created_by',
         'updated_by',
+        'is_active'
     ];
 
     public function transactions() : HasMany

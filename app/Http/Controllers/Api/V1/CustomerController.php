@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\customer\CustomerStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Utils\DynamicMessage;
@@ -39,6 +40,7 @@ class CustomerController extends Controller
                 'address'
             ])
             ->with('transactions', 'user')
+            ->whereNot('is_active', 0)
             ->orderByDesc('created_at');
 
         $customers = $customers->paginate($per_page);
@@ -84,7 +86,12 @@ class CustomerController extends Controller
         if (!$customer) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
-        $customer->delete();
+        if($customer->is_active === CustomerStatus::$NOT_ACTIVE) {
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
+        }
+
+        $customer->is_active = CustomerStatus::$NOT_ACTIVE;
+        $customer->save();
         return $this->json(DynamicMessage::customerRemove($customer->full_name));
     }
 

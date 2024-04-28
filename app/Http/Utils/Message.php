@@ -22,6 +22,11 @@ class Message
         return ["message" => GenericMessage::$TRANSACT_NOT_FOUND];
     }
 
+    public static function alreadyChanged()
+    {
+        return ["message" => GenericMessage::$ALREADY_CHANGED];
+    }
+
     public static function alreadyApproved()
     {
         return ["message" => GenericMessage::$ALREADY_APPROVED];
@@ -48,6 +53,10 @@ class Message
     }
 
     public static function orderSuccess() {
-        return ["message" => GenericMessage::$SUCCESS_ORDER];
+        return ["message" => GenericMessage::$ORDER_ADD];
+    }
+
+    public static function orderRemoved() {
+        return ["message" => GenericMessage::$ORDER_REMOVE];
     }
 }

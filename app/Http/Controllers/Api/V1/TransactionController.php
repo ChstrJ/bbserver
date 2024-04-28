@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\HttpStatusCode;
@@ -45,8 +46,8 @@ class TransactionController extends Controller
                 'status',
             ])
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->orderByDesc('transactions.created_at')
-            ->where('user_id', UserService::getUserId());
+            ->where('user_id', UserService::getUserId())
+            ->orderByDesc('transactions.created_at');
 
         //filtering by customer fullname
         if ($request->has('filter.customer.full_name')) {
@@ -90,9 +91,19 @@ class TransactionController extends Controller
         }
         return new TransactionResource($transaction->load('customer'));
     }
-    public function destroy(Transaction $transaction)
+    public function destroy(int $id)
     {
-        Transaction::find($transaction->id)->delete();
+        $order = Transaction::find($id);
+        if(!$order) {
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND); 
+        }
+        if($order->is_removed === TransactionStatus::$REMOVED) {
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
+        }
+        $order->is_removed = TransactionStatus::$REMOVED;
+        $order->save();
+
+        return $this->json(Message::orderRemoved(), HttpStatusCode::$ACCEPTED);
     }
 
 }

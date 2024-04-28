@@ -29,6 +29,7 @@ return new class extends Migration
                     ->nullable()
                     ->constrained('customers');
 
+            $table->boolean('is_removed')->default(false);
             $table->softDeletes();
         });
 
