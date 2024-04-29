@@ -28,13 +28,13 @@ class ExportController extends Controller
 
         $filename = TransactionService::generateFilename();
 
-        // --for testing
-        //return Excel::store(new SalesExport($transactions), $filename);
+        //--for testing
+        return Excel::download(new SalesExport($transactions), $filename);
 
-        $excelFile = Excel::download(new SalesExport($transactions), $filename)->getFile();
+        // $excelFile = Excel::download(new SalesExport($transactions), $filename)->getFile();
 
-        $fileContent = base64_encode(file_get_contents($excelFile));
+        // $fileContent = base64_encode(file_get_contents($excelFile));
 
-        return response()->json(['file_name' => $filename, 'excel_file' => $fileContent]);
+        // return response()->json(['file_name' => $filename, 'excel_file' => $fileContent]);
     }
 }
