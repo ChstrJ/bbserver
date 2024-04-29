@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\product\ProductStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
-use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusCode;
 use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
@@ -16,8 +16,6 @@ use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -53,6 +51,7 @@ class ProductController extends Controller
                 'srp',
                 'is_removed'
             ])
+            ->whereNot('is_removed', ProductStatus::$REMOVE)
             ->orderByDesc('created_at')
             ->orderByDesc('updated_at');
 
@@ -103,19 +102,16 @@ class ProductController extends Controller
 
     public function destroy(int $id)
     {
-        // if ($product->is_removed) {
-        //     return response()->json("Product was already removed.");
-        // }
-        // $product->is_removed = true;
-        // $product->save();
-
-        // return response()->json("{$product->name} was successfully removed.");
         $product = Product::find($id);
         if (!$product) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
-        $product->delete();
+        if($product->is_removed === ProductStatus::$REMOVE) {
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
+        }
 
-        return $this->json(DynamicMessage::productRemove($product->name));
+        $product->is_removed = ProductStatus::$REMOVE;
+        $product->save();
+        return $this->json(Message::deleteResource(), HttpStatusCode::$ACCEPTED);
     }
 }

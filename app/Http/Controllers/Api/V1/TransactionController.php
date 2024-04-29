@@ -97,10 +97,10 @@ class TransactionController extends Controller
         if(!$order) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND); 
         }
-        if($order->is_removed === TransactionStatus::$REMOVED) {
+        if($order->is_removed === TransactionStatus::$REMOVE) {
             return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
-        $order->is_removed = TransactionStatus::$REMOVED;
+        $order->is_removed = TransactionStatus::$REMOVE;
         $order->save();
         return $this->json(Message::deleteResource(), HttpStatusCode::$ACCEPTED);
     }

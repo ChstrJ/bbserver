@@ -54,7 +54,7 @@ class ExportController extends Controller
             ->select('transactions.*')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
-            ->whereNot('transactions.is_removed', TransactionStatus::$REMOVED)
+            ->whereNot('transactions.is_removed', TransactionStatus::$REMOVE)
             ->orderBy('transactions.status')
             ->with('user', 'customer');
 
