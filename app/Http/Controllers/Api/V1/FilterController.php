@@ -22,16 +22,18 @@ class FilterController extends Controller
         $customerName = $request->input('customer');
         $employeeName = $request->input('employee');
         $searchByRefNo = $request->input('search_by_ref');
-        $sortByDateAsc = $request->input('sort_date_asc');
-        $sortByDateDesc = $request->input('sort_date_desc');
-        $commission = $request->input('commission');
-        $sales = $request->input('sales');
+        $sortByDesc = $request->input('sort_by_desc');
+        $sortByAsc = $request->input('sort_by_asc');
+        $status = $request->input('status');
+        $paymentMethod = $request->input('payment_method');
+        //$commission = $request->input('commission');
+        //$sales = $request->input('sales');
 
         $query = Transaction::query()
             ->select('transactions.*')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
-            ->whereNot('transactions.status', TransactionStatus::$REMOVED)
+            ->whereNot('transactions.is_removed', TransactionStatus::$REMOVED)
             ->orderBy('transactions.status')
             ->with('user', 'customer');
 
@@ -40,12 +42,20 @@ class FilterController extends Controller
                 ->whereDate('transactions.created_at', '<=', $endDate);
         }
 
-        if ($sortByDateDesc === null) {
-            $query->orderBy('transactions.created_at', 'DESC');
+        if($status) {
+            $query->where("transactions.status", $status);
         }
 
-        if ($sortByDateAsc === null) {
-            $query->orderBy('transactions.created_at', 'ASC');
+        if($paymentMethod) {
+            $query->where("transactions.payment_method", $paymentMethod);
+        }
+
+        if ($sortByDesc) {
+            $query->orderBy("transactions.$sortByDesc", 'DESC');
+        }
+
+        if ($sortByAsc) {
+            $query->orderBy("transactions.$sortByAsc", 'ASC');
         }
         
         if ($searchByRefNo) {
@@ -70,8 +80,8 @@ class FilterController extends Controller
         $transactionCollection = new TransactionCollection($transactions);
 
         $additionalData = [
-            'commission' => floatval($commission),
-            'sales' => floatval($sales),
+            'commission' => 0,
+            'sales' => 0,
         ];
 
         return $transactionCollection->additional($additionalData);
