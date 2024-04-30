@@ -73,11 +73,11 @@ class FilterController extends Controller
         }
 
         if($commissionById) {
-            $query->where("transactions.status", TransactionStatus::$APPROVE)->where('transactions.user_id', $commissionById)->sum('commission')
+            $query->where("transactions.status", TransactionStatus::$APPROVE)->where('transactions.user_id', $commissionById)->sum('commission');
         }
 
         if($salesById) {
-            $query->where("transactions.status", TransactionStatus::$APPROVE)->where('transactions.user_id', $salesById)->sum('amount_due')
+            $query->where("transactions.status", TransactionStatus::$APPROVE)->where('transactions.user_id', $salesById)->sum('amount_due');
         }
 
 
@@ -88,7 +88,7 @@ class FilterController extends Controller
         $transactionCollection = new TransactionCollection($transactions);
 
         $additionalData = [
-            'commission' => $commisionById ?: 0,
+            'commission' => $commissionById ?: 0,
             'sales' => $salesById ?: 0,
         ];
 
