@@ -68,6 +68,5 @@ class UserController extends Controller
         $user->save();
         return $this->json(Message::deleteResource(), HttpStatusCode::$ACCEPTED);
     }
-    
 
 }

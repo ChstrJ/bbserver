@@ -26,8 +26,8 @@ class FilterController extends Controller
         $sortByAsc = $request->input('sort_by_asc');
         $status = $request->input('status');
         $paymentMethod = $request->input('payment_method');
-        //$commission = $request->input('commission');
-        //$sales = $request->input('sales');
+        $commissionById = $request->input('commission_by_id');
+        $salesById = $request->input('sales_by_id');
 
         $query = Transaction::query()
             ->select('transactions.*')
@@ -72,6 +72,14 @@ class FilterController extends Controller
             $query->where('users.full_name', 'LIKE', "%$employeeName%");
         }
 
+        if($commissionById) {
+            $query->where("transactions.status", TransactionStatus::$APPROVE)->where('transactions.user_id', $commissionById)->sum('commission')
+        }
+
+        if($salesById) {
+            $query->where("transactions.status", TransactionStatus::$APPROVE)->where('transactions.user_id', $salesById)->sum('amount_due')
+        }
+
 
         $perPage = $perPage ?: 15;
 
@@ -80,8 +88,8 @@ class FilterController extends Controller
         $transactionCollection = new TransactionCollection($transactions);
 
         $additionalData = [
-            'commission' => 0,
-            'sales' => 0,
+            'commission' => $commisionById,
+            'sales' => $salesById,
         ];
 
         return $transactionCollection->additional($additionalData);
