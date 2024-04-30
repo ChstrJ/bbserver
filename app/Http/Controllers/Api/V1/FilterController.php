@@ -88,8 +88,8 @@ class FilterController extends Controller
         $transactionCollection = new TransactionCollection($transactions);
 
         $additionalData = [
-            'commission' => $commisionById,
-            'sales' => $salesById,
+            'commission' => $commisionById ?: 0,
+            'sales' => $salesById ?: 0,
         ];
 
         return $transactionCollection->additional($additionalData);
