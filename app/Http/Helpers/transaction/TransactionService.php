@@ -79,7 +79,8 @@ trait TransactionService
 
     public static function generateReference()
     {
-        $rand = strtoupper(substr(uniqid(), 7));
+        $start = 0;
+        $rand = strtoupper(substr(uniqid(), 9));
         return 'BB' . now()->format('Ymd') . $rand;
     }
 

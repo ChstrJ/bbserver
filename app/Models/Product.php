@@ -22,6 +22,7 @@ class Product extends Model
         'quantity',
         'srp',
         'member_price',
+        'product_code',
         'created_by',
         'updated_by'
     ];

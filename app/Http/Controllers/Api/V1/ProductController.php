@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\product\ProductService;
 use App\Http\Helpers\product\ProductStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
@@ -74,7 +75,9 @@ class ProductController extends Controller
     {
         $user = UserService::getUser();
         $validated_data = $request->validated();
+        $code = ProductService::generateProductCode();
         $validated_data['created_by'] = $user->id;
+        $validated_data['product_code'] = $code;
         $product = $user->products()->create($validated_data);
         return $this->json(DynamicMessage::productAdded($product->name));
     }
