@@ -22,12 +22,6 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'sometimes|exists:customers,id',
-            'customer_name' => 'sometimes|exists:customers,name',
-            'customer_phone_number' => 'sometimes|exists:customers,phone_number',
-            'customer_address' => 'sometimes|exists:customers,address',
-            'customer_email' => 'sometimes|exists:customers,email',
-            'reference_number' => 'sometimes|string|unique:transactions,reference_number',
             'amount_due' => 'sometimes|numeric',
             'number_of_items' => 'sometimes|int',
             'payment_method' => 'required|int',
@@ -36,7 +30,7 @@ class StoreTransactionRequest extends FormRequest
             'checkouts' => 'required|array',
             'checkouts.*.id' => 'required|int|exists:products,id',
             'checkouts.*.product_code' => 'required|string|exists:products,product_code',
-            'checkouts.*.category_id' => 'required|string|exists:products,category_id',
+            'checkouts.*.category_id' => 'required|int|exists:products,category_id',
             'checkouts.*.name' => 'required|string|exists:products,name',
             'checkouts.*.quantity' => 'required|int|min:1',
             'checkouts.*.srp' => 'required|numeric|min:1',

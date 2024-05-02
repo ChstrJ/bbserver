@@ -22,8 +22,8 @@ class StoreLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|min:2',
-            'password' => 'required|string|min:2'
+            'username' => 'required|string',
+            'password' => 'required|string'
         ];
     }
 }
