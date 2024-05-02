@@ -37,7 +37,6 @@ return new class extends Migration {
         });
 
         DB::statement('ALTER TABLE products ADD CONSTRAINT chck_products_qty CHECK (quantity >= 0)');
-        DB::statement('ALTER TABLE products ADD CONSTRAINT chck_if_comm_prc_grtr_memb_prc CHECK(srp > member_price)');
     }
 
     /**

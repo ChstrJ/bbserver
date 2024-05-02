@@ -35,6 +35,8 @@ class StoreTransactionRequest extends FormRequest
             // 'image' => 'sometimes|image|mimes:png,jpg,jpeg|max:1024',
             'checkouts' => 'required|array',
             'checkouts.*.id' => 'required|int|exists:products,id',
+            'checkouts.*.product_code' => 'required|string|exists:products,product_code',
+            'checkouts.*.category_id' => 'required|string|exists:products,category_id',
             'checkouts.*.name' => 'required|string|exists:products,name',
             'checkouts.*.quantity' => 'required|int|min:1',
             'checkouts.*.srp' => 'required|numeric|min:1',
