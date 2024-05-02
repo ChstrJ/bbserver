@@ -13,33 +13,33 @@ use Maatwebsite\Excel\Facades\Excel;
 class ExportController extends Controller
 {
     use ResponseHelper;
-    public function exportSales(Request $request) {
+    // public function exportSales(Request $request) {
 
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
 
-        $query = Transaction::query();
+    //     $query = Transaction::query();
 
-        if($startDate && $endDate) {
-            $query->whereDate('created_at', '>=', $startDate)
-                ->whereDate('created_at', '<=', $endDate);
-        }
+    //     if($startDate && $endDate) {
+    //         $query->whereDate('created_at', '>=', $startDate)
+    //             ->whereDate('created_at', '<=', $endDate);
+    //     }
 
-        $transactions = $query->get();
+    //     $transactions = $query->get();
 
-        $filename = TransactionService::generateFilename();
+    //     $filename = TransactionService::generateFilename();
 
-        //--for testing
-        return Excel::download(new SalesExport($transactions), $filename);
+       
+    //     return Excel::download(new SalesExport($transactions), $filename);
 
-        // $excelFile = Excel::download(new SalesExport($transactions), $filename)->getFile();
+    //     $excelFile = Excel::download(new SalesExport($transactions), $filename)->getFile();
 
-        // $fileContent = base64_encode(file_get_contents($excelFile));
+    //     $fileContent = base64_encode(file_get_contents($excelFile));
 
-        // return response()->json(['file_name' => $filename, 'excel_file' => $fileContent]);
-    }
+    //     return response()->json(['file_name' => $filename, 'excel_file' => $fileContent]);
+    // }
 
-    public function exportSaless(Request $request)
+    public function exportSales(Request $request)
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
@@ -98,9 +98,7 @@ class ExportController extends Controller
 
         $filename = TransactionService::generateFilename();
 
-        //--for testing
         return Excel::download(new SalesExport($transactions), $filename);
-
 
     }
 }

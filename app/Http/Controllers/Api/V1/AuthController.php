@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\user\UserStatus;
 use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusCode;
 use App\Http\Utils\HttpStatusMessage;
@@ -46,7 +47,9 @@ class AuthController extends Controller
         //get the authenticated user and get the token from the user model
         $user = Auth::user(); 
 
-        $user->last_login_at = now('Asia/Manila');
+        $user->last_login_at = now();
+        $user->last_activity = now();
+        $user->status = UserStatus::$ONLINE;
         $user->save();
 
         //create an access token
@@ -62,7 +65,8 @@ class AuthController extends Controller
         $user = Auth::user();
         $user->currentAccessToken()->delete();
 
-        $user->last_logout_at = now('Asia/Manila');
+        $user->last_logout_at = now();
+        $user->status = UserStatus::$OFFLINE;
         $user->save();
 
         return response('', 204);

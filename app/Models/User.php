@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Http\Utils\Roles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -21,31 +23,44 @@ class User extends Authenticatable
         'username',
         'last_login_at',
         'last_logout_at',
-        'role_id'
+        'last_activity',
+        'role_id',
+        'status'
     ];
 
-    public function transactions()
+    public function transactions() : HasMany
     {
         return $this->hasMany(Transaction::class);
     }
 
-    public function products() {
+    public function products() : HasMany
+    {
         return $this->hasMany(Product::class);
     }
 
-    public function customers() {
+    public function customers() : HasMany
+    {
         return $this->hasMany(Customer::class);
     }
 
-    public function role() {
+    public function role() : BelongsTo
+    {
         return $this->belongsTo(Role::class);
     }
 
-    public function isAdmin() {
+    public function isAdmin() : int
+    {
         return $this->role_id == Roles::$ADMIN;
     }
 
-    public function isEmployee() {
+    public function isEmployee() : int
+    {
         return $this->role_id == Roles::$EMPLOYEE;
     }
+
+    public function isOnline() : bool
+    {                        
+        return $this->last_activity >= now()->subMinutes(5);
+    }
+
 }

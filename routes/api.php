@@ -26,7 +26,7 @@ use App\Http\Controllers\Api\V1\FilterController;
 //public routes
 Route::post('/auth/login', [AuthController::class, 'login']);
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
+Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     //employee scope
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/orders', TransactionController::class)->except(['update']);
@@ -41,7 +41,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
         Route::get('/admin/orders', [FilterController::class, 'filterOrders']);
-        Route::get('/admin/export', [ExportController::class, 'exportSaless']);
+        Route::get('/admin/export', [ExportController::class, 'exportSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
         
@@ -54,7 +54,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::patch('/admin/restore/order/{id}', [RestoreController::class, 'restoreTransaction']);
         Route::patch('/admin/restore/employee/{id}', [RestoreController::class, 'restoreEmployee']);
         Route::patch('/admin/restore/product/{id}', [RestoreController::class, 'restoreProduct']);
-    
     });
 });
 

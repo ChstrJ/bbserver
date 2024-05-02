@@ -15,8 +15,9 @@ class UserResource extends JsonResource
             'username' => $this->username,
             'last_login_at' => $this->last_login_at,
             'last_logout_at' => $this->last_logout_at,
-            'products_added' => ProductResource::collection($this->whenLoaded('products')),
-            'transactions_added' => TransactionResource::collection($this->whenLoaded('transactions')),
+            'status' => $this->status == 1 ? "Online" : "Offline",
+            // 'products_added' => ProductResource::collection($this->whenLoaded('products')),
+            // 'transactions_added' => TransactionResource::collection($this->whenLoaded('transactions')),
         ];
     }
 }
