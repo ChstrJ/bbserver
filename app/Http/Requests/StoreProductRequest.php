@@ -32,7 +32,7 @@ class StoreProductRequest extends FormRequest
             'category_id' => "required|int|exists:categories,id",
             'name' => 'required|string',
             'description' => 'required|string',
-            'quantity' => 'required|int|min:1|max:10000',
+            'quantity' => 'required|int|min:1',
             'srp' => 'required|numeric|gt:member_price',
             'member_price' => 'required|numeric',
         ];
