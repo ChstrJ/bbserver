@@ -20,14 +20,14 @@ class FilterController extends Controller
         $endDate = $request->input('end_date');
         $perPage = $request->input('per_page');
         $customerName = $request->input('customer');
-        $employeeName = $request->input('employee');
         $searchByRefNo = $request->input('search_by_ref');
         $sortByDesc = $request->input('sort_by_desc');
         $sortByAsc = $request->input('sort_by_asc');
         $status = $request->input('status');
         $paymentMethod = $request->input('payment_method');
-        $commissionById = $request->input('commission_by_id');
-        $salesById = $request->input('sales_by_id');
+        // $commissionById = $request->input('commission_by_id');
+        // $salesById = $request->input('sales_by_id');
+        $employeeId = $request->input('employee_id');
 
         $query = Transaction::query()
             ->select('transactions.*')
@@ -42,11 +42,11 @@ class FilterController extends Controller
                 ->whereDate('transactions.created_at', '<=', $endDate);
         }
 
-        if($status) {
+        if ($status) {
             $query->where("transactions.status", $status);
         }
 
-        if($paymentMethod) {
+        if ($paymentMethod) {
             $query->where("transactions.payment_method", $paymentMethod);
         }
 
@@ -57,7 +57,7 @@ class FilterController extends Controller
         if ($sortByAsc) {
             $query->orderBy("transactions.$sortByAsc", 'ASC');
         }
-        
+
         if ($searchByRefNo) {
             $query->where('transactions.reference_number', 'LIKE', "%$searchByRefNo%");
         }
@@ -67,29 +67,22 @@ class FilterController extends Controller
             $query->where('customers.full_name', 'LIKE', "%$customerName%");
         }
 
-        //filtering by user fullname
-        if ($employeeName) {
-            $query->where('users.full_name', 'LIKE', "%$employeeName%");
-        }
-
         $commission = 0;
-
-        if($commissionById) {
-            $commission = $query
-                    ->where("transactions.status", TransactionStatus::$APPROVE)
-                    ->where('transactions.user_id', $commissionById)
-                    ->sum('commission');
-        }
-
         $sales = 0;
-        
-        if($salesById) {
-            $sales = $query
-                    ->where("transactions.status", TransactionStatus::$APPROVE)
-                    ->where('transactions.user_id', $commissionById)
-                    ->sum('amount_due');
-        }
 
+        //filter by employee id and get the commission and sales
+        if ($employeeId) {
+            $query->where('users.id', $employeeId);
+
+            $commission = $query
+                ->where("transactions.status", TransactionStatus::$APPROVE)
+                ->where('transactions.user_id', $employeeId)
+                ->sum('commission');
+            $sales = $query
+                ->where("transactions.status", TransactionStatus::$APPROVE)
+                ->where('transactions.user_id', $employeeId)
+                ->sum('amount_due');
+        }
 
         $perPage = $perPage ?: 15;
 
@@ -146,11 +139,11 @@ class FilterController extends Controller
             ->where('transactions.status', 'pending')
             ->orderByDesc('transactions.created_at');
 
-        if($employeeName) {
+        if ($employeeName) {
             $query->where('user.full_name', 'LIKE', "%$employeeName%");
         }
 
-        if($customerName) {
+        if ($customerName) {
             $query->where('user.full_name', 'LIKE', "%$customerName%");
         }
 

@@ -44,12 +44,12 @@ class ExportController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $customerName = $request->input('customer');
-        $employeeName = $request->input('employee');
         $searchByRefNo = $request->input('search_by_ref');
         $sortByDesc = $request->input('sort_by_desc');
         $sortByAsc = $request->input('sort_by_asc');
         $status = $request->input('status');
         $paymentMethod = $request->input('payment_method');
+        $employeeId = $request->input('employee_id');
 
         $query = Transaction::query()
             ->select('transactions.*')
@@ -89,9 +89,8 @@ class ExportController extends Controller
             $query->where('customers.full_name', 'LIKE', "%$customerName%");
         }
 
-        //filtering by user fullname
-        if ($employeeName) {
-            $query->where('users.full_name', 'LIKE', "%$employeeName%");
+        if ($employeeId) {
+            $query->where('users.id', $employeeId);
         }
 
         $transactions = $query->get();

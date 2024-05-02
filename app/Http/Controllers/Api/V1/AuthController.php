@@ -56,7 +56,7 @@ class AuthController extends Controller
         $access_token = $request->user()->createToken('barista-token')->plainTextToken;
 
         //return the response with bearer
-        return response()->json(['user' => $user, 'token' => $access_token])
+        return response()->json(['user' => new UserResource($user), 'token' => $access_token])
             ->withHeaders(['Authorization' => "Bearer {$access_token}"]);
     }
 
