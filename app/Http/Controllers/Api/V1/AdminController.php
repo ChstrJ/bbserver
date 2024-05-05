@@ -15,6 +15,8 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -59,7 +61,14 @@ class AdminController extends Controller
         ]);
     }
 
-   
+
+    public function chartSales(Request $request)
+    {
+        $interval = $request->query('interval');
+        return $this->json([
+            $interval . '_sales' => TransactionService::getChartSalesData($interval)
+        ]);
+    }
 
     public function approve(Transaction $transaction, int $id)
     {
@@ -79,7 +88,6 @@ class AdminController extends Controller
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
         return $this->json(Message::approve());
-
     }
 
     public function reject(Transaction $transaction, int $id)
@@ -95,6 +103,4 @@ class AdminController extends Controller
         $transaction->save();
         return $this->json(Message::reject());
     }
-
-
 }

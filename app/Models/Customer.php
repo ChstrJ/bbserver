@@ -27,9 +27,13 @@ class Customer extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function appointment() : HasMany 
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
     public function user() : BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
 }

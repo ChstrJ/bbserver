@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AdminController;
 use App\Http\Controllers\Api\V1\ExportController;
 use App\Http\Controllers\Api\V1\RestoreController;
+use App\Http\Controllers\AppointmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\ProductController;
@@ -31,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/orders', TransactionController::class)->except(['update']);
     Route::apiResource('/customers', CustomerController::class);
+    Route::apiResource('/appointments', AppointmentController::class);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     
     Route::group(['middleware' => 'admin'], function () {
@@ -42,6 +44,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
         Route::get('/admin/orders', [FilterController::class, 'filterOrders']);
         Route::get('/admin/export', [ExportController::class, 'exportSales']);
+        Route::get('/admin/chart/sales', [AdminController::class, 'chartSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
         

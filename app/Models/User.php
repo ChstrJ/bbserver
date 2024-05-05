@@ -28,6 +28,10 @@ class User extends Authenticatable
         'status'
     ];
 
+    public function appointments() : HasMany
+    {   
+        return $this->hasMany(Appointment::class);
+    }
     public function transactions() : HasMany
     {
         return $this->hasMany(Transaction::class);

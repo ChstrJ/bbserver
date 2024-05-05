@@ -5,6 +5,7 @@ namespace App\Http\Helpers\transaction;
 use App\Http\Helpers\enums\PaymentMethod;
 use App\Http\Helpers\user\UserService;
 use App\Models\Product;
+use App\Models\Transaction;
 use Exception;
 
 trait TransactionService
@@ -91,20 +92,24 @@ trait TransactionService
         return "sales-{$date}-{$rand}.xlsx";
     }
 
-    public static function uploadPayment($image)
-    {
-        if ($image->has('image')) {
-            $file = $image->file('image');
 
-            $extension = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $extension;
+    // FOR IMAGE UPLOADING IMAGE
+    // ENABLE THIS FEATURE IF NEEDED
 
-            $path = 'uploads/image/';
-            $file->move($path, $filename);
+    // public static function uploadPayment($image)
+    // {
+    //     if ($image->has('image')) {
+    //         $file = $image->file('image');
 
-            return $path . $filename;
-        }
-    }
+    //         $extension = $file->getClientOriginalExtension();
+    //         $filename = time() . '.' . $extension;
+
+    //         $path = 'uploads/image/';
+    //         $file->move($path, $filename);
+
+    //         return $path . $filename;
+    //     }
+    // }
 
     public static function toMethod(int $payments)
     {
@@ -127,5 +132,26 @@ trait TransactionService
         }
 
         return implode(', ', $names);
+    }
+
+    public static function getChartSalesData($interval)
+    {
+        $now = UserService::getDate();
+        $salesQ = Transaction::select(['status', 'amount_due', 'created_at']);
+
+        switch ($interval) {
+            case 'weekly':
+                $salesQ->whereRaw('WEEKOFYEAR(created_at) = WEEKOFYEAR(CURDATE())');
+                break;
+            case 'monthly':
+                $salesQ->whereMonth('created_at', '=', date('m'));
+                break;
+            case 'yearly':
+                $salesQ->whereYear('created_at', '=', date('Y'));
+                break;
+            default:
+                $salesQ->where('created_at', $now);
+        }
+        return number_format($salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due'), 2);
     }
 }
