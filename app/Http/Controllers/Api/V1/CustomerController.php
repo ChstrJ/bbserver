@@ -26,14 +26,18 @@ class CustomerController extends Controller
     {
         $per_page = $request->input('per_page');
         $search = $request->input('search');
-
+        
         $query = Customer::query()
-            ->whereNot('is_active', CustomerStatus::$NOT_ACTIVE)
-            ->with('transactions', 'user')
-            ->orderByDesc('created_at');
+        ->whereNot('is_active', CustomerStatus::$NOT_ACTIVE)
+        ->with('transactions', 'user')
+        ->orderByDesc('created_at');
 
         if ($search) {
-            $query->where('full_name', 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('full_name', 'LIKE', "%{$search}%")
+                    ->orWhere('address', 'LIKE', "%{$search}%")
+                    ->orWhere('email_address', 'LIKE', "%{$search}%");
+            });
         }
 
         $per_page ?: 15;
@@ -54,9 +58,9 @@ class CustomerController extends Controller
     }
 
     public function show(int $id)
-    {
-        $customer = Customer::find($id);
-        if (!$customer) {
+    { 
+        $customer = Customer::find($id);    
+        if(!$customer) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         return new CustomerResource($customer->load('transactions', 'user'));
@@ -80,7 +84,7 @@ class CustomerController extends Controller
         if (!$customer) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
-        if ($customer->is_active === CustomerStatus::$NOT_ACTIVE) {
+        if($customer->is_active === CustomerStatus::$NOT_ACTIVE) {
             return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 

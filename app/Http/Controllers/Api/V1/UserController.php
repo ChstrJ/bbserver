@@ -28,12 +28,8 @@ class UserController extends Controller
             ->where('is_active', UserStatus::$ACTIVE);
 
             if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('full_name', 'LIKE', "%{$search}%")
-                        ->orWhere('address', 'LIKE', "%{$search}%")
-                        ->orWhere('email_address', 'LIKE', "%{$search}%");
-                });
-            }
+                $query->where('full_name', 'LIKE', "%{$search}%");
+            }  
         
         $perPage ?: 15;
 
