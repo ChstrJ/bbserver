@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('description');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
-            $table->date('date');
+            $table->date('date'); // for calendar
             $table->boolean('is_removed')->default(false);
-            $table->enum('status', ['pending', 'cancelled', 'reschedule', 'confirmed', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'cancelled', 'completed'])->default('pending');
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnUpdate();
             $table->timestamps();

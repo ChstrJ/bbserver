@@ -22,8 +22,18 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page');
+
+        $search = $request->input('search');
         $query = User::with('transactions', 'products')
             ->where('is_active', UserStatus::$ACTIVE);
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('full_name', 'LIKE', "%{$search}%")
+                        ->orWhere('address', 'LIKE', "%{$search}%")
+                        ->orWhere('email_address', 'LIKE', "%{$search}%");
+                });
+            }
         
         $perPage ?: 15;
 
