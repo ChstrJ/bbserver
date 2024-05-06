@@ -77,8 +77,6 @@ class Message
     public static function orderRemoved() {
         return ["message" => GenericMessage::$ORDER_REMOVE];
     }
-
     
-
    
 }

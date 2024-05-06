@@ -7,6 +7,7 @@ use App\Http\Helpers\user\UserStatus;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Utils\HttpStatusCode;
 use App\Http\Utils\Message;
+use App\Http\Utils\ResponseHelper;
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    use ResponseHelper;
     /**
      * Display a listing of the resource.
      */
