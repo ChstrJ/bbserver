@@ -64,7 +64,7 @@ class User extends Authenticatable
 
     public function isOnline() : bool
     {                        
-        return $this->last_activity >= now()->subMinutes(5);
+        return $this->last_activity >= now()->subMinutes(15);
     }
 
 }

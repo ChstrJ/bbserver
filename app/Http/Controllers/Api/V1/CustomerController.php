@@ -24,7 +24,7 @@ class CustomerController extends Controller
     use ResponseHelper;
     public function index(Request $request)
     {
-        $per_page = $request->input('per_page');
+        $perPage = $request->input('per_page', 15);
         $search = $request->input('search');
         
         $query = Customer::query()
@@ -40,8 +40,7 @@ class CustomerController extends Controller
             });
         }
 
-        $per_page ?: 15;
-        $customers = $query->paginate($per_page);
+        $customers = $query->paginate($perPage);
         return new CustomerCollection($customers);
     }
 

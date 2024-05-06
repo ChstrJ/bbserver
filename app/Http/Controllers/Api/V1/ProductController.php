@@ -32,9 +32,7 @@ class ProductController extends Controller
         $sortByDesc = $request->input('sort_by_desc');
         $sortByAsc = $request->input('sort_by_asc');
         $categoryId = $request->input('category_id');
-
-        //get the request input per page in query params
-        $per_page = $request->input('per_page');
+        $perPage = $request->input('per_page', 15);
 
         $query = Product::query()
             ->whereNot('is_removed', ProductStatus::$REMOVE)
@@ -63,11 +61,7 @@ class ProductController extends Controller
             $query->orderBy($sortByDesc, 'ASC');
         }
 
-        $per_page ?: 15;
-
-        //paginate the results
-        $products = $query->paginate($per_page);
-
+        $products = $query->paginate($perPage);
         return new ProductCollection($products);
     }
 

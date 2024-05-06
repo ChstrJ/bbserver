@@ -27,38 +27,36 @@ class TransactionController extends Controller
     {
 
         //get the request input per page in query params
-        $per_page = $request->input('per_page');
+        $perPage = $request->input('per_page', 15);
+        $sortByDesc = $request->input('sort_by_desc');
+        $sortByAsc = $request->input('sort_by_asc');
+        $search = $request->input('search');
+        $status = $request->input('status');
 
-        $query = QueryBuilder::for(Transaction::class)
-            ->allowedSorts([
-                'reference_id',
-                'amount_due',
-                'number_of_items',
-                'created_at',
-                'status',
-            ])
-            ->allowedFilters([
-                'reference_id',
-                'amount_due',
-                'number_of_items',
-                'created_at',
-                'customer.full_name',
-                'status',
-            ])
+        $query = Transaction::query()
+            ->select('transactions.*')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->where('user_id', UserService::getUserId())
-            ->orderByDesc('transactions.created_at');
+            ->where('transactions.user_id', UserService::getUserId())
+            ->orderByDesc('transactions.created_at')
+            ->with('customer', 'user');
 
-        //filtering by customer fullname
-        if ($request->has('filter.customer.full_name')) {
-            $customerName = $request->input('filter.customer.full_name');
-            $query->where('customer.full_name', 'LIKE', "%$customerName%");
+        if ($sortByDesc) {
+            $query->orderBy("transactions.$sortByDesc", 'DESC');
         }
 
-        $query->with('customer', 'user');
+        if ($sortByAsc) {
+            $query->orderBy("transactions.$sortByAsc", 'ASC');
+        }
 
-        $transaction = $query->paginate($per_page);
+        if ($status) {
+            $query->where('transactions.status', $status);
+        }
 
+        if ($search) {
+            $query->where('customers.full_name', 'LIKE', "%{$search}%");
+        }
+
+        $transaction = $query->paginate($perPage);
         return new TransactionCollection($transaction);
     }
 
@@ -79,7 +77,6 @@ class TransactionController extends Controller
         $validated_data['commission'] = $total['commission'];
 
         $user->transactions()->create($validated_data);
-
         return $this->json(Message::orderSuccess(), HttpStatusCode::$ACCEPTED);
     }
 
@@ -94,10 +91,10 @@ class TransactionController extends Controller
     public function destroy(int $id)
     {
         $order = Transaction::find($id);
-        if(!$order) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND); 
+        if (!$order) {
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
-        if($order->is_removed === TransactionStatus::$REMOVE) {
+        if ($order->is_removed === TransactionStatus::$REMOVE) {
             return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
         $order->is_removed = TransactionStatus::$REMOVE;

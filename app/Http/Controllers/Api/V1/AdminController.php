@@ -52,11 +52,11 @@ class AdminController extends Controller
                 "reject_count" => $reject_count,
             ],
             "transactions_total" => [
-                "today_sales" => floatval($today_sales),
-                "total_commission" => floatval($commission),
-                "total_sales" => floatval($sales),
-                "total_pending" => floatval($pending),
-                "total_rejected" => floatval($reject),
+                "today_sales" => number_format($today_sales, 2),
+                "total_commission" => number_format($commission, 2),
+                "total_sales" => number_format($sales, 2),
+                "total_pending" => number_format($pending, 2),
+                "total_rejected" => number_format($reject, 2),
             ],
         ]);
     }
@@ -82,7 +82,6 @@ class AdminController extends Controller
         }
 
         $data = $transaction->checkouts;
-
         TransactionService::decrementQty($data);
 
         $transaction->status = TransactionStatus::$APPROVE;

@@ -17,15 +17,13 @@ class FilterController extends Controller
     {
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $perPage = $request->input('per_page');
+        $perPage = $request->input('per_page', 15);
         $customerName = $request->input('customer');
         $searchByRefNo = $request->input('search_by_ref');
         $sortByDesc = $request->input('sort_by_desc');
         $sortByAsc = $request->input('sort_by_asc');
         $status = $request->input('status');
         $paymentMethod = $request->input('payment_method');
-        // $commissionById = $request->input('commission_by_id');
-        // $salesById = $request->input('sales_by_id');
         $employeeId = $request->input('employee_id');
 
         $query = Transaction::query()
@@ -83,8 +81,6 @@ class FilterController extends Controller
                 ->sum('amount_due');
         }
 
-        $perPage = $perPage ?: 15;
-
         $transactions = $query->paginate($perPage);
 
         $transactionCollection = new TransactionCollection($transactions);
@@ -100,7 +96,7 @@ class FilterController extends Controller
     public function filterEmployees(Request $request)
     {
 
-        $perPage = $request->input('per_page');
+        $perPage = $request->input('per_page', 15);
         $employeeName = $request->input('employee');
 
         $query = User::query()
@@ -108,22 +104,18 @@ class FilterController extends Controller
             ->orderByDesc('last_login_at')
             ->with('products', 'transactions');
 
-
         if ($employeeName) {
             $query->where('full_name', 'LIKE', "%$employeeName%");
         }
 
-        $perPage ?: 15;
-
         $user = $query->paginate($perPage);
-
         return new UserCollection($user);
     }
 
     public function filterOrders(Request $request)
     {
 
-        $perPage = $request->input('per_page');
+        $perPage = $request->input('per_page', 15);
         $employeeName = $request->input('employee');
         $customerName = $request->input('customer');
         $searchByRefNo = $request->input('search_by_ref');
@@ -155,13 +147,10 @@ class FilterController extends Controller
         }
 
         if ($sortByAsc) {
-            $query->orderBy('transactions.created_at', 'ASC');
+            $query->orderBy("transactions.$sortByAsc", 'ASC');
         }
 
-        $perPage ?: 15;
-
         $transaction = $query->paginate($perPage);
-
         return new TransactionCollection($transaction);
     }
 }

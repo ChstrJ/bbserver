@@ -94,10 +94,7 @@ class ExportController extends Controller
         }
 
         $transactions = $query->get();
-
         $filename = TransactionService::generateFilename();
-
         return Excel::download(new SalesExport($transactions), $filename);
-
     }
 }

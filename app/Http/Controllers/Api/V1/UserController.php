@@ -21,24 +21,22 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page');
-
+        $perPage = $request->input('per_page', 15);
         $search = $request->input('search');
+
         $query = User::with('transactions', 'products')
             ->where('is_active', UserStatus::$ACTIVE);
 
-            if ($search) {
-                $query->where('full_name', 'LIKE', "%{$search}%");
-            }  
-        
-        $perPage ?: 15;
+        if ($search) {
+            $query->where('full_name', 'LIKE', "%{$search}%")
+                ->orWhere('username', 'LIKE', "%{$search}%");
+        }
 
         $user = $query->paginate($perPage);
-        
         return new UserCollection($user);
     }
 
-    public function store(StoreRegisterRequest $request) 
+    public function store(StoreRegisterRequest $request)
     {
         $data = $request->validated();
         User::create([
@@ -71,7 +69,7 @@ class UserController extends Controller
         if (!$user) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
-        if($user->is_active === UserStatus::$NOT_ACTIVE) {
+        if ($user->is_active === UserStatus::$NOT_ACTIVE) {
             return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
