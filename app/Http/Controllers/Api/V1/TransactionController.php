@@ -6,19 +6,15 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
-use App\Http\Utils\DynamicMessage;
-use App\Http\Utils\HttpStatusCode;
 use App\Http\Helpers\transaction\TransactionService;
-use App\Http\Utils\Message;
+use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Transaction;
 use App\Http\Requests\StoreTransactionRequest;
-use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\TransactionResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class TransactionController extends Controller
 {
@@ -77,14 +73,14 @@ class TransactionController extends Controller
         $validated_data['commission'] = $total['commission'];
 
         $user->transactions()->create($validated_data);
-        return $this->json(Message::orderSuccess(), HttpStatusCode::$ACCEPTED);
+        return Response::orderSuccess();
     }
 
     public function show(int $id)
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+            return Response::notFound();
         }
         return new TransactionResource($transaction->load('customer'));
     }
@@ -92,14 +88,15 @@ class TransactionController extends Controller
     {
         $order = Transaction::find($id);
         if (!$order) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+            return Response::notFound();
         }
         if ($order->is_removed === TransactionStatus::$REMOVE) {
-            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
+            return Response::alreadyChanged();
         }
         $order->is_removed = TransactionStatus::$REMOVE;
         $order->save();
-        return $this->json(Message::deleteResource(), HttpStatusCode::$ACCEPTED);
+
+        return Response::deleteResource();
     }
 
 }
