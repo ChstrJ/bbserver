@@ -25,25 +25,23 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->input('per_page');
+        $search = $request->input('search');
+        
+        $query = Customer::query()
+        ->whereNot('is_active', CustomerStatus::$NOT_ACTIVE)
+        ->with('transactions', 'user')
+        ->orderByDesc('created_at');
 
-        $customers = QueryBuilder::for(Customer::class)
-            ->allowedFilters([
-                'full_name',
-                'address',
-                'phone_number',
-                'address'
-            ])
-            ->allowedSorts([
-                'full_name',
-                'address',
-                'phone_number',
-                'address'
-            ])
-            ->with('transactions', 'user')
-            ->whereNot('is_active', 0)
-            ->orderByDesc('created_at');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('full_name', 'LIKE', "%{$search}%")
+                    ->orWhere('address', 'LIKE', "%{$search}%")
+                    ->orWhere('email_address', 'LIKE', "%{$search}%");
+            });
+        }
 
-        $customers = $customers->paginate($per_page);
+        $per_page ?: 15;
+        $customers = $query->paginate($per_page);
         return new CustomerCollection($customers);
     }
 

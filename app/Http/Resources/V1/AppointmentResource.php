@@ -24,6 +24,8 @@ class AppointmentResource extends JsonResource
             "status" => $this->status,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
+            "customer" => new CustomerResource($this->whenLoaded('customer')),
+            "employee" => new UserResource($this->whenLoaded('user'))
         ];
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->date('date');
+            $table->boolean('is_removed')->default(false);
             $table->enum('status', ['pending', 'cancelled', 'reschedule', 'confirmed', 'completed'])->default('pending');
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnUpdate();

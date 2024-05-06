@@ -15,7 +15,6 @@ class FilterController extends Controller
 {
     public function filterSales(Request $request)
     {
-
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
         $perPage = $request->input('per_page');
@@ -59,12 +58,12 @@ class FilterController extends Controller
         }
 
         if ($searchByRefNo) {
-            $query->where('transactions.reference_number', 'LIKE', "%$searchByRefNo%");
+            $query->where('transactions.reference_number', 'LIKE', "%{$searchByRefNo}%");
         }
 
         //filtering by customer fullname
         if ($customerName) {
-            $query->where('customers.full_name', 'LIKE', "%$customerName%");
+            $query->where('customers.full_name', 'LIKE', "%{$customerName}%");
         }
 
         $commission = 0;
@@ -128,8 +127,8 @@ class FilterController extends Controller
         $employeeName = $request->input('employee');
         $customerName = $request->input('customer');
         $searchByRefNo = $request->input('search_by_ref');
-        $sortByDateAsc = $request->input('sort_date_asc');
-        $sortByDateDesc = $request->input('sort_date_desc');
+        $sortByAsc = $request->input('sort_date_asc');
+        $sortByDesc = $request->input('sort_date_desc');
 
         $query = Transaction::query()
             ->select('transactions.*', 'customers.full_name', 'users.full_name')
@@ -140,24 +139,24 @@ class FilterController extends Controller
             ->orderByDesc('transactions.created_at');
 
         if ($employeeName) {
-            $query->where('user.full_name', 'LIKE', "%$employeeName%");
+            $query->where('user.full_name', 'LIKE', "%{$employeeName}%");
         }
 
         if ($customerName) {
-            $query->where('user.full_name', 'LIKE', "%$customerName%");
+            $query->where('user.full_name', 'LIKE', "%{$customerName}%");
         }
 
         if ($searchByRefNo) {
-            $query->where('transactions.reference_number', 'LIKE', "%$searchByRefNo%");
+            $query->where('transactions.reference_number', 'LIKE', "%{$searchByRefNo}%");
         }
 
-        // if ($sortByDateDesc === null) {
-        //     $query->orderBy('transactions.created_at', 'DESC');
-        // }
+        if ($sortByDesc) {
+            $query->orderBy("transactions.$sortByDesc", 'DESC');
+        }
 
-        // if ($sortByDateAsc === null) {
-        //     $query->orderBy('transactions.created_at', 'ASC');
-        // }
+        if ($sortByAsc) {
+            $query->orderBy('transactions.created_at', 'ASC');
+        }
 
         $perPage ?: 15;
 

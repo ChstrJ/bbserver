@@ -11,7 +11,7 @@ class StoreAppointmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreAppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'full_name' => 'required|string',
+            'description' => 'required|string',
+            'start_time' => 'required|different:start_time',
+            'end_time' => 'required|different:end_time',
+            'date' => 'required',
+            'status' => 'required'
         ];
     }
 }

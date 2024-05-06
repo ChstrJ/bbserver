@@ -17,6 +17,7 @@ use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
@@ -27,48 +28,47 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        //get the request input for date range filter
-        $startDate = $request->input('filter.created_at.0');
-        $endDate = $request->input('filter.created_at.1');
+        $search = $request->input('search');
+        $sortByDesc = $request->input('sort_by_desc');
+        $sortByAsc = $request->input('sort_by_asc');
+        $categoryId = $request->input('category_id');
 
         //get the request input per page in query params
         $per_page = $request->input('per_page');
 
-        $query = QueryBuilder::for(Product::class)
-            ->allowedSorts([
-                'id',
-                'name',
-                'created_at',
-                'updated_at',
-                'quantity',
-                'srp'
-            ])
-            ->allowedFilters([
-                'id',
-                'name',
-                'created_at',
-                'updated_at',
-                'category_id',
-                'srp',
-                'is_removed'
-            ])
+        $query = Product::query()
             ->whereNot('is_removed', ProductStatus::$REMOVE)
-            ->orderByDesc('created_at')
-            ->orderByDesc('updated_at');
+            ->orderBy('created_at')
+            ->orderBy('updated_at');
 
-
-        if ($startDate && $endDate) {
-            $startDate = Carbon::parse($startDate);
-            $endDate = Carbon::parse($endDate);
-
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('product_code', 'LIKE', "%{$search}%")
+                    ->orWhere('name', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%")
+                    ->orWhere('srp', 'LIKE', "%$search%")
+                    ->orWhere('member_price', 'LIKE', "%{$search}%");
+            });
         }
+
+        if($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($sortByDesc) {
+            $query->orderBy($sortByDesc, 'DESC');
+        }
+
+        if ($sortByAsc) {
+            $query->orderBy($sortByDesc, 'ASC');
+        }
+
+        $per_page ?: 15;
 
         //paginate the results
         $products = $query->paginate($per_page);
 
         return new ProductCollection($products);
-
     }
 
     public function store(StoreProductRequest $request)
@@ -109,7 +109,7 @@ class ProductController extends Controller
         if (!$product) {
             return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
-        if($product->is_removed === ProductStatus::$REMOVE) {
+        if ($product->is_removed === ProductStatus::$REMOVE) {
             return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
