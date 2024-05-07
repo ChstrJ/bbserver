@@ -7,15 +7,18 @@ use App\Http\Helpers\product\ProductService;
 use App\Http\Helpers\product\ProductStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
-use App\Http\Utils\Response;
+use App\Http\Utils\HttpStatusCode;
+use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\V1\ProductCollection;
 use App\Http\Resources\V1\ProductResource;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
@@ -65,15 +68,11 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $user = UserService::getUser();
-
         $validated_data = $request->validated();
         $code = ProductService::generateProductCode();
-
         $validated_data['created_by'] = $user->id;
         $validated_data['product_code'] = $code;
-
         $product = $user->products()->create($validated_data);
-
         return $this->json(DynamicMessage::productAdded($product->name));
     }
 
@@ -81,7 +80,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         if (!$product) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         return new ProductResource($product->load('user'));
     }
@@ -93,7 +92,7 @@ class ProductController extends Controller
         $validated_data['updated_by'] = $user->id;
         $product->update($validated_data);
         if (!$product) {
-            return Response::invalid();
+            return $this->json(Message::invalid(), HttpStatusCode::$UNPROCESSABLE_ENTITY);
         }
         return $this->json(DynamicMessage::productUpdated($product->name));
     }
@@ -102,15 +101,14 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         if (!$product) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if ($product->is_removed === ProductStatus::$REMOVE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
         $product->is_removed = ProductStatus::$REMOVE;
         $product->save();
-
-        return Response::deleteResource();
+        return $this->json(Message::deleteResource(), HttpStatusCode::$ACCEPTED);
     }
 }

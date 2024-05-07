@@ -7,13 +7,17 @@ use App\Http\Helpers\customer\CustomerStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Utils\DynamicMessage;
-use App\Http\Utils\Response;
+use App\Http\Utils\GenericMessage;
+use App\Http\Utils\HttpStatusCode;
+use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\V1\CustomerResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
 {
@@ -47,7 +51,7 @@ class CustomerController extends Controller
         $validated_data['created_by'] = $user->id;
         $user = Customer::create($validated_data);
         if (!$user) {
-            return Response::invalid();
+            return $this->json(Message::invalid(), HttpStatusCode::$UNPROCESSABLE_ENTITY);
         }
         return $this->json(DynamicMessage::customerAdded($validated_data['full_name']));
     }
@@ -56,7 +60,7 @@ class CustomerController extends Controller
     { 
         $customer = Customer::find($id);    
         if(!$customer) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         return new CustomerResource($customer->load('transactions', 'user'));
     }
@@ -68,7 +72,7 @@ class CustomerController extends Controller
         $validated_data['updated_by'] = $user->id;
         $customer->update($validated_data);
         if (!$customer) {
-            return Response::invalid();
+            return $this->json(Message::invalid(), HttpStatusCode::$UNPROCESSABLE_ENTITY);
         }
         return $this->json(DynamicMessage::customerUpdated($customer->full_name));
     }
@@ -77,10 +81,10 @@ class CustomerController extends Controller
     {
         $customer = Customer::find($id);
         if (!$customer) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if($customer->is_active === CustomerStatus::$NOT_ACTIVE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
         $customer->is_active = CustomerStatus::$NOT_ACTIVE;

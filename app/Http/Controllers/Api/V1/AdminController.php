@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
-use App\Http\Utils\Response;
+use App\Http\Requests\StoreRegisterRequest;
+use App\Http\Utils\HttpStatusCode;
+use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
 use App\Http\Utils\Roles;
 use App\Models\Customer;
@@ -14,6 +16,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -71,11 +74,11 @@ class AdminController extends Controller
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
 
         if ($transaction->status === TransactionStatus::$APPROVE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
         $data = $transaction->checkouts;
@@ -83,22 +86,20 @@ class AdminController extends Controller
 
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
-
-        return Response::approve();
+        return $this->json(Message::approve());
     }
 
     public function reject(Transaction $transaction, int $id)
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if ($transaction->status === TransactionStatus::$REJECT) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
         $transaction->status = TransactionStatus::$REJECT;
         $transaction->save();
-
-        return Response::reject();
+        return $this->json(Message::reject());
     }
 }

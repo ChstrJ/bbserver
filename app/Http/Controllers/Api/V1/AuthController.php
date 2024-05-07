@@ -4,17 +4,18 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\user\UserStatus;
-use App\Http\Utils\GenericResponse;
+use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusCode;
-use App\Http\Utils\HttpStatusResponse;
+use App\Http\Utils\HttpStatusMessage;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
-use App\Http\Utils\Response;
+use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -40,7 +41,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (!Auth::attempt($credentials)) {
-            return Response::invalidCredentials();
+            return $this->json(Message::invalidCredentials(), HttpStatusCode::$UNAUTHORIZED);
         }
 
         //get the authenticated user and get the token from the user model

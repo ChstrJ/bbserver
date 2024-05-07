@@ -6,13 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\appointment\AppointmentStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Resources\V1\AppointmentResource;
-use App\Http\Utils\Response;
+use App\Http\Utils\HttpStatusCode;
+use App\Http\Utils\Message;
+use App\Http\Utils\ResponseHelper;
 use App\Models\Appointment;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 
 class AppointmentController extends Controller
 {
+    use ResponseHelper;
     /**
      * Display a listing of the resource.
      */
@@ -41,7 +44,7 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::find($id);
         if (!$appointment) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         return new AppointmentResource($appointment->load('customer', 'user'));
     }
@@ -54,9 +57,9 @@ class AppointmentController extends Controller
         $validated_data = $request->validated();
         $appointment->update($validated_data);
         if (!$appointment) {
-            return Response::invalid();
+            return $this->json(Message::invalid(), HttpStatusCode::$UNPROCESSABLE_ENTITY);
         }
-        return Response::updateResource();
+        return $this->json(Message::updateResource(), HttpStatusCode::$ACCEPTED);
     }
 
     /**
@@ -66,16 +69,16 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::find($id);
         if (!$appointment) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
 
         if ($appointment->is_removed == AppointmentStatus::$REMOVE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$UNPROCESSABLE_ENTITY);
         }
 
         $appointment->is_removed = AppointmentStatus::$REMOVE;
         $appointment->save();
 
-        return Response::updateResource();
+        return $this->json(Message::updateResource(), HttpStatusCode::$ACCEPTED);
     }
 }

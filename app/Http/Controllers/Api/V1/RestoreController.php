@@ -8,7 +8,7 @@ use App\Http\Helpers\customer\CustomerStatus;
 use App\Http\Helpers\product\ProductStatus;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserStatus;
-use App\Http\Utils\Response;
+use App\Http\Utils\Message;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Customer;
 use App\Models\Product;
@@ -41,62 +41,60 @@ class RestoreController extends Controller
     {
         $customer = Customer::find($id);
         if (!$customer) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if ($customer->is_active === CustomerStatus::$ACTIVE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
         $customer->is_active = CustomerStatus::$ACTIVE;
         $customer->save();
 
-        return Response::restoreResource();
+        return $this->json(Message::restoreResource(), HttpStatusCode::$ACCEPTED);
     }
 
     public function restoreTransaction(int $id)
     {
         $order = Transaction::find($id);
         if (!$order) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if ($order->is_removed === TransactionStatus::$RESTORE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
         $order->is_removed = TransactionStatus::$RESTORE;
         $order->save();
 
-        return Response::restoreResource();
+        return $this->json(Message::restoreResource(), HttpStatusCode::$ACCEPTED);
     }
 
     public function restoreEmployee(int $id)
     {
         $user = User::find($id);
         if (!$user) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if($user->is_active === UserStatus::$NOT_ACTIVE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
         $user->is_active = UserStatus::$NOT_ACTIVE;
         $user->save();
-
-        return Response::restoreResource();
+        return $this->json(Message::restoreResource(), HttpStatusCode::$ACCEPTED);
     }
 
     public function restoreProduct(int $id)
     {
         $product = User::find($id);
         if (!$product) {
-            return Response::notFound();
+            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
         }
         if($product->is_removed === ProductStatus::$RESTORE) {
-            return Response::alreadyChanged();
+            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
         }
 
         $product->is_removed = ProductStatus::$RESTORE;
         $product->save();
-
-        return Response::restoreResource();
+        return $this->json(Message::restoreResource(), HttpStatusCode::$ACCEPTED);
     }
 }
