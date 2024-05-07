@@ -36,4 +36,4 @@ RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 EXPOSE 80
 
-CMD ["php-fpm"]
+CMD ["nginx", "-g", "daemon off;"]
