@@ -40,20 +40,22 @@ class AdminController extends Controller
             ->sum('amount_due');
 
         return response()->json([
-            "total_products" => $products,
-            "total_customers" => $customer,
-            "total_employees" => $employee,
+            "inventory" => $products,
+            "customers" => $customer,
+            "employees" => $employee,
+            "orders" => $pending,
+
             "transaction_counts" => [
                 "sales_count" => $sales_count,
                 "pending_count" => $pending_count,
                 "reject_count" => $reject_count,
             ],
             "transactions_total" => [
-                "today_sales" => number_format($today_sales, 2),
-                "total_commission" => number_format($commission, 2),
-                "total_sales" => number_format($sales, 2),
-                "total_pending" => number_format($pending, 2),
-                "total_rejected" => number_format($reject, 2),
+                "today_sales" => $today_sales,
+                "total_commission" => $commission,
+                "total_sales" => $sales,
+                "total_pending" => $pending,
+                "total_rejected" => $reject,
             ],
         ]);
     }
