@@ -6,6 +6,8 @@ use App\Http\Helpers\enums\PaymentMethod;
 use App\Http\Helpers\user\UserService;
 use App\Models\Product;
 use App\Models\Transaction;
+use Carbon\Carbon;
+use DB;
 use Exception;
 
 trait TransactionService
@@ -152,6 +154,91 @@ trait TransactionService
             default:
                 $salesQ->where('created_at', $now);
         }
-        return number_format($salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due'), 2);
+        return $salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due');
+    }
+
+    public static function chartsData($interval)
+    {
+        $now = Carbon::now();
+        $query = Transaction::query();
+
+        $startWeek = $now->startOfWeek()->toDateString();
+        $endWeek = $now->endOfWeek()->toDateString();
+
+        $startYear = $now->startOfYear()->toDateString();
+        $endYear = $now->endOfYear()->toDateString();
+
+        switch ($interval) {
+            case 'weekly':
+
+                $weeklySales = [
+                    'Monday' => 0,
+                    'Tuesday' => 0,
+                    'Wednesday' => 0,
+                    'Thursday' => 0,
+                    'Friday' => 0,
+                    'Saturday' => 0,
+                    'Sunday' => 0,
+                ];
+
+                $weeklySalesData = $query
+                    ->select(DB::raw('DATE(created_at) AS day'), DB::raw('TRUNCATE(SUM(amount_due), 2) AS sales'))
+                    ->where('status', TransactionStatus::$APPROVE)
+                    ->whereBetween('created_at', [$startWeek, $endWeek])
+                    ->groupBy(DB::raw('DATE(created_at)'))
+                    ->get();
+
+
+                for ($i = 0; $i < count($weeklySalesData); $i++) {
+                    $dayName = Carbon::parse($weeklySalesData[$i]->day)->format('l');
+                    $weeklySales[$dayName] = $weeklySalesData[$i]->sales;
+                }
+
+                return $weeklySales;
+
+            case 'monthly':
+
+                $monthSales = [];
+
+                $monthlySales = $query
+                    ->select(DB::raw('MONTH(created_at) AS month'), DB::raw('TRUNCATE(SUM(amount_due), 2) AS total_sales'))
+                    ->where('status', TransactionStatus::$APPROVE)
+                    ->whereBetween('created_at', [$startYear, $endYear])
+                    ->groupBy(DB::raw('MONTH(created_at)'))
+                    ->get();
+
+
+                for ($month = 0; $month < 12; $month++) {
+                    $monthName = Carbon::createFromDate(null, $month)->format('F');
+                    $salesData = $monthlySales->where('month', $month)->first();
+                    $monthSales[$monthName] = $salesData ? $salesData->total_sales : 0;
+                }
+
+                return $monthSales;
+
+            case 'yearly':
+
+                $yearSales = [];
+
+                // get the last 5 years sale
+                $endYear = Carbon::now()->year;
+                $startYear = Carbon::now()->year - 4;
+
+
+                $yearlySalesData = $query
+                    ->select(DB::raw('YEAR(created_at) AS year'), DB::raw('SUM(amount_due) AS total_sales'))
+                    ->where('status', TransactionStatus::$APPROVE)
+                    ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 5 YEAR)')
+                    ->groupBy(DB::raw('YEAR(created_at)'))
+                    ->get()
+                    ->keyBy('year');
+
+                for ($year = $startYear; $year <= $endYear; $year++) {
+                    $yearSales[$year] = $yearlySalesData->has($year) ? $yearlySalesData[$year]->total_sales : 0;
+                }
+
+                return $yearSales;
+        }
+
     }
 }

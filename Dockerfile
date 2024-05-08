@@ -1,39 +1,28 @@
 FROM richarvey/nginx-php-fpm:3.0.0
 
-WORKDIR /var/www/html
-
-# INSTALL DEPENDENCIES
-RUN apk update && apk add --no-cache \
-    git \
+# Install GD and Zip extensions
+RUN apk add --no-cache \
     libpng-dev \
-    zip \
-    unzip \
-    && docker-php-ext-install pdo_mysql gd
-
-# INSTALL COMPOSER
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-COPY composer.json composer.lock ./
-COPY package-lock.json ./
-COPY laravel.conf /etc/nginx/sites-available/default
-
-RUN composer install --no-scripts --no-autoloader
+    libjpeg-turbo-dev \
+    libzip-dev \
+    && docker-php-ext-configure gd --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd zip
 
 COPY . .
 
-RUN composer dump-autoload
+# Image config
+ENV SKIP_COMPOSER 1
+ENV WEBROOT /var/www/html/public
+ENV PHP_ERRORS_STDERR 1
+ENV RUN_SCRIPTS 1
+ENV REAL_IP_HEADER 1
 
-RUN echo "generating application key..."
-RUN php artisan key:generate --show
+# Laravel config
+ENV APP_ENV production
+ENV APP_DEBUG false
+ENV LOG_CHANNEL stderr
 
-RUN echo "Caching config..."
-RUN php artisan config:cache
+# Allow composer to run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
-RUN echo "Caching routes..."
-RUN php artisan route:cache
-
-RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/start.sh"]

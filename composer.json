@@ -10,9 +10,9 @@
         "laravel/breeze": "^1.29",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
+        "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.8",
         "maatwebsite/excel": "*",
-        "spatie/laravel-query-builder": "^5.8",
         "tymon/jwt-auth": "^2.0"
     },
     "require-dev": {

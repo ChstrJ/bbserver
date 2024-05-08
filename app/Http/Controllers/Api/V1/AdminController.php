@@ -13,7 +13,9 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -63,10 +65,10 @@ class AdminController extends Controller
 
     public function chartSales(Request $request)
     {
-        $interval = $request->query('interval');
-        return $this->json([
-            $interval . '_sales' => TransactionService::getChartSalesData($interval)
-        ]);
+
+        $interval = $request->input('interval');
+
+        return $this->json([TransactionService::chartsData($interval)]);
     }
 
     public function approve(Transaction $transaction, int $id)
