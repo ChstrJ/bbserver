@@ -136,7 +136,7 @@ trait TransactionService
         return implode(', ', $names);
     }
 
-    public static function getChartSalesData($interval)
+    public static function test($interval)
     {
         $now = UserService::getDate();
         $salesQ = Transaction::select(['status', 'amount_due', 'created_at']);
@@ -157,7 +157,7 @@ trait TransactionService
         return $salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due');
     }
 
-    public static function chartsData($interval)
+    public static function getChartSalesData($interval)
     {
         $now = Carbon::now();
         $query = Transaction::query();
@@ -189,9 +189,9 @@ trait TransactionService
                     ->get();
 
 
-                for ($i = 0; $i < count($weeklySalesData); $i++) {
-                    $dayName = Carbon::parse($weeklySalesData[$i]->day)->format('l');
-                    $weeklySales[$dayName] = $weeklySalesData[$i]->sales;
+                for ($day = 0; $day < count($weeklySalesData); $day++) {
+                    $dayName = Carbon::parse($weeklySalesData[$day]->day)->format('l');
+                    $weeklySales[$dayName] = $weeklySalesData[$day]->sales;
                 }
 
                 return $weeklySales;
@@ -220,10 +220,9 @@ trait TransactionService
 
                 $yearSales = [];
 
-                // get the last 5 years sale
-                $endYear = Carbon::now()->year;
-                $startYear = Carbon::now()->year - 4;
-
+                //start with the last 5 years through the current yhear
+                $startYear = $now->year - 4;
+                $endYear = $now->year;
 
                 $yearlySalesData = $query
                     ->select(DB::raw('YEAR(created_at) AS year'), DB::raw('SUM(amount_due) AS total_sales'))
