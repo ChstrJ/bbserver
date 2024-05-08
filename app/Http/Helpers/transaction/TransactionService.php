@@ -157,9 +157,10 @@ trait TransactionService
         return $salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due');
     }
 
-    public static function getChartSalesData($interval)
+    public static function getLogScaleData($interval)
     {
         $now = Carbon::now();
+        
         $query = Transaction::query();
 
         $startWeek = $now->startOfWeek()->toDateString();
@@ -182,7 +183,7 @@ trait TransactionService
                 ];
 
                 $weeklySalesData = $query
-                    ->select(DB::raw('DATE(created_at) AS day'), DB::raw('TRUNCATE(SUM(amount_due), 2) AS sales'))
+                    ->select(DB::raw('DATE(created_at) AS day'), DB::raw('TRUNCATE(SUM(amount_due), 2) AS total_sales'))
                     ->where('status', TransactionStatus::$APPROVE)
                     ->whereBetween('created_at', [$startWeek, $endWeek])
                     ->groupBy(DB::raw('DATE(created_at)'))
@@ -191,7 +192,7 @@ trait TransactionService
 
                 for ($day = 0; $day < count($weeklySalesData); $day++) {
                     $dayName = Carbon::parse($weeklySalesData[$day]->day)->format('l');
-                    $weeklySales[$dayName] = $weeklySalesData[$day]->sales;
+                    $weeklySales[$dayName] = $weeklySalesData[$day]->total_sales;
                 }
 
                 return $weeklySales;
@@ -237,6 +238,14 @@ trait TransactionService
                 }
 
                 return $yearSales;
+
+            default:
+                $todaySales = $query
+                    ->where('status', TransactionStatus::$APPROVE)
+                    ->whereDate('created_at', UserService::getDate())
+                    ->sum('amount_due');
+
+                return ["today_sales" => $todaySales];
         }
 
     }

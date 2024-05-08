@@ -68,7 +68,7 @@ class AdminController extends Controller
 
         $interval = $request->input('interval');
 
-        return $this->json(TransactionService::getChartSalesData($interval));
+        return $this->json(TransactionService::getLogScaleData($interval));
     }
 
     public function approve(Transaction $transaction, int $id)
