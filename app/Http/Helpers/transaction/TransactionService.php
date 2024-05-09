@@ -160,7 +160,7 @@ trait TransactionService
     public static function getLogScaleData($interval)
     {
         $now = Carbon::now();
-        
+
         $query = Transaction::query();
 
         $startWeek = $now->startOfWeek()->toDateString();
@@ -183,7 +183,7 @@ trait TransactionService
                 ];
 
                 $weeklySalesData = $query
-                    ->select(DB::raw('DATE(created_at) AS day'), DB::raw('TRUNCATE(SUM(amount_due), 2) AS total_sales'))
+                    ->selectRaw('DATE(created_at) AS day, TRUNCATE(SUM(amount_due), 2) AS total_sales')
                     ->where('status', TransactionStatus::$APPROVE)
                     ->whereBetween('created_at', [$startWeek, $endWeek])
                     ->groupBy(DB::raw('DATE(created_at)'))
@@ -202,7 +202,7 @@ trait TransactionService
                 $monthSales = [];
 
                 $monthlySales = $query
-                    ->select(DB::raw('MONTH(created_at) AS month'), DB::raw('TRUNCATE(SUM(amount_due), 2) AS total_sales'))
+                    ->selectRaw('MONTH(created_at) as month, TRUNCATE(SUM(amount_due), 2) AS total_sales')
                     ->where('status', TransactionStatus::$APPROVE)
                     ->whereBetween('created_at', [$startYear, $endYear])
                     ->groupBy(DB::raw('MONTH(created_at)'))
@@ -226,7 +226,7 @@ trait TransactionService
                 $endYear = $now->year;
 
                 $yearlySalesData = $query
-                    ->select(DB::raw('YEAR(created_at) AS year'), DB::raw('SUM(amount_due) AS total_sales'))
+                    ->selectRaw('YEAR(created_at) as year, SUM(amount_due) AS total_sales')
                     ->where('status', TransactionStatus::$APPROVE)
                     ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 5 YEAR)')
                     ->groupBy(DB::raw('YEAR(created_at)'))

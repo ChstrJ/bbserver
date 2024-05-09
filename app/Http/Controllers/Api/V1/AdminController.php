@@ -28,36 +28,34 @@ class AdminController extends Controller
         $customer = Customer::count();
         $employee = User::where('role_id', Roles::$EMPLOYEE)->count();
 
-        $sales = Transaction::where('status', TransactionStatus::$APPROVE)->sum('amount_due');
-        $reject = Transaction::where('status', TransactionStatus::$REJECT)->sum('amount_due');
-        $pending = Transaction::where('status', TransactionStatus::$PENDING)->sum('amount_due');
-        $commission = Transaction::where('status', TransactionStatus::$APPROVE)->sum('commission');
-
-        $sales_count = Transaction::where('status', TransactionStatus::$APPROVE)->count();
-        $reject_count = Transaction::where('status', TransactionStatus::$REJECT)->count();
-        $pending_count = Transaction::where('status', TransactionStatus::$PENDING)->count();
-
-        $today_sales = Transaction::where('status', TransactionStatus::$APPROVE)
-            ->whereDate('created_at', $today)
-            ->sum('amount_due');
+        $totals = Transaction::selectRaw("
+        COUNT(CASE WHEN status = '".TransactionStatus::$APPROVE."' THEN amount_due ELSE 0 END) AS sales_count,
+        COUNT(CASE WHEN status = '".TransactionStatus::$REJECT."' THEN amount_due ELSE 0 END) AS reject_count,
+        COUNT(CASE WHEN status = '".TransactionStatus::$PENDING."' THEN amount_due ELSE 0 END) AS pending_count,
+        TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today ."' THEN amount_due ELSE 0 END), 2) AS today_sales,
+        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$APPROVE."' THEN amount_due ELSE 0 END), 2) AS total_sales,
+        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$REJECT."' THEN amount_due ELSE 0 END), 2) AS total_rejected,
+        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$PENDING."' THEN amount_due ELSE 0 END), 2) AS total_pending,
+        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$APPROVE."' THEN commission ELSE 0 END), 2) AS total_commission
+        ")->first();
 
         return response()->json([
             "inventory" => $products,
             "customers" => $customer,
             "employees" => $employee,
-            "orders" => $pending,
+            "orders" => $totals->pending_count,
 
             "transaction_counts" => [
-                "sales_count" => $sales_count,
-                "pending_count" => $pending_count,
-                "reject_count" => $reject_count,
+                "sales_count" => $totals->sales_count,
+                "pending_count" => $totals->pending_count,
+                "reject_count" => $totals->reject_count,
             ],
             "transactions_total" => [
-                "today_sales" => $today_sales,
-                "total_commission" => $commission,
-                "total_sales" => $sales,
-                "total_pending" => $pending,
-                "total_rejected" => $reject,
+                "today_sales" => $totals->today_sales,
+                "total_commission" => $totals->total_commission,
+                "total_sales" => $totals->total_sales,
+                "total_pending" => $totals->total_pending,
+                "total_rejected" => $totals->total_rejected,
             ],
         ]);
     }
