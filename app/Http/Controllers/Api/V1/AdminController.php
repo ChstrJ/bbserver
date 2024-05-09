@@ -26,7 +26,7 @@ class AdminController extends Controller
 
         $products = Product::count();
         $customer = Customer::count();
-        $employee = User::where('role_id', Roles::$EMPLOYEE)->count();
+        $employee = User::count();
 
         $totals = Transaction::selectRaw("
         COUNT(CASE WHEN status = '".TransactionStatus::$APPROVE."' THEN amount_due ELSE 0 END) AS sales_count,
