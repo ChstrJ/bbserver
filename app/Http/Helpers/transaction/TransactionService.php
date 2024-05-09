@@ -184,9 +184,9 @@ trait TransactionService
 
                 $weeklySalesData = $query
                     ->selectRaw('DATE(created_at) AS day, TRUNCATE(SUM(amount_due), 2) AS total_sales')
-                    ->where('status', TransactionStatus::$APPROVE)
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereBetween('created_at', [$startWeek, $endWeek])
-                    ->groupBy(DB::raw('DATE(created_at)'))
+                    ->groupByRaw('DATE(created_at)')
                     ->get();
 
 
@@ -202,10 +202,10 @@ trait TransactionService
                 $monthSales = [];
 
                 $monthlySales = $query
-                    ->selectRaw('MONTH(created_at) as month, TRUNCATE(SUM(amount_due), 2) AS total_sales')
-                    ->where('status', TransactionStatus::$APPROVE)
+                    ->selectRaw('MONTH(created_at) AS month, TRUNCATE(SUM(amount_due), 2) AS total_sales')
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereBetween('created_at', [$startYear, $endYear])
-                    ->groupBy(DB::raw('MONTH(created_at)'))
+                    ->groupByRaw('MONTH(created_at)')
                     ->get();
 
 
@@ -226,10 +226,10 @@ trait TransactionService
                 $endYear = $now->year;
 
                 $yearlySalesData = $query
-                    ->selectRaw('YEAR(created_at) as year, SUM(amount_due) AS total_sales')
-                    ->where('status', TransactionStatus::$APPROVE)
+                    ->selectRaw('YEAR(created_at) AS year, SUM(amount_due) AS total_sales')
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 5 YEAR)')
-                    ->groupBy(DB::raw('YEAR(created_at)'))
+                    ->groupByRaw('YEAR(created_at)')
                     ->get()
                     ->keyBy('year');
 
@@ -241,8 +241,8 @@ trait TransactionService
 
             default:
                 $todaySales = $query
-                    ->where('status', TransactionStatus::$APPROVE)
-                    ->whereDate('created_at', UserService::getDate())
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
+                    ->whereRaw('created_at = ?', [UserService::getDate()])
                     ->sum('amount_due');
 
                 return ["today_sales" => $todaySales];
