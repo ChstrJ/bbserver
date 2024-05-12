@@ -61,7 +61,7 @@ class ProductController extends Controller
             $query->orderBy($sortByDesc, 'ASC');
         }
 
-        $products = $query->paginate($perPage);
+        $products = $query->simplePaginate($perPage);
         return new ProductCollection($products);
     }
 

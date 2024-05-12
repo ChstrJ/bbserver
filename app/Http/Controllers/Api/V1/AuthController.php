@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\user\UserService;
 use App\Http\Helpers\user\UserStatus;
 use App\Http\Utils\GenericMessage;
 use App\Http\Utils\HttpStatusCode;
@@ -30,9 +31,8 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'role_id' => 2,
         ]);
-        return response()->json([
-            'data' => new UserResource($user_data),
-        ]);
+        $user = new UserResource($user_data);
+        return $this->json($user);
     }
 
     public function login(StoreLoginRequest $request)
@@ -45,7 +45,7 @@ class AuthController extends Controller
         }
 
         //get the authenticated user and get the token from the user model
-        $user = Auth::user(); 
+        $user = Auth::user();
 
         $user->last_login_at = now();
         $user->last_activity = now();
@@ -53,13 +53,28 @@ class AuthController extends Controller
         $user->save();
 
         //create an access token
-        $access_token = $request->user()->createToken('barista-token')->plainTextToken;
+
+        $access_token = $request->user()->createToken(name: 'personal-token', expiresAt: now()->addWeek())->plainTextToken;
 
         //return the response with bearer
         return response()->json(['user' => new UserResource($user), 'token' => $access_token])
             ->withHeaders(['Authorization' => "Bearer {$access_token}"]);
     }
 
+    public function verify(Request $request)
+    {
+        $user = auth()->user();
+        $token = $user->currentAccessToken(); 
+
+        if (!$token || !$user) {
+            return response()->json(['token_invalid'], 401);
+        }
+
+        if (Carbon::now() >= ($token->expires_at->toDateString())) {
+            return response()->json(['token_expired'], 401);
+        }
+
+    }
     public function logout(Request $request)
     {
         $user = Auth::user();

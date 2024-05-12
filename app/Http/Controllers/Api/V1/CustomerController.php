@@ -40,7 +40,7 @@ class CustomerController extends Controller
             });
         }
 
-        $customers = $query->paginate($perPage);
+        $customers = $query->simplePaginate($perPage);
         return new CustomerCollection($customers);
     }
 

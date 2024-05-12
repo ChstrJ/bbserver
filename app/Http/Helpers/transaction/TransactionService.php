@@ -6,6 +6,8 @@ use App\Http\Helpers\enums\PaymentMethod;
 use App\Http\Helpers\user\UserService;
 use App\Models\Product;
 use App\Models\Transaction;
+use Carbon\Carbon;
+use DB;
 use Exception;
 
 trait TransactionService
@@ -134,7 +136,7 @@ trait TransactionService
         return implode(', ', $names);
     }
 
-    public static function getChartSalesData($interval)
+    public static function test($interval)
     {
         $now = UserService::getDate();
         $salesQ = Transaction::select(['status', 'amount_due', 'created_at']);
@@ -152,6 +154,99 @@ trait TransactionService
             default:
                 $salesQ->where('created_at', $now);
         }
-        return number_format($salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due'), 2);
+        return $salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due');
+    }
+
+    public static function getLogScaleData($interval)
+    {
+        $now = Carbon::now();
+
+        $query = Transaction::query();
+
+        $startWeek = $now->startOfWeek()->toDateString();
+        $endWeek = $now->endOfWeek()->toDateString();
+
+        $startYear = $now->startOfYear()->toDateString();
+        $endYear = $now->endOfYear()->toDateString();
+
+        switch ($interval) {
+            case 'weekly':
+
+                $weeklySales = [
+                    'Monday' => 0,
+                    'Tuesday' => 0,
+                    'Wednesday' => 0,
+                    'Thursday' => 0,
+                    'Friday' => 0,
+                    'Saturday' => 0,
+                    'Sunday' => 0,
+                ];
+
+                $weeklySalesData = $query
+                    ->selectRaw('DATE(created_at) AS day, TRUNCATE(SUM(amount_due), 2) AS total_sales')
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
+                    ->whereBetween('created_at', [$startWeek, $endWeek])
+                    ->groupByRaw('DATE(created_at)')
+                    ->get();
+
+
+                for ($day = 0; $day < count($weeklySalesData); $day++) {
+                    $dayName = Carbon::parse($weeklySalesData[$day]->day)->format('l');
+                    $weeklySales[$dayName] = $weeklySalesData[$day]->total_sales;
+                }
+
+                return $weeklySales;
+
+            case 'monthly':
+
+                $monthSales = [];
+
+                $monthlySales = $query
+                    ->selectRaw('MONTH(created_at) AS month, TRUNCATE(SUM(amount_due), 2) AS total_sales')
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
+                    ->whereBetween('created_at', [$startYear, $endYear])
+                    ->groupByRaw('MONTH(created_at)')
+                    ->get();
+
+
+                for ($month = 0; $month < 12; $month++) {
+                    $monthName = Carbon::createFromDate(null, $month)->format('F');
+                    $salesData = $monthlySales->where('month', $month)->first();
+                    $monthSales[$monthName] = $salesData ? $salesData->total_sales : 0;
+                }
+
+                return $monthSales;
+
+            case 'yearly':
+
+                $yearSales = [];
+
+                //start with the last 5 years through the current yhear
+                $startYear = $now->year - 4;
+                $endYear = $now->year;
+
+                $yearlySalesData = $query
+                    ->selectRaw('YEAR(created_at) AS year, SUM(amount_due) AS total_sales')
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
+                    ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 5 YEAR)')
+                    ->groupByRaw('YEAR(created_at)')
+                    ->get()
+                    ->keyBy('year');
+
+                for ($year = $startYear; $year <= $endYear; $year++) {
+                    $yearSales[$year] = $yearlySalesData->has($year) ? $yearlySalesData[$year]->total_sales : 0;
+                }
+
+                return $yearSales;
+
+            default:
+                $todaySales = $query
+                    ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
+                    ->whereRaw('created_at = ?', [UserService::getDate()])
+                    ->sum('amount_due');
+
+                return ["today_sales" => $todaySales];
+        }
+
     }
 }

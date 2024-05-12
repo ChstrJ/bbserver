@@ -56,7 +56,7 @@ class TransactionController extends Controller
             $query->where('customers.full_name', 'LIKE', "%{$search}%");
         }
 
-        $transaction = $query->paginate($perPage);
+        $transaction = $query->simplePaginate($perPage);
         return new TransactionCollection($transaction);
     }
 
