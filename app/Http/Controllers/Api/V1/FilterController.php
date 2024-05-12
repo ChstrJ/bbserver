@@ -81,7 +81,7 @@ class FilterController extends Controller
                 ->sum('amount_due');
         }
 
-        $transactions = $query->paginate($perPage);
+        $transactions = $query->simplePaginate($perPage);
 
         $transactionCollection = new TransactionCollection($transactions);
 
@@ -108,7 +108,7 @@ class FilterController extends Controller
             $query->where('full_name', 'LIKE', "%$employeeName%");
         }
 
-        $user = $query->paginate($perPage);
+        $user = $query->simplePaginate($perPage);
         return new UserCollection($user);
     }
 
@@ -150,7 +150,7 @@ class FilterController extends Controller
             $query->orderBy("transactions.$sortByAsc", 'ASC');
         }
 
-        $transaction = $query->paginate($perPage);
+        $transaction = $query->simplePaginate($perPage);
         return new TransactionCollection($transaction);
     }
 }

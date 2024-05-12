@@ -30,9 +30,8 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'role_id' => 2,
         ]);
-        return response()->json([
-            'data' => new UserResource($user_data),
-        ]);
+        $user = new UserResource($user_data);
+        return $this->json($user);
     }
 
     public function login(StoreLoginRequest $request)
