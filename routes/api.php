@@ -29,7 +29,7 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     //employee scope
-    Route::get('/auth/verify', [AuthController::class, 'verify']);
+    Route::get('/auth/verify', [AuthController::class, 'verifyToken']);
     Route::apiResource('/products', ProductController::class);
     Route::apiResource('/orders', TransactionController::class)->except(['update']);
     Route::apiResource('/customers', CustomerController::class);

@@ -8,7 +8,6 @@ use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
 use App\Models\Transaction;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FilterController extends Controller
@@ -81,7 +80,7 @@ class FilterController extends Controller
                 ->sum('amount_due');
         }
 
-        $transactions = $query->simplePaginate($perPage);
+        $transactions = $query->paginate($perPage);
 
         $transactionCollection = new TransactionCollection($transactions);
 
@@ -108,7 +107,7 @@ class FilterController extends Controller
             $query->where('full_name', 'LIKE', "%$employeeName%");
         }
 
-        $user = $query->simplePaginate($perPage);
+        $user = $query->paginate($perPage);
         return new UserCollection($user);
     }
 
@@ -116,9 +115,7 @@ class FilterController extends Controller
     {
 
         $perPage = $request->input('per_page', 15);
-        $employeeName = $request->input('employee');
-        $customerName = $request->input('customer');
-        $searchByRefNo = $request->input('search_by_ref');
+        $search = $request->input('search');
         $sortByAsc = $request->input('sort_date_asc');
         $sortByDesc = $request->input('sort_date_desc');
 
@@ -130,16 +127,13 @@ class FilterController extends Controller
             ->where('transactions.status', 'pending')
             ->orderByDesc('transactions.created_at');
 
-        if ($employeeName) {
-            $query->where('user.full_name', 'LIKE', "%{$employeeName}%");
-        }
 
-        if ($customerName) {
-            $query->where('user.full_name', 'LIKE', "%{$customerName}%");
-        }
-
-        if ($searchByRefNo) {
-            $query->where('transactions.reference_number', 'LIKE', "%{$searchByRefNo}%");
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('transactions.reference_number', 'LIKE', "%{$search}%")
+                    ->orWhere('users.full_name', 'LIKE', "%{$search}%")
+                    ->orWhere('customers.full_name', 'LIKE', "%{$search}%");
+            });
         }
 
         if ($sortByDesc) {
@@ -150,7 +144,7 @@ class FilterController extends Controller
             $query->orderBy("transactions.$sortByAsc", 'ASC');
         }
 
-        $transaction = $query->simplePaginate($perPage);
+        $transaction = $query->paginate($perPage);
         return new TransactionCollection($transaction);
     }
 }

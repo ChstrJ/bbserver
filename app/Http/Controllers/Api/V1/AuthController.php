@@ -60,9 +60,9 @@ class AuthController extends Controller
             ->withHeaders(['Authorization' => "Bearer {$access_token}"]);
     }
 
-    public function verify(Request $request)
+    public function verifyToken(Request $request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $token = $user->currentAccessToken(); 
 
         if (!$token || !$user) {
@@ -72,6 +72,10 @@ class AuthController extends Controller
         if (Carbon::now() >= ($token->expires_at->toDateString())) {
             return response()->json(['token_expired'], 401);
         }
+    }
+
+    public function refreshToken(Request $request)
+    {
 
     }
     public function logout(Request $request)

@@ -8,14 +8,11 @@ use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
-use App\Http\Utils\Roles;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -63,9 +60,7 @@ class AdminController extends Controller
 
     public function chartSales(Request $request)
     {
-
         $interval = $request->input('interval');
-
         return $this->json(TransactionService::getLogScaleData($interval));
     }
 
