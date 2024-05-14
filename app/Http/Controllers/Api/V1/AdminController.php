@@ -26,14 +26,14 @@ class AdminController extends Controller
         $employee = User::count();
 
         $totals = Transaction::selectRaw("
-        COUNT(CASE WHEN status = '".TransactionStatus::$APPROVE."' THEN amount_due ELSE 0 END) AS sales_count,
-        COUNT(CASE WHEN status = '".TransactionStatus::$REJECT."' THEN amount_due ELSE 0 END) AS reject_count,
-        COUNT(CASE WHEN status = '".TransactionStatus::$PENDING."' THEN amount_due ELSE 0 END) AS pending_count,
+        COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS sales_count,
+        COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS reject_count,
+        COUNT(CASE WHEN status = 'pending' THEN  status ELSE null END) AS pending_count,
         TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today ."' THEN amount_due ELSE 0 END), 2) AS today_sales,
-        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$APPROVE."' THEN amount_due ELSE 0 END), 2) AS total_sales,
-        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$REJECT."' THEN amount_due ELSE 0 END), 2) AS total_rejected,
-        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$PENDING."' THEN amount_due ELSE 0 END), 2) AS total_pending,
-        TRUNCATE(SUM(CASE WHEN status = '".TransactionStatus::$APPROVE."' THEN commission ELSE 0 END), 2) AS total_commission
+        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS total_sales,
+        TRUNCATE(SUM(CASE WHEN status = 'rejected' THEN amount_due ELSE 0 END), 2) AS total_rejected,
+        TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
+        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission
         ")->first();
 
         return response()->json([
