@@ -1,145 +1,68 @@
 <?php
 
-namespace App\Http\Helpers\transaction;
+namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Helpers\enums\PaymentMethod;
+use App\Http\Controllers\Controller;
+use App\Http\Helpers\customer\CustomerStatus;
+use App\Http\Helpers\product\ProductStatus;
+use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
 use Carbon\Carbon;
-use DB;
-use Exception;
+use Illuminate\Http\Request;
 
-trait TransactionService
+class EmployeeController extends Controller
 {
-    public static function processTransaction($data)
+    public function getAllTotal()
     {
+        $today = UserService::getDate();
+        $id = UserService::getUserId();
+        $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
+        $customer = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
 
-        $total_items = 0;
-        $total_amount = 0;
-        $commission = 0;
-
-        foreach ($data['checkouts'] as $product_data) {
-            //get the product_id 
-            $product = Product::find($product_data['id']);
-
-            $mem_price = $product->member_price;
-
-            //get the product srp from the db
-            $produt_price = $product->srp;
-
-            if (!$product) {
-                throw new Exception("$product->id not found");
-            }
-
-            //get the qty and srp from the request 
-            $qty = $product_data['quantity'];
-            $srp = $product_data['srp'];
-            $name = $product_data['name'];
-
-            //compare if the req qty payload is > product qty from the db
-            if ($qty > $product->quantity) {
-                throw new Exception('The selected product is out of stock!');
-            }
-
-            if ($product->name !== $name) {
-                throw new Exception('Invalid product name');
-            }
-
-            //check if the srp is the same in the db
-            if ($srp !== $produt_price) {
-                throw new Exception('Invalid product SRP');
-            }
+        $totals = Transaction::selectRaw("
+        COUNT(CASE WHEN status = 'approved' AND user_id = " . $id . " THEN status ELSE null END) AS sales_count,
+        COUNT(CASE WHEN status = 'pending' AND user_id = " . $id . " THEN status ELSE null END) AS pending_count,
+        COUNT(CASE WHEN status = 'rejected' AND user_id = " . $id . " THEN status ELSE null END) AS reject_count,
+        TRUNCATE(SUM(CASE WHEN status = 'pending' AND user_id = " . $id . " THEN amount_due ELSE 0 END), 2) AS total_pending,
+        TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = " . $id . " THEN amount_due ELSE 0 END), 2) AS overall_sales,
+        TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = " . $id . " THEN commission ELSE 0 END), 2) AS total_commission,
+        TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = " . $id . " AND DATE(created_at) = " . $today . " THEN amount_due ELSE 0 END), 2) AS today_sales
+        ")->first();
 
 
-            //update the total amount and total qty
-            $total_items += $qty;
-            $total_amount += $qty * $srp;
+        return response()->json([
+            "inventory" => $products,
+            "customers" => $customer,
+            "orders" => $totals->pending_count,
 
-            //compute the commission
-            $commission += $srp - $mem_price;
-        }
+            "total_counts" => [
+                "sales_count" => $totals->sales_count,
+                "pending_count" => $totals->pending_count,
+                "reject_count" => $totals->reject_count,
+            ],
 
-        return ['total_amount' => $total_amount, 'total_items' => $total_items, 'commission' => $commission];
+            "total_transactions" => [
+                "overall_sales" => $totals->overall_sales,
+                "today_sales" => $totals->today_sales,
+                "total_commission" => $totals->total_commission,
+                "total_pending" => $totals->total_pending,
+            ],
+        ]);
     }
 
-    public static function decrementQty($data)
+    public function chartSales(Request $request)
     {
-
-        foreach ($data as $checkouts) {
-            $product = Product::find($checkouts['id']);
-
-            $qty = $checkouts['quantity'];
-
-            if (!$product) {
-                throw new Exception('Product ID not found.');
-            }
-
-            $product->decrement('quantity', $qty);
-        }
-
+        $interval = $request->input('interval');
+        return response()->json($this->getLogScaleData($interval));
     }
 
-    public static function generateReference()
-    {
-        $start = 0;
-        $rand = strtoupper(substr(uniqid(), 9));
-        return 'BB' . now()->format('Ymd') . $rand;
-    }
-
-    public static function generateFilename()
-    {
-        $date = UserService::getDate();
-        $rand = substr(uniqid(), 10);
-        return "sales-{$date}-{$rand}.xlsx";
-    }
-
-
-    // FOR IMAGE UPLOADING IMAGE
-    // ENABLE THIS FEATURE IF NEEDED
-
-    // public static function uploadPayment($image)
-    // {
-    //     if ($image->has('image')) {
-    //         $file = $image->file('image');
-
-    //         $extension = $file->getClientOriginalExtension();
-    //         $filename = time() . '.' . $extension;
-
-    //         $path = 'uploads/image/';
-    //         $file->move($path, $filename);
-
-    //         return $path . $filename;
-    //     }
-    // }
-
-    public static function toMethod(int $payments)
-    {
-        switch ($payments) {
-            case 1:
-                return $payments = PaymentMethod::$CASH;
-            case 2:
-                return $payments = PaymentMethod::$COD;
-            default:
-                return 'N/A';
-        }
-    }
-
-    public static function processCheckouts($data)
-    {
-        $names = [];
-
-        for ($i = 0; $i < count($data); $i++) {
-            $names[] = $data[$i]['name'];
-        }
-
-        return implode(', ', $names);
-    }
-
-
-    public static function getLogScaleData($interval)
+    private static function getLogScaleData($interval)
     {
         $now = Carbon::now();
+        $id = UserService::getUserId();
 
         $query = Transaction::query();
 
@@ -164,6 +87,7 @@ trait TransactionService
 
                 $weeklySalesData = $query
                     ->selectRaw('DATE(created_at) AS day, TRUNCATE(SUM(amount_due), 2) AS total_sales')
+                    ->where('user_id', $id)
                     ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereBetween('created_at', [$startWeek, $endWeek])
                     ->groupByRaw('DATE(created_at)')
@@ -183,6 +107,7 @@ trait TransactionService
 
                 $monthlySales = $query
                     ->selectRaw('MONTH(created_at) AS month, TRUNCATE(SUM(amount_due), 2) AS total_sales')
+                    ->where('user_id', $id)
                     ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereBetween('created_at', [$startYear, $endYear])
                     ->groupByRaw('MONTH(created_at)')
@@ -207,6 +132,7 @@ trait TransactionService
 
                 $yearlySalesData = $query
                     ->selectRaw('YEAR(created_at) AS year, SUM(amount_due) AS total_sales')
+                    ->where('user_id', $id)
                     ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 5 YEAR)')
                     ->groupByRaw('YEAR(created_at)')

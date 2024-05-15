@@ -71,6 +71,7 @@ class Kernel extends HttpKernel
         //custom
         'logs' => \App\Http\Middleware\LogUserActivity::class,
         'admin' => \App\Http\Middleware\AdminRole::class,
+        'employee' => \App\Http\Middleware\EmployeeRole::class,
         'online' =>  \App\Http\Middleware\OnlineChecker::class,
     ];
 }

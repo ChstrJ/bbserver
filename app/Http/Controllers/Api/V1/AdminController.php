@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\customer\CustomerStatus;
+use App\Http\Helpers\product\ProductStatus;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
+use App\Http\Helpers\user\UserStatus;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Customer;
@@ -21,19 +24,19 @@ class AdminController extends Controller
     {
         $today = UserService::getDate();
 
-        $products = Product::count();
-        $customer = Customer::count();
-        $employee = User::count();
+        $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
+        $customer = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
+        $employee = User::whereNot('is_active', UserStatus::$NOT_ACTIVE)->count();
 
         $totals = Transaction::selectRaw("
         COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS sales_count,
         COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS reject_count,
         COUNT(CASE WHEN status = 'pending' THEN  status ELSE null END) AS pending_count,
-        TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today ."' THEN amount_due ELSE 0 END), 2) AS today_sales,
         TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS total_sales,
         TRUNCATE(SUM(CASE WHEN status = 'rejected' THEN amount_due ELSE 0 END), 2) AS total_rejected,
         TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
-        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission
+        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission,
+        TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today ."' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
         return response()->json([

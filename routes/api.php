@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AdminController;
+use App\Http\Controllers\Api\V1\EmployeeController;
 use App\Http\Controllers\Api\V1\ExportController;
 use App\Http\Controllers\Api\V1\RestoreController;
 use Illuminate\Support\Facades\Route;
@@ -28,18 +29,24 @@ use App\Http\Controllers\Api\V1\FilterController;
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
-    //employee scope
     Route::get('/auth/verify', [AuthController::class, 'verifyToken']);
-    Route::apiResource('/products', ProductController::class);
-    Route::apiResource('/orders', TransactionController::class)->except(['update']);
-    Route::apiResource('/customers', CustomerController::class);
-    Route::apiResource('/appointments', AppointmentController::class);
+    Route::get('/auth/user', [AuthController::class, 'getUserInfo']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
-    
-    Route::group(['middleware' => 'admin'], function () {
-        Route::apiResource('/users', UserController::class);
 
+    Route::group(['middleware' => 'employee'], function () {
+        //employee scope
+        Route::get('/employee/summary', [EmployeeController::class, 'getAllTotal']);
+        Route::get('/employee/chart/sales', [EmployeeController::class, 'chartSales']);
+        Route::apiResource('/products', ProductController::class);
+        Route::apiResource('/orders', TransactionController::class)->except(['update']);
+        Route::apiResource('/customers', CustomerController::class);
+        Route::apiResource('/appointments', AppointmentController::class);
+    });
+
+
+    Route::group(['middleware' => 'admin'], function () {
         //admin scope
+        Route::apiResource('/users', UserController::class);
         Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
         Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
@@ -48,7 +55,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::get('/admin/chart/sales', [AdminController::class, 'chartSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
-        
+
         //for restoring resources
         Route::get('/admin/deleted-customers', [RestoreController::class, 'getAllDeletedCustomers']);
         Route::get('/admin/deleted-orders', [RestoreController::class, 'getAllDeletedTransactions']);

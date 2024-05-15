@@ -52,15 +52,6 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function isAdmin() : int
-    {
-        return $this->role_id == Roles::$ADMIN;
-    }
-
-    public function isEmployee() : int
-    {
-        return $this->role_id == Roles::$EMPLOYEE;
-    }
 
     public function isOnline() : bool
     {                        
