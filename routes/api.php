@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AppointmentController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AdminController;
+use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\EmployeeController;
 use App\Http\Controllers\Api\V1\ExportController;
 use App\Http\Controllers\Api\V1\RestoreController;
@@ -43,10 +44,10 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::apiResource('/appointments', AppointmentController::class);
     });
 
-
     Route::group(['middleware' => 'admin'], function () {
         //admin scope
         Route::apiResource('/users', UserController::class);
+        Route::apiResource('/categories', CategoryController::class);
         Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
         Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
@@ -65,27 +66,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::patch('/admin/restore/order/{id}', [RestoreController::class, 'restoreTransaction']);
         Route::patch('/admin/restore/employee/{id}', [RestoreController::class, 'restoreEmployee']);
         Route::patch('/admin/restore/product/{id}', [RestoreController::class, 'restoreProduct']);
+
+        Route::post('/admin-create', [AdminController::class, 'createAdmin']);
     });
 });
-
-
-
-
-
-
-// Route::get('/products', [ProductController::class, 'index']);
-//     Route::get('/users', [UserController::class, 'index']);
-//     Route::post('/users', [UserController::class, 'store']);
-//     Route::get('/users/{id}', [UserController::class, 'show']);
-//     Route::post('/logout', [AuthController::class, 'logout']);
-//     Route::get('/products/{id}', [ProductController::class, 'show']);
-//     Route::post('/products', [ProductController::class, 'store']);
-//     Route::patch('/products/{id}', [ProductController::class, 'edit']);
-//     Route::put('/products/{id}', [ProductController::class, 'update']);
-//     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
-//     Route::post('/pos', [TransactionController::class, 'store']);
-//     Route::get('/pos/', [TransactionController::class, 'index']);
-//     Route::get('/pos/{id}', [TransactionController::class, 'show']);
-//     Route::delete('/pos/{id}', [TransactionController::class, 'destroy']);
-//     Route::put('/pos/{id}', [TransactionController::class, 'update']);
-//     Route::patch('/pos/{id}', [TransactionController::class, 'update']);

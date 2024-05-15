@@ -9,6 +9,7 @@ use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Helpers\user\UserStatus;
+use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Customer;
@@ -100,5 +101,17 @@ class AdminController extends Controller
         $transaction->save();
 
         return Response::reject();
+    }
+
+    public function createAdmin(StoreRegisterRequest $request) 
+    {
+        $data = $request->validated();
+        User::create([
+            'full_name' => $data['full_name'],
+            'username' => $data['username'],
+            'password' => bcrypt($data['password']),
+            'role_id' => 1,
+        ]);
+        return response('',200);
     }
 }

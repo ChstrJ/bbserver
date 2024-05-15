@@ -9,7 +9,7 @@ class Response
     public static function createResource()
     {
         $msg = ["message" => GenericMessage::$CREATE];
-        $code = HttpStatusCode::$OK;
+        $code = HttpStatusCode::$CREATED;
         return response()->json($msg, $code);
     }
 

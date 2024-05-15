@@ -14,9 +14,6 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Crypt;
-
 class AuthController extends Controller
 {
     use ResponseHelper;
@@ -29,8 +26,7 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'role_id' => 2,
         ]);
-        $user = new UserResource($user_data);
-        return $this->json($user);
+        return Response::createResource();
     }
 
     public function login(StoreLoginRequest $request)
