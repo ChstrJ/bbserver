@@ -32,8 +32,8 @@ class AdminController extends Controller
         $totals = Transaction::selectRaw("
         COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS sales_count,
         COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS reject_count,
-        COUNT(CASE WHEN status = 'pending' THEN  status ELSE null END) AS pending_count,
-        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS total_sales,
+        COUNT(status) AS pending_count,
+        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS overall_sales,
         TRUNCATE(SUM(CASE WHEN status = 'rejected' THEN amount_due ELSE 0 END), 2) AS total_rejected,
         TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
         TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission,
@@ -54,7 +54,7 @@ class AdminController extends Controller
             "transactions_total" => [
                 "today_sales" => $totals->today_sales,
                 "total_commission" => $totals->total_commission,
-                "total_sales" => $totals->total_sales,
+                "overall_sales" => $totals->overall_sales,
                 "total_pending" => $totals->total_pending,
                 "total_rejected" => $totals->total_rejected,
             ],

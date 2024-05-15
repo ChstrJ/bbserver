@@ -30,7 +30,7 @@ class FilterController extends Controller
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->whereNot('transactions.is_removed', TransactionStatus::$REMOVE)
-            ->orderBy('transactions.status')
+            ->where('transactions.status', TransactionStatus::$APPROVE)
             ->with('user', 'customer');
 
         if ($startDate && $endDate) {
@@ -124,7 +124,7 @@ class FilterController extends Controller
             ->with('customer', 'user')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->where('transactions.status', 'pending')
+            ->orderBy('transactions.status', 'ASC')
             ->orderByDesc('transactions.created_at');
 
 
