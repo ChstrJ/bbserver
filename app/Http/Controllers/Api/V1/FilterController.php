@@ -121,6 +121,7 @@ class FilterController extends Controller
         $sortByAsc = $request->input('sort_date_asc');
         $sortByDesc = $request->input('sort_date_desc');
         $paymentMethod = $request->input('payment_method');
+        $employeeId = $request->input('employee_id');
 
         $query = Transaction::query()
             ->select('transactions.*', 'customers.full_name', 'users.full_name')
@@ -134,7 +135,6 @@ class FilterController extends Controller
             $query->whereDate('transactions.created_at', '>=', $startDate)
                 ->whereDate('transactions.created_at', '<=', $endDate);
         }
-
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -158,6 +158,10 @@ class FilterController extends Controller
 
         if ($sortByAsc) {
             $query->orderBy("transactions.$sortByAsc", 'ASC');
+        }
+
+        if ($employeeId) {
+            $query->where('users.id', $employeeId);
         }
 
         $transaction = $query->paginate($perPage);
