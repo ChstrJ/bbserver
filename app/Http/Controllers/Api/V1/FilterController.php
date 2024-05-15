@@ -113,11 +113,14 @@ class FilterController extends Controller
 
     public function filterOrders(Request $request)
     {
-
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $perPage = $request->input('per_page', 15);
         $search = $request->input('search');
+        $status = $request->input('status');
         $sortByAsc = $request->input('sort_date_asc');
         $sortByDesc = $request->input('sort_date_desc');
+        $paymentMethod = $request->input('payment_method');
 
         $query = Transaction::query()
             ->select('transactions.*', 'customers.full_name', 'users.full_name')
@@ -127,6 +130,11 @@ class FilterController extends Controller
             ->orderBy('transactions.status', 'ASC')
             ->orderByDesc('transactions.created_at');
 
+        if ($startDate && $endDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate)
+                ->whereDate('transactions.created_at', '<=', $endDate);
+        }
+
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -134,6 +142,14 @@ class FilterController extends Controller
                     ->orWhere('users.full_name', 'LIKE', "%{$search}%")
                     ->orWhere('customers.full_name', 'LIKE', "%{$search}%");
             });
+        }
+
+        if ($status) {
+            $query->where("transactions.status", $status);
+        }
+
+        if ($paymentMethod) {
+            $query->where("transactions.payment_method", $paymentMethod);
         }
 
         if ($sortByDesc) {
