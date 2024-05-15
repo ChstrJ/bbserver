@@ -60,7 +60,11 @@ trait TransactionService
             $commission += $srp - $mem_price;
         }
 
-        return ['total_amount' => $total_amount, 'total_items' => $total_items, 'commission' => $commission];
+        return [
+            'total_amount' => $total_amount,
+            'total_items' => $total_items,
+            'commission' => $commission
+        ];
     }
 
     public static function decrementQty($data)

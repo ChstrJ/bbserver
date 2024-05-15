@@ -33,8 +33,8 @@ class ProductController extends Controller
 
         $query = Product::query()
             ->whereNot('is_removed', ProductStatus::$REMOVE)
-            ->orderBy('created_at')
-            ->orderBy('updated_at');
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('updated_at', 'DESC');
 
         if ($search) {
             $query->where(function ($q) use ($search) {

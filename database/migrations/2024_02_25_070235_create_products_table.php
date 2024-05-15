@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->string('name');
             $table->string('description');
             $table->integer('quantity')->check('quantity >= 0');
-            $table->float('srp');
-            $table->float('member_price');
+            $table->decimal('srp');
+            $table->decimal('member_price');
             $table->boolean('is_removed')->default(false);
             $table->timestamps();
             $table->tinyInteger('created_by')->nullable();
