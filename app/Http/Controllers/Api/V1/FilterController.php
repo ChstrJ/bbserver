@@ -33,7 +33,7 @@ class FilterController extends Controller
             ->where('transactions.status', TransactionStatus::$APPROVE)
             ->with('user', 'customer');
 
-        if ($startDate && $endDate) {
+        if ($startDate || $endDate) {
             $query->whereDate('transactions.created_at', '>=', $startDate)
                 ->whereDate('transactions.created_at', '<=', $endDate);
         }
