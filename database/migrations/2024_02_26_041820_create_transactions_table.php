@@ -15,12 +15,12 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->string('reference_number');
-            $table->float('amount_due');
+            $table->decimal('amount_due');
             $table->integer('number_of_items');
             $table->tinyInteger('payment_method');
             $table->json('checkouts');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->float('commission')->nullable();
+            $table->decimal('commission')->nullable();
             $table->timestamps();
             
             $table->foreignId('user_id')
