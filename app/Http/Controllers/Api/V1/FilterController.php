@@ -38,10 +38,10 @@ class FilterController extends Controller
                     ->whereDate('transactions.created_at', '<=', $endDate);
             } 
             else if ($startDate) {
-                $query->whereDate('transactions.created_at', '=', $startDate);
+                $query->whereDate('transactions.created_at', '>=', $startDate);
             } 
             else if ($endDate) {
-                $query->whereDate('transactions.created_at', '=', $endDate);
+                $query->whereDate('transactions.created_at', '<=', $endDate);
             }
 
         if ($status) {
@@ -143,10 +143,10 @@ class FilterController extends Controller
                 ->whereDate('transactions.created_at', '<=', $endDate);
         } 
         else if ($startDate) {
-            $query->whereDate('transactions.created_at', '=', $startDate);
+            $query->whereDate('transactions.created_at', '>=', $startDate);
         } 
         else if ($endDate) {
-            $query->whereDate('transactions.created_at', '=', $endDate);
+            $query->whereDate('transactions.created_at', '<=', $endDate);
         }
 
         if ($search) {
