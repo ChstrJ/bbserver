@@ -23,6 +23,8 @@ class TransactionController extends Controller
     {
 
         //get the request input per page in query params
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $perPage = $request->input('per_page', 15);
         $sortByDesc = $request->input('sort_by_desc');
         $sortByAsc = $request->input('sort_by_asc');
@@ -35,6 +37,15 @@ class TransactionController extends Controller
             ->where('transactions.user_id', UserService::getUserId())
             ->orderByDesc('transactions.created_at')
             ->with('customer', 'user');
+
+        if ($startDate && $endDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate)
+                ->whereDate('transactions.created_at', '<=', $endDate);
+        } else if ($startDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate);
+        } else if ($endDate) {
+            $query->whereDate('transactions.created_at', '<=', $endDate);
+        }
 
         if ($sortByDesc) {
             $query->orderBy("transactions.$sortByDesc", 'DESC');
