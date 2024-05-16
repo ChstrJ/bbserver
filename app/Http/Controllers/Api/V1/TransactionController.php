@@ -49,7 +49,10 @@ class TransactionController extends Controller
         }
 
         if ($search) {
-            $query->where('customers.full_name', 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('transactions.reference_number', 'LIKE', "%{$search}%")
+                    ->orWhere('customers.name', 'LIKE', "%{$search}%");
+            });
         }
 
         $transaction = $query->paginate($perPage);
