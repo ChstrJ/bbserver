@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
+use App\Http\Helpers\user\UserStatus;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
 use App\Models\Transaction;
@@ -30,10 +31,9 @@ class FilterController extends Controller
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->whereNot('transactions.is_removed', TransactionStatus::$REMOVE)
-            ->where('transactions.status', TransactionStatus::$APPROVE)
             ->with('user', 'customer');
 
-        if (($startDate && $endDate) || ($startDate || $endDate)) { 
+        if (($startDate && $endDate) || ($startDate || $endDate)) {
             $query->whereDate('transactions.created_at', '>=', $startDate)
                 ->whereDate('transactions.created_at', '<=', $endDate);
         }
@@ -101,6 +101,7 @@ class FilterController extends Controller
         $query = User::query()
             ->select('*')
             ->orderByDesc('last_login_at')
+            ->whereNot('is_active', UserStatus::$NOT_ACTIVE)
             ->with('products', 'transactions');
 
         if ($employeeName) {
@@ -131,7 +132,7 @@ class FilterController extends Controller
             ->orderBy('transactions.status', 'ASC')
             ->orderByDesc('transactions.created_at');
 
-        if ($startDate && $endDate) {
+        if (($startDate && $endDate) || ($startDate || $endDate)) {
             $query->whereDate('transactions.created_at', '>=', $startDate)
                 ->whereDate('transactions.created_at', '<=', $endDate);
         }
