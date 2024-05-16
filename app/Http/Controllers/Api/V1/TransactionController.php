@@ -28,6 +28,7 @@ class TransactionController extends Controller
         $perPage = $request->input('per_page', 15);
         $sortByDesc = $request->input('sort_by_desc');
         $sortByAsc = $request->input('sort_by_asc');
+        $categoryId = $request->input('category_id');
         $search = $request->input('search');
         $status = $request->input('status');
 
@@ -45,6 +46,10 @@ class TransactionController extends Controller
             $query->whereDate('transactions.created_at', '>=', $startDate);
         } else if ($endDate) {
             $query->whereDate('transactions.created_at', '<=', $endDate);
+        }
+
+        if($categoryId) {
+            $query->where('category_id', $categoryId);
         }
 
         if ($sortByDesc) {

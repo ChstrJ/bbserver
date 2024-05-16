@@ -33,16 +33,14 @@ class FilterController extends Controller
             ->whereNot('transactions.is_removed', TransactionStatus::$REMOVE)
             ->with('user', 'customer');
 
-            if ($startDate && $endDate) {
-                $query->whereDate('transactions.created_at', '>=', $startDate)
-                    ->whereDate('transactions.created_at', '<=', $endDate);
-            } 
-            else if ($startDate) {
-                $query->whereDate('transactions.created_at', '>=', $startDate);
-            } 
-            else if ($endDate) {
-                $query->whereDate('transactions.created_at', '<=', $endDate);
-            }
+        if ($startDate && $endDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate)
+                ->whereDate('transactions.created_at', '<=', $endDate);
+        } else if ($startDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate);
+        } else if ($endDate) {
+            $query->whereDate('transactions.created_at', '<=', $endDate);
+        }
 
         if ($status) {
             $query->where("transactions.status", $status);
@@ -141,11 +139,9 @@ class FilterController extends Controller
         if ($startDate && $endDate) {
             $query->whereDate('transactions.created_at', '>=', $startDate)
                 ->whereDate('transactions.created_at', '<=', $endDate);
-        } 
-        else if ($startDate) {
+        } else if ($startDate) {
             $query->whereDate('transactions.created_at', '>=', $startDate);
-        } 
-        else if ($endDate) {
+        } else if ($endDate) {
             $query->whereDate('transactions.created_at', '<=', $endDate);
         }
 
