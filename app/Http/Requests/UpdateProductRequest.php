@@ -27,11 +27,10 @@ class UpdateProductRequest extends FormRequest
             'category_id' => "sometimes|int|min:1|exists:categories,id",
             'name' => 'sometimes|string|min:2',
             'description' => 'sometimes|string|min:2',
-            'quantity' => 'sometimes|int|min:1|max:999999',
-            'srp' => 'sometimes|numeric|min:1|max:999999',
+            'quantity' => 'sometimes|int|min:1|max:10000',
+            'srp' => 'sometimes|numeric|min:1|max:500000',
             'is_removed' => 'sometimes|boolean',
-            'member_price' => 'sometimes|numeric|min:1|max:999999',
-            'updated_by' => "sometimes|int|exists:users,id",
+            'member_price' => 'sometimes|numeric|min:1|max:500000',
         ];
     }
 }

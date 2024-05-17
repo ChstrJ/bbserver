@@ -5,9 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\user\UserService;
 use App\Http\Helpers\user\UserStatus;
-use App\Http\Utils\GenericMessage;
-use App\Http\Utils\HttpStatusCode;
-use App\Http\Utils\HttpStatusMessage;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
@@ -18,7 +15,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-
 class AuthController extends Controller
 {
     use ResponseHelper;
@@ -31,8 +27,7 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
             'role_id' => 2,
         ]);
-        $user = new UserResource($user_data);
-        return $this->json($user);
+        return Response::createResource();
     }
 
     public function login(StoreLoginRequest $request)
@@ -46,7 +41,6 @@ class AuthController extends Controller
 
         //get the authenticated user and get the token from the user model
         $user = Auth::user();
-
         $user->last_login_at = now();
         $user->last_activity = now();
         $user->status = UserStatus::$ONLINE;
@@ -54,36 +48,48 @@ class AuthController extends Controller
 
         //create an access token
 
+        $user = new UserResource($user);
+
         $access_token = $request->user()->createToken(name: 'personal-token', expiresAt: now()->addWeek())->plainTextToken;
 
-        //return the response with bearer
-        return response()->json(['user' => new UserResource($user), 'token' => $access_token])
+        //return the response with bearer token with cookie
+        return response()->json(['user' => $user, 'token' => $access_token])
             ->withHeaders(['Authorization' => "Bearer {$access_token}"]);
+
     }
 
-    public function verify(Request $request)
+    public function verifyToken(Request $request)
     {
-        $user = auth()->user();
-        $token = $user->currentAccessToken(); 
-
+        $user = Auth::user();
+        $token = $user->currentAccessToken();
+        
         if (!$token || !$user) {
             return response()->json(['token_invalid'], 401);
         }
 
-        if (Carbon::now() >= ($token->expires_at->toDateString())) {
+        if (Carbon::now()->toDateString() >= ($token->expires_at->toDateString())) {
             return response()->json(['token_expired'], 401);
         }
-
     }
+
     public function logout(Request $request)
     {
         $user = Auth::user();
-        $user->currentAccessToken()->delete();
-
+        
         $user->last_logout_at = now();
         $user->status = UserStatus::$OFFLINE;
         $user->save();
 
+        $user->currentAccessToken()->delete();
+
         return response('', 204);
     }
+
+    public function getUserInfo(Request $request)
+    {
+        $id = UserService::getUserId();
+        $info = User::find($id);
+        return new UserResource($info);
+    }
+
 }

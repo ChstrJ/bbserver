@@ -27,9 +27,12 @@ class TransactionController extends Controller
     {
 
         //get the request input per page in query params
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $perPage = $request->input('per_page', 15);
         $sortByDesc = $request->input('sort_by_desc');
         $sortByAsc = $request->input('sort_by_asc');
+        $categoryId = $request->input('category_id');
         $search = $request->input('search');
         $status = $request->input('status');
 
@@ -39,6 +42,19 @@ class TransactionController extends Controller
             ->where('transactions.user_id', UserService::getUserId())
             ->orderByDesc('transactions.created_at')
             ->with('customer', 'user');
+
+        if ($startDate && $endDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate)
+                ->whereDate('transactions.created_at', '<=', $endDate);
+        } else if ($startDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate);
+        } else if ($endDate) {
+            $query->whereDate('transactions.created_at', '<=', $endDate);
+        }
+
+        if($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
 
         if ($sortByDesc) {
             $query->orderBy("transactions.$sortByDesc", 'DESC');
@@ -53,10 +69,13 @@ class TransactionController extends Controller
         }
 
         if ($search) {
-            $query->where('customers.full_name', 'LIKE', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('transactions.reference_number', 'LIKE', "%{$search}%")
+                    ->orWhere('customers.name', 'LIKE', "%{$search}%");
+            });
         }
 
-        $transaction = $query->simplePaginate($perPage);
+        $transaction = $query->paginate($perPage);
         return new TransactionCollection($transaction);
     }
 
