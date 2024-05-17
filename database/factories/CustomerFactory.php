@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use Database\Seeders\CustomerSeeder;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
