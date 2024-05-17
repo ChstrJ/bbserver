@@ -38,8 +38,8 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         //employee scope
         Route::get('/employee/summary', [EmployeeController::class, 'getAllTotal']);
         Route::get('/employee/chart/sales', [EmployeeController::class, 'chartSales']);
-        Route::apiResource('/products', ProductController::class);
         Route::apiResource('/employee/orders', TransactionController::class)->except(['update']);
+        Route::apiResource('/products', ProductController::class);
         Route::apiResource('/customers', CustomerController::class);
         Route::apiResource('/appointments', AppointmentController::class);
     });

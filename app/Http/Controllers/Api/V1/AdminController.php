@@ -51,7 +51,7 @@ class AdminController extends Controller
                 "pending_count" => $totals->pending_count,
                 "reject_count" => $totals->reject_count,
             ],
-            "transactions_total" => [
+            "total_transactions" => [
                 "today_sales" => $totals->today_sales,
                 "total_commission" => $totals->total_commission,
                 "overall_sales" => $totals->overall_sales,
