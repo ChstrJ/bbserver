@@ -12,8 +12,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.8",
-        "maatwebsite/excel": "*",
-        "tymon/jwt-auth": "^2.0"
+        "maatwebsite/excel": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

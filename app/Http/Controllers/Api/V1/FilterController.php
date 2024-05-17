@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\transaction\TransactionStatus;
+use App\Http\Helpers\user\UserStatus;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
 use App\Models\Transaction;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FilterController extends Controller
@@ -31,12 +31,15 @@ class FilterController extends Controller
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->whereNot('transactions.is_removed', TransactionStatus::$REMOVE)
-            ->orderBy('transactions.status')
             ->with('user', 'customer');
 
         if ($startDate && $endDate) {
             $query->whereDate('transactions.created_at', '>=', $startDate)
                 ->whereDate('transactions.created_at', '<=', $endDate);
+        } else if ($startDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate);
+        } else if ($endDate) {
+            $query->whereDate('transactions.created_at', '<=', $endDate);
         }
 
         if ($status) {
@@ -81,7 +84,7 @@ class FilterController extends Controller
                 ->sum('amount_due');
         }
 
-        $transactions = $query->simplePaginate($perPage);
+        $transactions = $query->paginate($perPage);
 
         $transactionCollection = new TransactionCollection($transactions);
 
@@ -102,44 +105,60 @@ class FilterController extends Controller
         $query = User::query()
             ->select('*')
             ->orderByDesc('last_login_at')
+            ->whereNot('is_active', UserStatus::$NOT_ACTIVE)
             ->with('products', 'transactions');
 
         if ($employeeName) {
             $query->where('full_name', 'LIKE', "%$employeeName%");
         }
 
-        $user = $query->simplePaginate($perPage);
+        $user = $query->paginate($perPage);
         return new UserCollection($user);
     }
 
     public function filterOrders(Request $request)
     {
-
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
         $perPage = $request->input('per_page', 15);
-        $employeeName = $request->input('employee');
-        $customerName = $request->input('customer');
-        $searchByRefNo = $request->input('search_by_ref');
+        $search = $request->input('search');
+        $status = $request->input('status');
         $sortByAsc = $request->input('sort_date_asc');
         $sortByDesc = $request->input('sort_date_desc');
+        $paymentMethod = $request->input('payment_method');
+        $employeeId = $request->input('employee_id');
 
         $query = Transaction::query()
             ->select('transactions.*', 'customers.full_name', 'users.full_name')
             ->with('customer', 'user')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->where('transactions.status', 'pending')
+            ->orderBy('transactions.status', 'ASC')
             ->orderByDesc('transactions.created_at');
 
-        if ($employeeName) {
-            $query->where('user.full_name', 'LIKE', "%{$employeeName}%");
+        if ($startDate && $endDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate)
+                ->whereDate('transactions.created_at', '<=', $endDate);
+        } else if ($startDate) {
+            $query->whereDate('transactions.created_at', '>=', $startDate);
+        } else if ($endDate) {
+            $query->whereDate('transactions.created_at', '<=', $endDate);
         }
 
-        if ($customerName) {
-            $query->where('user.full_name', 'LIKE', "%{$customerName}%");
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('transactions.reference_number', 'LIKE', "%{$search}%")
+                    ->orWhere('users.full_name', 'LIKE', "%{$search}%")
+                    ->orWhere('customers.full_name', 'LIKE', "%{$search}%");
+            });
         }
 
-        if ($searchByRefNo) {
-            $query->where('transactions.reference_number', 'LIKE', "%{$searchByRefNo}%");
+        if ($status) {
+            $query->where("transactions.status", $status);
+        }
+
+        if ($paymentMethod) {
+            $query->where("transactions.payment_method", $paymentMethod);
         }
 
         if ($sortByDesc) {
@@ -150,7 +169,11 @@ class FilterController extends Controller
             $query->orderBy("transactions.$sortByAsc", 'ASC');
         }
 
-        $transaction = $query->simplePaginate($perPage);
+        if ($employeeId) {
+            $query->where('users.id', $employeeId);
+        }
+
+        $transaction = $query->paginate($perPage);
         return new TransactionCollection($transaction);
     }
 }

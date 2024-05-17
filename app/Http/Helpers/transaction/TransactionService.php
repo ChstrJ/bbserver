@@ -60,7 +60,11 @@ trait TransactionService
             $commission += $srp - $mem_price;
         }
 
-        return ['total_amount' => $total_amount, 'total_items' => $total_items, 'commission' => $commission];
+        return [
+            'total_amount' => $total_amount,
+            'total_items' => $total_items,
+            'commission' => $commission
+        ];
     }
 
     public static function decrementQty($data)
@@ -136,26 +140,6 @@ trait TransactionService
         return implode(', ', $names);
     }
 
-    public static function test($interval)
-    {
-        $now = UserService::getDate();
-        $salesQ = Transaction::select(['status', 'amount_due', 'created_at']);
-
-        switch ($interval) {
-            case 'weekly':
-                $salesQ->whereRaw('WEEKOFYEAR(created_at) = WEEKOFYEAR(CURDATE())');
-                break;
-            case 'monthly':
-                $salesQ->whereMonth('created_at', '=', date('m'));
-                break;
-            case 'yearly':
-                $salesQ->whereYear('created_at', '=', date('Y'));
-                break;
-            default:
-                $salesQ->where('created_at', $now);
-        }
-        return $salesQ->where('status', TransactionStatus::$APPROVE)->sum('amount_due');
-    }
 
     public static function getLogScaleData($interval)
     {
@@ -247,6 +231,5 @@ trait TransactionService
 
                 return ["today_sales" => $todaySales];
         }
-
     }
 }

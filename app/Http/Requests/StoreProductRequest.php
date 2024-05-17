@@ -32,9 +32,9 @@ class StoreProductRequest extends FormRequest
             'category_id' => "required|int|exists:categories,id",
             'name' => 'required|string',
             'description' => 'required|string',
-            'quantity' => 'required|int|min:1',
-            'srp' => 'required|numeric|gt:member_price',
-            'member_price' => 'required|numeric',
+            'quantity' => 'required|int|min:1|max:1000',
+            'srp' => 'required|numeric|gt:member_price|min:1|max:500000',
+            'member_price' => 'required|numeric|min:1|max:500000',
         ];
     }
 }
