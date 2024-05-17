@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\user\UserStatus;
 use App\Http\Requests\StoreRegisterRequest;
-use App\Http\Utils\HttpStatusCode;
-use App\Http\Utils\Message;
+use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
 use App\Models\User;
-use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\V1\UserCollection;
 use App\Http\Resources\V1\UserResource;
@@ -47,7 +45,7 @@ class UserController extends Controller
             'password' => bcrypt($data['password']),
             'role_id' => 2,
         ]);
-        return $this->json(Message::createResource(), HttpStatusCode::$ACCEPTED);
+        return Response::createResource();
     }
 
     public function show(User $user)
@@ -60,24 +58,24 @@ class UserController extends Controller
         $validated_data = $request->validated();
         $user->update($validated_data);
         if (!$user) {
-            return $this->json(Message::invalid(), HttpStatusCode::$UNPROCESSABLE_ENTITY);
+            return Response::invalid();
         }
-        return $this->json(Message::updateResource(), HttpStatusCode::$ACCEPTED);
+        return Response::updateResource();
     }
 
     public function destroy(int $id)
     {
         $user = User::find($id);
         if (!$user) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+            return Response::notFound();
         }
         if ($user->is_active === UserStatus::$NOT_ACTIVE) {
-            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
+            return Response::alreadyChanged();
         }
 
         $user->is_active = UserStatus::$NOT_ACTIVE;
         $user->save();
-        return $this->json(Message::deleteResource(), HttpStatusCode::$ACCEPTED);
+        return Response::deleteResource();
     }
 
 }
