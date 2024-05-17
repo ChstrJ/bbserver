@@ -72,11 +72,11 @@ class AdminController extends Controller
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+            return Response::notFound();
         }
 
         if ($transaction->status === TransactionStatus::$APPROVE) {
-            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
+            return Response::alreadyChanged();
         }
 
         $data = $transaction->checkouts;
@@ -84,33 +84,23 @@ class AdminController extends Controller
 
         $transaction->status = TransactionStatus::$APPROVE;
         $transaction->save();
-        return $this->json(Message::approve());
+
+        return Response::approve();
     }
 
     public function reject(Transaction $transaction, int $id)
     {
         $transaction = Transaction::find($id);
         if (!$transaction) {
-            return $this->json(Message::notFound(), HttpStatusCode::$NOT_FOUND);
+            return Response::notFound();
         }
         if ($transaction->status === TransactionStatus::$REJECT) {
-            return $this->json(Message::alreadyChanged(), HttpStatusCode::$CONFLICT);
+            return Response::alreadyChanged();
         }
         $transaction->status = TransactionStatus::$REJECT;
         $transaction->save();
-        return $this->json(Message::reject());
-    }
 
-    public function createAdmin(StoreRegisterRequest $request) 
-    {
-        $data = $request->validated();
-        User::create([
-            'full_name' => $data['full_name'],
-            'username' => $data['username'],
-            'password' => bcrypt($data['password']),
-            'role_id' => 1,
-        ]);
-        return response('',200);
+        return Response::reject();
     }
 
     public function createAdmin(StoreRegisterRequest $request) 
