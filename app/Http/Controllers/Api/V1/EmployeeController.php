@@ -116,6 +116,7 @@ class EmployeeController extends Controller
 
                 for ($month = 0; $month < 12; $month++) {
                     $monthName = Carbon::createFromDate(null, $month)->format('F');
+                    $monthName = substr($monthName, 0, 3);
                     $salesData = $monthlySales->where('month', $month)->first();
                     $monthSales[$monthName] = $salesData ? $salesData->total_sales : 0;
                 }

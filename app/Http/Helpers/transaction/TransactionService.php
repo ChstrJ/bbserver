@@ -7,10 +7,9 @@ use App\Http\Helpers\user\UserService;
 use App\Models\Product;
 use App\Models\Transaction;
 use Carbon\Carbon;
-use DB;
 use Exception;
 
-trait TransactionService
+class TransactionService
 {
     public static function processTransaction($data)
     {
@@ -195,6 +194,7 @@ trait TransactionService
 
                 for ($month = 0; $month < 12; $month++) {
                     $monthName = Carbon::createFromDate(null, $month)->format('F');
+                    $monthName = substr($monthName, 0, 3);
                     $salesData = $monthlySales->where('month', $month)->first();
                     $monthSales[$monthName] = $salesData ? $salesData->total_sales : 0;
                 }
