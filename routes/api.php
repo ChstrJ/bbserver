@@ -67,6 +67,6 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::patch('/admin/restore/employee/{id}', [RestoreController::class, 'restoreEmployee']);
         Route::patch('/admin/restore/product/{id}', [RestoreController::class, 'restoreProduct']);
 
-        Route::post('/admin-create', [AdminController::class, 'createAdmin']);
+        Route::post('/admin/create', [AdminController::class, 'createAdmin']);
     });
 });

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    use ResponseHelper, TransactionService;
+    use ResponseHelper;
     public function index(Request $request)
     {
 
