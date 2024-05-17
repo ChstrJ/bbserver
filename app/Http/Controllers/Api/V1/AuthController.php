@@ -8,12 +8,11 @@ use App\Http\Helpers\user\UserStatus;
 use App\Http\Requests\StoreLoginRequest;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
-use App\Http\Utils\Message;
+use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
@@ -36,7 +35,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (!Auth::attempt($credentials)) {
-            return $this->json(Message::invalidCredentials(), HttpStatusCode::$UNAUTHORIZED);
+            return Response::invalidCredentials();
         }
 
         //get the authenticated user and get the token from the user model
