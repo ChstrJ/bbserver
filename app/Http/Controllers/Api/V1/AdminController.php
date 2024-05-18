@@ -21,51 +21,71 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     use ResponseHelper;
-    public function getAllTotal()
+    public function getAllTotal(Request $request)
     {
+        $interval = $request->query('interval');
+
         $today = UserService::getDate();
-
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
-        $customer = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
-        $employee = User::whereNot('is_active', UserStatus::$NOT_ACTIVE)->count();
+        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
+        
+        $criticalStocks = Product::where('quantity', '<=', '50')
+                        ->whereNot('is_removed', ProductStatus::$REMOVE)->get();
 
-        $totals = Transaction::selectRaw("
-        COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS sales_count,
-        COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS reject_count,
-        COUNT(status) AS pending_count,
-        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS overall_sales,
-        TRUNCATE(SUM(CASE WHEN status = 'rejected' THEN amount_due ELSE 0 END), 2) AS total_rejected,
-        TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
-        TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission,
-        TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today ."' THEN amount_due ELSE 0 END), 2) AS today_sales
+        $employees = User::selectRaw("
+            COUNT(id) AS all_users,
+            COUNT(CASE WHEN role_id = 1 THEN role_id ELSE null END) AS admin,
+            COUNT(CASE WHEN role_id = 2 THEN role_id ELSE null END) AS employee
         ")->first();
 
-        return response()->json([
-            "inventory" => $products,
-            "customers" => $customer,
-            "employees" => $employee,
-            "orders" => $totals->pending_count,
+        $transactions = Transaction::selectRaw("
+            COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS approved_count,
+            COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS rejected_count,
+            COUNT(CASE WHEN status = 'pending' THEN status ELSE null END) AS pending_count,
+            TRUNCATE(SUM(CASE WHEN status = 'rejected' THEN amount_due ELSE 0 END), 2) AS total_rejected,
+            TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
+            TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission,
+            TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS overall_sales,
+            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today ."' THEN amount_due ELSE 0 END), 2) AS today_sales
+        ")->first();
 
-            "transaction_counts" => [
-                "sales_count" => $totals->sales_count,
-                "pending_count" => $totals->pending_count,
-                "reject_count" => $totals->reject_count,
+        $sales = [];
+
+        if($interval) {
+           $sales = $this->chartSales($interval);
+        } else {
+            $sales = $this->chartSales('weekly');
+        }
+
+        return [
+            "sales" => [
+                "overall" => $transactions->overall_sales,
+                "today" => $transactions->today_sales,
             ],
-            "total_transactions" => [
-                "today_sales" => $totals->today_sales,
-                "total_commission" => $totals->total_commission,
-                "overall_sales" => $totals->overall_sales,
-                "total_pending" => $totals->total_pending,
-                "total_rejected" => $totals->total_rejected,
+            "counts" => [
+                "products" => $products,
+                "orders" => [
+                    "pending" => $transactions->pending_count,
+                    "approved" => $transactions->approved_count,
+                    "rejected" => $transactions->rejected_count,
+                ]
             ],
-        ]);
+            "employees" => [
+                "all" => $employees->all_users,
+                "admin" => $employees->admin,
+                "employee" => $employees->employee,
+            ],
+            "customers" => $customers,
+            "charts" => [
+                "sales" => $sales,
+                "products" => $criticalStocks
+            ]
+        ];
     }
 
-
-    public function chartSales(Request $request)
+    private function chartSales(string $interval)
     {
-        $interval = $request->input('interval');
-        return $this->json(TransactionService::getLogScaleData($interval));
+        return TransactionService::getLogScaleData($interval);
     }
 
     public function approve(Transaction $transaction, int $id)
@@ -103,7 +123,7 @@ class AdminController extends Controller
         return Response::reject();
     }
 
-    public function createAdmin(StoreRegisterRequest $request) 
+    public function createAdmin(StoreRegisterRequest $request)
     {
         $data = $request->validated();
         User::create([
@@ -112,6 +132,6 @@ class AdminController extends Controller
             'password' => bcrypt($data['password']),
             'role_id' => 1,
         ]);
-        return response('',200);
+        return response('', 200);
     }
 }
