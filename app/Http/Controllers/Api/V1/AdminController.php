@@ -28,9 +28,9 @@ class AdminController extends Controller
         $today = UserService::getDate();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
         $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
-        
+
         $criticalStocks = Product::where('quantity', '<=', '50')
-                        ->whereNot('is_removed', ProductStatus::$REMOVE)->get();
+            ->whereNot('is_removed', ProductStatus::$REMOVE)->get();
 
         $employees = User::selectRaw("
             COUNT(id) AS all_users,
@@ -46,13 +46,13 @@ class AdminController extends Controller
             TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
             TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission,
             TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS overall_sales,
-            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today ."' THEN amount_due ELSE 0 END), 2) AS today_sales
+            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
         $sales = [];
 
-        if($interval) {
-           $sales = $this->chartSales($interval);
+        if ($interval) {
+            $sales = $this->chartSales($interval);
         } else {
             $sales = $this->chartSales('weekly');
         }
@@ -68,14 +68,15 @@ class AdminController extends Controller
                     "pending" => $transactions->pending_count,
                     "approved" => $transactions->approved_count,
                     "rejected" => $transactions->rejected_count,
-                ]
+                ],
+                "employees" => [
+                    "all" => $employees->all_users,
+                    "admin" => $employees->admin,
+                    "employee" => $employees->employee,
+                ],
+                "customers" => $customers,
             ],
-            "employees" => [
-                "all" => $employees->all_users,
-                "admin" => $employees->admin,
-                "employee" => $employees->employee,
-            ],
-            "customers" => $customers,
+
             "charts" => [
                 "sales" => $sales,
                 "products" => $criticalStocks
