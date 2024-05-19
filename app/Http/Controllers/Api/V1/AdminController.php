@@ -46,7 +46,7 @@ class AdminController extends Controller
             TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
-        return [
+        return $this->json([
             "sales" => [
                 "overall" => $orders->overall_sales,
                 "today" => $orders->today_sales,
@@ -65,7 +65,7 @@ class AdminController extends Controller
                     "employee" => $employees->employee,
                 ],
             ],
-        ];
+        ]);
     }
 
 

@@ -7,34 +7,22 @@ use App\Http\Helpers\customer\CustomerStatus;
 use App\Http\Helpers\product\ProductStatus;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
+use App\Http\Utils\ResponseHelper;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    public function getAllSummary(Request $request)
+    use ResponseHelper;
+    public function getAllSummary()
     {
-        $interval = $request->query('interval');
-
         $today = UserService::getDate();
         $currentUser = UserService::getUserId();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
         $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
-
-        $sales = [];
-
-        if ($interval) {
-            $sales = $this->chartSales($interval);
-        } else {
-            $sales = $this->chartSales('weekly');
-        }
-
-        $criticalStocks = Product::where('quantity', '<=', '50')
-            ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
 
         $orders = Transaction::selectRaw("
             COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS approved_count,
@@ -44,7 +32,7 @@ class EmployeeController extends Controller
             TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' AND user_id = '" . $currentUser . "' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
-        return [
+        return $this->json([
             "sales" => [
                 "overall" => $orders->overall_sales,
                 "today" => $orders->today_sales,
@@ -57,17 +45,31 @@ class EmployeeController extends Controller
                     "rejected" => $orders->rejected_count,
                 ],
                 "customers" => $customers,
-            ],
-            "charts" => [
-                "sales" => $sales,
-                "products" => $criticalStocks
             ]
-        ];
+        ]);
     }
 
-    public function chartSales($interval)
+    public function criticalStocks()
     {
-        return $this->getLogScaleData($interval);
+        $criticalStocks = Product::where('quantity', '<=', '50')
+            ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
+
+        return $this->json($criticalStocks);
+    }
+
+    public function chartSales(Request $request)
+    {
+        $interval = $request->input('interval');
+
+        $sales = [];
+
+        if ($sales) {
+            $sales = $this->getLogScaleData($interval);
+        } else {
+            $sales = $this->getLogScaleData('weekly');
+        }
+
+        return $this->json($sales);
     }
 
     private static function getLogScaleData($interval)
