@@ -21,16 +21,24 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     use ResponseHelper;
-    public function getAllTotal(Request $request)
+    public function getAllSummary(Request $request)
     {
         $interval = $request->query('interval');
 
         $today = UserService::getDate();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
-        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
+        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count(); 
+
+        $sales = [];
+
+        if ($interval) {
+            $sales = $this->chartSales($interval);
+        } else {
+            $sales = $this->chartSales('weekly');
+        }
 
         $criticalStocks = Product::where('quantity', '<=', '50')
-            ->whereNot('is_removed', ProductStatus::$REMOVE)->get();
+                    ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
 
         $employees = User::selectRaw("
             COUNT(id) AS all_users,
@@ -49,14 +57,6 @@ class AdminController extends Controller
             TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
-        $sales = [];
-
-        if ($interval) {
-            $sales = $this->chartSales($interval);
-        } else {
-            $sales = $this->chartSales('weekly');
-        }
-
         return [
             "sales" => [
                 "overall" => $transactions->overall_sales,
@@ -69,22 +69,21 @@ class AdminController extends Controller
                     "approved" => $transactions->approved_count,
                     "rejected" => $transactions->rejected_count,
                 ],
+                "customers" => $customers,
                 "employees" => [
                     "all" => $employees->all_users,
                     "admin" => $employees->admin,
                     "employee" => $employees->employee,
                 ],
-                "customers" => $customers,
+                "charts" => [
+                    "sales" => $sales,
+                    "products" => $criticalStocks,
+                ]
             ],
-
-            "charts" => [
-                "sales" => $sales,
-                "products" => $criticalStocks
-            ]
         ];
     }
 
-    private function chartSales(string $interval)
+    public function chartSales($interval)
     {
         return TransactionService::getLogScaleData($interval);
     }

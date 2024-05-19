@@ -37,7 +37,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     Route::group(['middleware' => 'employee'], function () {
         //employee scope
         Route::get('/employee/summary', [EmployeeController::class, 'getAllTotal']);
-        Route::get('/employee/chart/sales', [EmployeeController::class, 'chartSales']);
+        Route::get('/employee/summary/sales', [EmployeeController::class, 'chartSales']);
         Route::apiResource('/employee/orders', TransactionController::class)->except(['update']);
         Route::apiResource('/products', ProductController::class);
         Route::apiResource('/customers', CustomerController::class);
@@ -48,12 +48,11 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         //admin scope
         Route::apiResource('/users', UserController::class);
         Route::apiResource('/categories', CategoryController::class);
-        Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
+        Route::get('/admin/summary', [AdminController::class, 'getAllSummary']);
         Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
         Route::get('/admin/orders', [FilterController::class, 'filterOrders']);
         Route::get('/admin/export', [ExportController::class, 'exportSales']);
-        Route::get('/admin/chart/sales', [AdminController::class, 'chartSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
 
