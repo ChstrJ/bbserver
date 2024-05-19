@@ -27,7 +27,7 @@ class AdminController extends Controller
 
         $today = UserService::getDate();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
-        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
+        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count(); 
 
         $sales = [];
 
@@ -38,7 +38,7 @@ class AdminController extends Controller
         }
 
         $criticalStocks = Product::where('quantity', '<=', '50')
-            ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
+                    ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
 
         $employees = User::selectRaw("
             COUNT(id) AS all_users,

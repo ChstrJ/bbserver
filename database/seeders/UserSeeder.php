@@ -14,24 +14,29 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
+       User::factory()->count(7)->create();
        DB::table('users')->insert([
         [
             "full_name" => "Chester Jazmin",
             "username" => "admin1",
             "password" => bcrypt('1234'),
             "role_id" => 1,
+            "created_at" => now()
         ],
         [
             "full_name" => "Keanno Regino",
             "username" => "admin2",
             "password" => bcrypt('1234'),
             "role_id" => 1,
+            "created_at" => now()
         ],
         [
             "full_name" => "Jeline Cadayday",
             "username" => "employee1",
             "password" => bcrypt('1234'),
             "role_id" => 2,
+            "created_at" => now()
         ]
        ]);
     }

@@ -146,8 +146,8 @@ class TransactionService
 
         $query = Transaction::query();
 
-        $startWeek = $now->startOfWeek()->toDateString();
-        $endWeek = $now->endOfWeek()->toDateString();
+        $startWeek = $now->startOfWeek()->toDateTimeString();
+        $endWeek = $now->endOfWeek()->toDateTimeString();
 
         $startYear = $now->startOfYear()->toDateString();
         $endYear = $now->endOfYear()->toDateString();
@@ -172,7 +172,6 @@ class TransactionService
                     ->groupByRaw('DATE(created_at)')
                     ->get();
 
-
                 for ($day = 0; $day < count($weeklySalesData); $day++) {
                     $dayName = Carbon::parse($weeklySalesData[$day]->day)->format('l');
                     $weeklySales[$dayName] = $weeklySalesData[$day]->total_sales;
@@ -190,8 +189,7 @@ class TransactionService
                     ->whereBetween('created_at', [$startYear, $endYear])
                     ->groupByRaw('MONTH(created_at)')
                     ->get();
-
-
+                
                 for ($month = 0; $month < 12; $month++) {
                     $monthName = Carbon::createFromDate(null, $month)->format('F');
                     $monthName = substr($monthName, 0, 3);
