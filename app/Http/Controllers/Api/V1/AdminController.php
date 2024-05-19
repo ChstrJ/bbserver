@@ -27,7 +27,7 @@ class AdminController extends Controller
 
         $today = UserService::getDate();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
-        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count(); 
+        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
 
         $sales = [];
 
@@ -38,7 +38,7 @@ class AdminController extends Controller
         }
 
         $criticalStocks = Product::where('quantity', '<=', '50')
-                    ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
+            ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
 
         $employees = User::selectRaw("
             COUNT(id) AS all_users,
@@ -46,7 +46,7 @@ class AdminController extends Controller
             COUNT(CASE WHEN role_id = 2 THEN role_id ELSE null END) AS employee
         ")->first();
 
-        $transactions = Transaction::selectRaw("
+        $orders = Transaction::selectRaw("
             COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS approved_count,
             COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS rejected_count,
             COUNT(CASE WHEN status = 'pending' THEN status ELSE null END) AS pending_count,
@@ -59,15 +59,15 @@ class AdminController extends Controller
 
         return [
             "sales" => [
-                "overall" => $transactions->overall_sales,
-                "today" => $transactions->today_sales,
+                "overall" => $orders->overall_sales,
+                "today" => $orders->today_sales,
             ],
             "counts" => [
                 "products" => $products,
                 "orders" => [
-                    "pending" => $transactions->pending_count,
-                    "approved" => $transactions->approved_count,
-                    "rejected" => $transactions->rejected_count,
+                    "pending" => $orders->pending_count,
+                    "approved" => $orders->approved_count,
+                    "rejected" => $orders->rejected_count,
                 ],
                 "customers" => $customers,
                 "employees" => [
@@ -75,11 +75,11 @@ class AdminController extends Controller
                     "admin" => $employees->admin,
                     "employee" => $employees->employee,
                 ],
-                "charts" => [
-                    "sales" => $sales,
-                    "products" => $criticalStocks,
-                ]
             ],
+            "charts" => [
+                "sales" => $sales,
+                "products" => $criticalStocks,
+            ]
         ];
     }
 
