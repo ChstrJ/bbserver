@@ -23,22 +23,11 @@ class AdminController extends Controller
     use ResponseHelper;
     public function getAllSummary(Request $request)
     {
-        $interval = $request->query('interval');
-
+       
         $today = UserService::getDate();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
         $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count(); 
 
-        $sales = [];
-
-        if ($interval) {
-            $sales = $this->chartSales($interval);
-        } else {
-            $sales = $this->chartSales('weekly');
-        }
-
-        $criticalStocks = Product::where('quantity', '<=', '50')
-                    ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
 
         $employees = User::selectRaw("
             COUNT(id) AS all_users,
@@ -76,16 +65,32 @@ class AdminController extends Controller
                     "employee" => $employees->employee,
                 ],
             ],
-            "charts" => [
-                "sales" => $sales,
-                "products" => $criticalStocks,
-            ]
         ];
     }
 
-    public function chartSales($interval)
+
+    public function criticalStocks() 
     {
-        return TransactionService::getLogScaleData($interval);
+        $criticalStocks = Product::where('quantity', '<=', '50')
+                    ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
+
+        return $this->json($criticalStocks);
+    }
+
+    public function chartSales(Request $request)
+    {
+        
+        $interval = $request->input('interval');
+
+        $sales = [];
+
+        if ($interval) {
+            $sales = TransactionService::getLogScaleData($interval);
+        } else {
+            $sales = TransactionService::getLogScaleData('weekly');
+        }
+
+        return $this->json($sales);
     }
 
     public function approve(Transaction $transaction, int $id)
