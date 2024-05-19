@@ -10,53 +10,64 @@ use App\Http\Helpers\user\UserService;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    public function getAllTotal()
+    public function getAllSummary(Request $request)
     {
-        $today = UserService::getDate();
-        $id = UserService::getUserId();
-        $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
-        $customer = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
+        $interval = $request->query('interval');
 
-        $totals = Transaction::selectRaw("
-        COUNT(CASE WHEN status = 'approved' AND user_id = " . $id . " THEN status ELSE null END) AS sales_count,
-        COUNT(CASE WHEN status = 'pending' AND user_id = " . $id . " THEN status ELSE null END) AS pending_count,
-        COUNT(CASE WHEN status = 'rejected' AND user_id = " . $id . " THEN status ELSE null END) AS reject_count,
-        TRUNCATE(SUM(CASE WHEN status = 'pending' AND user_id = " . $id . " THEN amount_due ELSE 0 END), 2) AS total_pending,
-        TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = " . $id . " THEN amount_due ELSE 0 END), 2) AS overall_sales,
-        TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = " . $id . " THEN commission ELSE 0 END), 2) AS total_commission,
-        TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = " . $id . " AND DATE(created_at) = " . $today . " THEN amount_due ELSE 0 END), 2) AS today_sales
+        $today = UserService::getDate();
+        $currentUser = UserService::getUserId();
+        $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
+        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
+
+        $sales = [];
+
+        if ($interval) {
+            $sales = $this->chartSales($interval);
+        } else {
+            $sales = $this->chartSales('weekly');
+        }
+
+        $criticalStocks = Product::where('quantity', '<=', '50')
+            ->whereNot('is_removed', ProductStatus::$REMOVE)->simplePaginate();
+
+        $orders = Transaction::selectRaw("
+            COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS approved_count,
+            COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS rejected_count,
+            COUNT(CASE WHEN status = 'pending' THEN status ELSE null END) AS pending_count,
+            TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = '" . $currentUser . "' THEN amount_due ELSE 0 END), 2) AS overall_sales,
+            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' AND user_id = '" . $currentUser . "' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
-
-        return response()->json([
-            "inventory" => $products,
-            "customers" => $customer,
-            "orders" => $totals->pending_count,
-
-            "total_counts" => [
-                "sales_count" => $totals->sales_count,
-                "pending_count" => $totals->pending_count,
-                "reject_count" => $totals->reject_count,
+        return [
+            "sales" => [
+                "overall" => $orders->overall_sales,
+                "today" => $orders->today_sales,
             ],
-
-            "total_transactions" => [
-                "overall_sales" => $totals->overall_sales,
-                "today_sales" => $totals->today_sales,
-                "total_commission" => $totals->total_commission,
-                "total_pending" => $totals->total_pending,
+            "counts" => [
+                "products" => $products,
+                "orders" => [
+                    "pending" => $orders->pending_count,
+                    "approved" => $orders->approved_count,
+                    "rejected" => $orders->rejected_count,
+                ],
+                "customers" => $customers,
             ],
-        ]);
+            "charts" => [
+                "sales" => $sales,
+                "products" => $criticalStocks
+            ]
+        ];
     }
 
-    public function chartSales(Request $request)
+    public function chartSales($interval)
     {
-        $interval = $request->input('interval');
-        return response()->json($this->getLogScaleData($interval));
+        return $this->getLogScaleData($interval);
     }
 
     private static function getLogScaleData($interval)
@@ -66,8 +77,8 @@ class EmployeeController extends Controller
 
         $query = Transaction::query();
 
-        $startWeek = $now->startOfWeek()->toDateString();
-        $endWeek = $now->endOfWeek()->toDateString();
+        $startWeek = $now->startOfWeek()->toDateTimeString();
+        $endWeek = $now->endOfWeek()->toDateTimeString();
 
         $startYear = $now->startOfYear()->toDateString();
         $endYear = $now->endOfYear()->toDateString();

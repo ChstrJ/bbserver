@@ -36,8 +36,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
 
     Route::group(['middleware' => 'employee'], function () {
         //employee scope
-        Route::get('/employee/summary', [EmployeeController::class, 'getAllTotal']);
-        Route::get('/employee/summary/sales', [EmployeeController::class, 'chartSales']);
+        Route::get('/employee/summary', [EmployeeController::class, 'getAllSummary']);
         Route::apiResource('/employee/orders', TransactionController::class)->except(['update']);
         Route::apiResource('/products', ProductController::class);
         Route::apiResource('/customers', CustomerController::class);
