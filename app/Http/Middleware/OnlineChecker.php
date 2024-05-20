@@ -19,8 +19,8 @@ class OnlineChecker
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
-
-        if ($user && $user->isOnline()) {
+    
+        if ($user && $user->last_activity >= now()->subMinutes(15)->toDateTimeString()) {
             $user->last_activity = now();
             $user->status = UserStatus::$ONLINE;
             $user->save();

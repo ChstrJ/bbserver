@@ -36,7 +36,8 @@ class TransactionController extends Controller
             ->select('transactions.*')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->where('transactions.user_id', UserService::getUserId())
-            ->orderByDesc('transactions.created_at')
+            ->orderBy('transactions.created_at', 'DESC')
+            ->orderBy('transactions.status', 'ASC')
             ->with('customer', 'user');
 
         if ($startDate && $endDate) {

@@ -133,7 +133,7 @@ class TransactionService
         $names = [];
 
         for ($i = 0; $i < count($data); $i++) {
-            $names[] = $data[$i]['name'];
+            $names[] = $data[$i]['name'] . ' ' . ' ' . $data[$i]['quantity'] . ' qty';
         }
 
         return implode(', ', $names);
@@ -189,7 +189,7 @@ class TransactionService
                     ->whereBetween('created_at', [$startYear, $endYear])
                     ->groupByRaw('MONTH(created_at)')
                     ->get();
-                
+
                 for ($month = 0; $month < 12; $month++) {
                     $monthName = Carbon::createFromDate(null, $month)->format('F');
                     $monthName = substr($monthName, 0, 3);

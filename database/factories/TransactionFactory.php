@@ -22,7 +22,7 @@ class TransactionFactory extends Factory
             'reference_number' => TransactionService::generateReference(),
             'customer_id' => $this->faker->numberBetween(1, 5),
             'user_id' => $this->faker->numberBetween(1, 10),
-            'amount_due' => $this->faker->numberBetween(1, 100),
+            'amount_due' => $this->faker->numberBetween(1, 5000),
             'number_of_items' => $this->faker->numberBetween(1, 100),
             'status' => $this->faker->randomElement(['approved', 'rejected', 'pending']),
             'payment_method' => $this->faker->numberBetween(1, 2),
