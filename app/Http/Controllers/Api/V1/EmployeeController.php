@@ -25,11 +25,11 @@ class EmployeeController extends Controller
         $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
 
         $orders = Transaction::selectRaw("
-            COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS approved_count,
-            COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS rejected_count,
-            COUNT(CASE WHEN status = 'pending' THEN status ELSE null END) AS pending_count,
-            TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = '" . $currentUser . "' THEN amount_due ELSE 0 END), 2) AS overall_sales,
-            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' AND user_id = '" . $currentUser . "' THEN amount_due ELSE 0 END), 2) AS today_sales
+            COUNT(CASE WHEN status = 'approved' AND user_id = '".$currentUser."' THEN status ELSE null END) AS approved_count,
+            COUNT(CASE WHEN status = 'rejected' AND user_id = '".$currentUser."' THEN status ELSE null END) AS rejected_count,
+            COUNT(CASE WHEN status = 'pending' AND user_id = '".$currentUser."' THEN status ELSE null END) AS pending_count,
+            TRUNCATE(SUM(CASE WHEN status = 'approved' AND user_id = '".$currentUser."' THEN amount_due ELSE 0 END), 2) AS overall_sales,
+            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '".$today."' AND user_id = '".$currentUser."' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
         return $this->json([
