@@ -43,7 +43,7 @@ class AdminController extends Controller
             TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
             TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission,
             TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS overall_sales,
-            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' THEN amount_due ELSE 0 END), 2) AS today_sales
+            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' AND status = 'approved' THEN amount_due ELSE 0 END), 2) AS today_sales
         ")->first();
 
         return $this->json([
