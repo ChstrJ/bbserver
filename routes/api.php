@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::get('/employee/summary', [EmployeeController::class, 'getAllSummary']);
         Route::get('/employee/chart/sales', [EmployeeController::class, 'chartSales']);
         Route::get('/employee/chart/products', [EmployeeController::class, 'criticalStocks']);
-        Route::apiResource('/employee/orders', TransactionController::class)->except(['update']);
+        Route::apiResource('/orders', TransactionController::class)->except(['update']);
         Route::apiResource('/products', ProductController::class);
         Route::apiResource('/customers', CustomerController::class);
         Route::apiResource('/appointments', AppointmentController::class);
@@ -48,7 +48,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     Route::group(['middleware' => 'admin'], function () {
         //admin scope
         Route::apiResource('/users', UserController::class);
-        Route::apiResource('/categories', CategoryController::class);
+        Route::apiResource('/categories', CategoryController::class)->only(['store', 'update', 'destroy']);
         Route::get('/admin/summary', [AdminController::class, 'getAllSummary']);
         Route::get('/admin/chart/sales', [AdminController::class, 'chartSales']);
         Route::get('/admin/chart/products', [AdminController::class, 'criticalStocks']);
