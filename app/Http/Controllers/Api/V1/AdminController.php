@@ -72,7 +72,7 @@ class AdminController extends Controller
     public function criticalStocks() 
     {
         $criticalStocks = Product::where('quantity', '<=', '50')
-                    ->whereNot('is_removed', ProductStatus::$REMOVE)->limit(15);
+                    ->whereNot('is_removed', ProductStatus::$REMOVE)->limit(15)->get();
 
         return $this->json($criticalStocks);
     }
