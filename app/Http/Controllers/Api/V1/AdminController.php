@@ -9,7 +9,6 @@ use App\Http\Helpers\summary\SummaryService;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
-use App\Http\Helpers\user\UserStatus;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;

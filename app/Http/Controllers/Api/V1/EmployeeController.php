@@ -7,13 +7,10 @@ use App\Http\Helpers\customer\CustomerStatus;
 use App\Http\Helpers\product\ProductStatus;
 use App\Http\Helpers\summary\SummaryService;
 use App\Http\Helpers\transaction\TransactionService;
-use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\ResponseHelper;
 use App\Models\Customer;
 use App\Models\Product;
-use App\Models\Transaction;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller

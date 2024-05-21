@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\queries\TransactionQuery;
 use App\Http\Helpers\transaction\TransactionStatus;
-use App\Http\Helpers\user\UserService;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
