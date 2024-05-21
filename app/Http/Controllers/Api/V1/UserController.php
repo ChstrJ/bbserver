@@ -7,6 +7,7 @@ use App\Http\Helpers\user\UserStatus;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
+use App\Http\Utils\Role;
 use App\Models\User;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\V1\UserCollection;
@@ -43,7 +44,7 @@ class UserController extends Controller
             'full_name' => $data['full_name'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
-            'role_id' => 2,
+            'role_id' => Role::EMPLOYEE,
         ]);
         return Response::createResource();
     }

@@ -10,6 +10,7 @@ use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Resources\V1\UserResource;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
+use App\Http\Utils\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class AuthController extends Controller
             'full_name' => $data['full_name'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
-            'role_id' => 2,
+            'role_id' => Role::EMPLOYEE,
         ]);
         return Response::createResource();
     }

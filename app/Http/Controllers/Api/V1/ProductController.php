@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\product\ProductService;
 use App\Http\Helpers\product\ProductStatus;
+use App\Http\Helpers\queries\ProductQuery;
 use App\Http\Helpers\user\UserService;
 use App\Http\Utils\DynamicMessage;
 use App\Http\Utils\Response;
@@ -25,41 +26,13 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search');
-        $sortByDesc = $request->input('sort_by_desc');
-        $sortByAsc = $request->input('sort_by_asc');
-        $categoryId = $request->input('category_id');
-        $perPage = $request->input('per_page', 15);
+        $perPage = $request->input("per_page", 15);
 
-        $query = Product::query()
-            ->whereNot('is_removed', ProductStatus::$REMOVE)
-            ->orderBy('created_at', 'DESC')
-            ->orderBy('updated_at', 'DESC');
+        $query = ProductQuery::ProductQuery();
+        ProductQuery::applyFilters($query, $request);
+        $transactions = $query->paginate($perPage);
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('product_code', 'LIKE', "%{$search}%")
-                    ->orWhere('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%")
-                    ->orWhere('srp', 'LIKE', "%$search%")
-                    ->orWhere('member_price', 'LIKE', "%{$search}%");
-            });
-        }
-
-        if($categoryId) {
-            $query->where('category_id', $categoryId);
-        }
-
-        if ($sortByDesc) {
-            $query->orderBy($sortByDesc, 'DESC');
-        }
-
-        if ($sortByAsc) {
-            $query->orderBy($sortByDesc, 'ASC');
-        }
-
-        $products = $query->paginate($perPage);
-        return new ProductCollection($products);
+        return new ProductCollection($transactions);
     }
 
     public function store(StoreProductRequest $request)

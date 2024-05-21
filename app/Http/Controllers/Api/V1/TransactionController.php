@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\queries\TransactionQuery;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
 use App\Http\Helpers\transaction\TransactionService;
@@ -21,59 +22,13 @@ class TransactionController extends Controller
     use ResponseHelper;
     public function index(Request $request)
     {
-
-        //get the request input per page in query params
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
         $perPage = $request->input('per_page', 15);
-        $sortByDesc = $request->input('sort_by_desc');
-        $sortByAsc = $request->input('sort_by_asc');
-        $categoryId = $request->input('category_id');
-        $search = $request->input('search');
-        $status = $request->input('status');
 
-        $query = Transaction::query()
-            ->select('transactions.*')
-            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->where('transactions.user_id', UserService::getUserId())
-            ->orderBy('transactions.created_at', 'DESC')
-            ->orderBy('transactions.status', 'ASC')
-            ->with('customer', 'user');
-
-        if ($startDate && $endDate) {
-            $query->whereDate('transactions.created_at', '>=', $startDate)
-                ->whereDate('transactions.created_at', '<=', $endDate);
-        } else if ($startDate) {
-            $query->whereDate('transactions.created_at', '>=', $startDate);
-        } else if ($endDate) {
-            $query->whereDate('transactions.created_at', '<=', $endDate);
-        }
-
-        if($categoryId) {
-            $query->where('category_id', $categoryId);
-        }
-
-        if ($sortByDesc) {
-            $query->orderBy("transactions.$sortByDesc", 'DESC');
-        }
-
-        if ($sortByAsc) {
-            $query->orderBy("transactions.$sortByAsc", 'ASC');
-        }
-
-        if ($status) {
-            $query->where('transactions.status', $status);
-        }
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('transactions.reference_number', 'LIKE', "%{$search}%")
-                    ->orWhere('customers.name', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $transaction = $query->paginate($perPage);
-        return new TransactionCollection($transaction);
+        $query = TransactionQuery::TransactionQuery();
+        TransactionQuery::applyFilters($query, $request);
+        $transactions = $query->paginate($perPage);
+        
+        return new TransactionCollection($transactions);
     }
 
     public function store(StoreTransactionRequest $request)

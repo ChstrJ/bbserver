@@ -33,6 +33,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     Route::get('/auth/verify', [AuthController::class, 'verifyToken']);
     Route::get('/auth/user', [AuthController::class, 'getUserInfo']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/register', [AuthController::class, 'register']);
 
     Route::group(['middleware' => 'employee'], function () {
         //employee scope

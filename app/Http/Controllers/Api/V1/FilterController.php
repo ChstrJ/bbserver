@@ -102,16 +102,18 @@ class FilterController extends Controller
     {
 
         $perPage = $request->input('per_page', 15);
-        $employeeName = $request->input('employee');
+        $search = $request->input('search');
 
         $query = User::query()
-            ->select('*')
             ->orderByDesc('last_login_at')
             ->whereNot('is_active', UserStatus::$NOT_ACTIVE)
             ->with('products', 'transactions');
 
-        if ($employeeName) {
-            $query->where('full_name', 'LIKE', "%$employeeName%");
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'LIKE', "%{$search}%")
+                ->orWhere('username', 'LIKE', "%{$search}%");
+            });
         }
 
         $user = $query->paginate($perPage);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\customer\CustomerStatus;
 use App\Http\Helpers\product\ProductStatus;
+use App\Http\Helpers\summary\SummaryService;
 use App\Http\Helpers\transaction\TransactionService;
 use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserService;
@@ -21,30 +22,14 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
     use ResponseHelper;
+
     public function getAllSummary(Request $request)
     {
-       
         $today = UserService::getDate();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
         $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count(); 
-
-
-        $employees = User::selectRaw("
-            COUNT(id) AS all_users,
-            COUNT(CASE WHEN role_id = 1 THEN role_id ELSE null END) AS admin,
-            COUNT(CASE WHEN role_id = 2 THEN role_id ELSE null END) AS employee
-        ")->first();
-
-        $orders = Transaction::selectRaw("
-            COUNT(CASE WHEN status = 'approved' THEN status ELSE null END) AS approved_count,
-            COUNT(CASE WHEN status = 'rejected' THEN status ELSE null END) AS rejected_count,
-            COUNT(CASE WHEN status = 'pending' THEN status ELSE null END) AS pending_count,
-            TRUNCATE(SUM(CASE WHEN status = 'rejected' THEN amount_due ELSE 0 END), 2) AS total_rejected,
-            TRUNCATE(SUM(CASE WHEN status = 'pending' THEN amount_due ELSE 0 END), 2) AS total_pending,
-            TRUNCATE(SUM(CASE WHEN status = 'approved' THEN commission ELSE 0 END), 2) AS total_commission,
-            TRUNCATE(SUM(CASE WHEN status = 'approved' THEN amount_due ELSE 0 END), 2) AS overall_sales,
-            TRUNCATE(SUM(CASE WHEN DATE(created_at) = '" . $today . "' AND status = 'approved' THEN amount_due ELSE 0 END), 2) AS today_sales
-        ")->first();
+        $employees = SummaryService::getEmployeeSummary();
+        $orders = SummaryService::getOrderSummary($today);
 
         return $this->json([
             "sales" => [
@@ -68,7 +53,6 @@ class AdminController extends Controller
         ]);
     }
 
-
     public function criticalStocks() 
     {
         $criticalStocks = Product::where('quantity', '<=', '50')
@@ -79,17 +63,11 @@ class AdminController extends Controller
 
     public function chartSales(Request $request)
     {
-        
         $interval = $request->input('interval');
 
-        $sales = [];
-
-        if ($interval) {
-            $sales = TransactionService::getLogScaleData($interval);
-        } else {
-            $sales = TransactionService::getLogScaleData('weekly');
-        }
-
+        $interval = $interval ?: 'weekly';
+        $sales = TransactionService::getLogScaleData($interval);
+        
         return $this->json($sales);
     }
 

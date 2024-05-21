@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Utils\HttpStatusMessage;
 use App\Http\Utils\Role;
 use Closure;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class EmployeeRole
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user()->role_id;
-        if (Auth::check() && ($user === Role::$ADMIN || $user === Role::$EMPLOYEE)) {
+        if (Auth::check() && ($user === Role::ADMIN || $user === Role::EMPLOYEE)) {
             return $next($request);
         }
 
