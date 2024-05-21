@@ -49,12 +49,13 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         //admin scope
         Route::apiResource('/users', UserController::class);
         Route::apiResource('/categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('/admin/orders', TransactionController::class)->except(['update']);
         Route::get('/admin/summary', [AdminController::class, 'getAllSummary']);
         Route::get('/admin/chart/sales', [AdminController::class, 'chartSales']);
         Route::get('/admin/chart/products', [AdminController::class, 'criticalStocks']);
         Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
         Route::get('/admin/sales', [FilterController::class, 'filterSales']);
-        Route::get('/admin/orders', [FilterController::class, 'filterOrders']);
+        Route::get('/admin/filter/orders', [FilterController::class, 'filterOrders']);
         Route::get('/admin/export', [ExportController::class, 'exportSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
