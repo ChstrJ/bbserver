@@ -12,6 +12,7 @@ use App\Http\Helpers\user\UserService;
 use App\Http\Requests\StoreRegisterRequest;
 use App\Http\Utils\Response;
 use App\Http\Utils\ResponseHelper;
+use App\Http\Utils\Role;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -112,7 +113,7 @@ class AdminController extends Controller
             'full_name' => $data['full_name'],
             'username' => $data['username'],
             'password' => bcrypt($data['password']),
-            'role_id' => 1,
+            'role_id' => Role::ADMIN,
         ]);
         return response('', 200);
     }

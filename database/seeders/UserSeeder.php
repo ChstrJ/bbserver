@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Http\Utils\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,28 +22,28 @@ class UserSeeder extends Seeder
             "full_name" => "Chester Jazmin",
             "username" => "admin1",
             "password" => bcrypt('1234'),
-            "role_id" => 1,
+            "role_id" => Role::SUPER_ADMIN,
             "created_at" => now()
         ],
         [
             "full_name" => "Keanno Regino",
             "username" => "admin2",
             "password" => bcrypt('1234'),
-            "role_id" => 1,
+            "role_id" => Role::SUPER_ADMIN,
             "created_at" => now()
         ],
         [
             "full_name" => "Jerome Cruz Ilunio",
             "username" => "admin3",
             "password" => bcrypt('1234'),
-            "role_id" => 2,
+            "role_id" => Role::ADMIN,
             "created_at" => now()
         ],
         [
             "full_name" => "Jeline Cadayday",
             "username" => "employee1",
             "password" => bcrypt('1234'),
-            "role_id" => 3,
+            "role_id" => Role::EMPLOYEE,
             "created_at" => now()
         ]
        ]);
