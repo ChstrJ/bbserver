@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
 
         //custom
+        'super' => \App\Http\Middleware\SuperRole::class,
         'admin' => \App\Http\Middleware\AdminRole::class,
         'employee' => \App\Http\Middleware\EmployeeRole::class,
         'online' =>  \App\Http\Middleware\OnlineChecker::class,

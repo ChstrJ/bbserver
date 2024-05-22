@@ -21,11 +21,7 @@ return new class extends Migration {
             $table->timestamp('last_logout_at')->nullable();
             $table->timestamp('last_activity')->nullable();
             $table->timestamps();
-            
-            $table->foreignId('role_id')
-                ->constrained('roles')
-                ->restrictOnDelete()
-                ->restrictOnUpdate();
+            $table->tinyInteger('role_id');
 
         });
     }

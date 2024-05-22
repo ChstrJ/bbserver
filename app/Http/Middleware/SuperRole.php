@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class EmployeeRole
+class SuperRole
 {
     /**
      * Handle an incoming request.
@@ -18,11 +18,9 @@ class EmployeeRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user()->role_id;
-        if (Auth::check() && ($user === Role::ADMIN || $user === Role::EMPLOYEE || $user === Role::SUPER_ADMIN)) {
+        if(Auth::check() && Auth::user()->role_id === Role::SUPER_ADMIN) {
             return $next($request);
         }
-
         return abort(403, HttpStatusMessage::$FORBIDDEN);
     }
 }

@@ -26,7 +26,7 @@ class AdminController extends Controller
     {
         $today = UserService::getDate();
         $products = Product::whereNot('is_removed', ProductStatus::$REMOVE)->count();
-        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count(); 
+        $customers = Customer::whereNot('is_active', CustomerStatus::$NOT_ACTIVE)->count();
         $employees = SummaryService::getEmployeeSummary();
         $orders = SummaryService::getOrderSummary($today);
 
@@ -52,10 +52,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function criticalStocks() 
+    public function criticalStocks()
     {
         $criticalStocks = Product::where('quantity', '<=', '50')
-                    ->whereNot('is_removed', ProductStatus::$REMOVE)->limit(15)->get();
+                        ->whereNot('is_removed', ProductStatus::$REMOVE)->limit(15)->get();
 
         return $this->json($criticalStocks);
     }
@@ -66,7 +66,7 @@ class AdminController extends Controller
 
         $interval = $interval ?: 'weekly';
         $sales = TransactionService::getLogScaleData($interval);
-        
+
         return $this->json($sales);
     }
 

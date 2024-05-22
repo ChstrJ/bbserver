@@ -4,6 +4,7 @@
 namespace App\Http\Utils;
 
 class Role {
-    const ADMIN = 1;
-    const EMPLOYEE = 2;
+    const SUPER_ADMIN = 1;
+    const ADMIN = 2;
+    const EMPLOYEE = 3;
 }

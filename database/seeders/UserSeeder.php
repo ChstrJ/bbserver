@@ -32,10 +32,17 @@ class UserSeeder extends Seeder
             "created_at" => now()
         ],
         [
+            "full_name" => "Jerome Cruz Ilunio",
+            "username" => "admin3",
+            "password" => bcrypt('1234'),
+            "role_id" => 2,
+            "created_at" => now()
+        ],
+        [
             "full_name" => "Jeline Cadayday",
             "username" => "employee1",
             "password" => bcrypt('1234'),
-            "role_id" => 2,
+            "role_id" => 3,
             "created_at" => now()
         ]
        ]);

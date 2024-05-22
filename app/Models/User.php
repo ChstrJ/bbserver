@@ -47,11 +47,6 @@ class User extends Authenticatable
         return $this->hasMany(Customer::class);
     }
 
-    public function role() : BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
-
     public function isOnline() : bool
     {                        
         return $this->last_activity >= now()->subMinutes(15);

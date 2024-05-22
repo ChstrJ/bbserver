@@ -70,7 +70,9 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::patch('/admin/restore/order/{id}', [RestoreController::class, 'restoreTransaction']);
         Route::patch('/admin/restore/employee/{id}', [RestoreController::class, 'restoreEmployee']);
         Route::patch('/admin/restore/product/{id}', [RestoreController::class, 'restoreProduct']);
-
-        Route::post('/admin/create', [AdminController::class, 'createAdmin']);
     });
+
+        Route::group(['middleware' => 'super'], function () {
+            Route::post('/admin/create', [AdminController::class, 'createAdmin']);
+        });
 });

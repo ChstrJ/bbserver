@@ -7,6 +7,7 @@ use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserStatus;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
+use App\Http\Utils\Role;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -107,6 +108,7 @@ class FilterController extends Controller
         $query = User::query()
             ->orderByDesc('last_login_at')
             ->whereNot('is_active', UserStatus::$NOT_ACTIVE)
+            ->whereNot('role_id', Role::SUPER_ADMIN)
             ->with('products', 'transactions');
 
         if ($search) {
@@ -137,7 +139,8 @@ class FilterController extends Controller
             ->with('customer', 'user')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->orderBy('transactions.status', 'ASC');
+            ->orderBy('transactions.status', 'ASC')
+            ->orderBy('transactions.created_at', 'DESC');
 
         if ($startDate && $endDate) {
             $query->whereDate('transactions.created_at', '>=', $startDate)
