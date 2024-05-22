@@ -109,6 +109,7 @@ class FilterController extends Controller
             ->orderByDesc('last_login_at')
             ->whereNot('is_active', UserStatus::$NOT_ACTIVE)
             ->whereNot('role_id', Role::SUPER_ADMIN)
+            ->orderBy('status', 'DESC')
             ->with('products', 'transactions');
 
         if ($search) {

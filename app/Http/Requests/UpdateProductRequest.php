@@ -29,7 +29,6 @@ class UpdateProductRequest extends FormRequest
             'description' => 'sometimes|string',
             'quantity' => 'sometimes|int|min:1|max:10000',
             'srp' => 'sometimes|numeric|min:1|max:500000',
-            'is_removed' => 'sometimes|boolean',
             'member_price' => 'sometimes|numeric|min:1|max:500000',
         ];
     }
