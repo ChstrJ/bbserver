@@ -36,9 +36,9 @@ class SummaryService
     public static function getEmployeeSummary()
     {
         return User::selectRaw("
-            COUNT(CASE WHEN role_id != 1 THEN role_id ELSE NULL END) AS all_users,
-            COUNT(CASE WHEN role_id = 2 THEN role_id ELSE null END) AS admin,
-            COUNT(CASE WHEN role_id = 3 THEN role_id ELSE null END) AS employee
+            COUNT(CASE WHEN role_id != 3 THEN role_id ELSE NULL END) AS all_users,
+            COUNT(CASE WHEN role_id = 1 THEN role_id ELSE null END) AS admin,
+            COUNT(CASE WHEN role_id = 2 THEN role_id ELSE null END) AS employee
         ")->first();
     }
 }
