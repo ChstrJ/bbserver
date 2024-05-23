@@ -26,7 +26,7 @@ class StoreAppointmentRequest extends FormRequest
             'description' => 'required|string',
             'start_time' => 'required|different:start_time',
             'end_time' => 'required|different:end_time',
-            'date' => 'required',
+            'date' => 'required|date',
             'status' => 'required'
         ];
     }

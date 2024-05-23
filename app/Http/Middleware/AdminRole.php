@@ -19,7 +19,7 @@ class AdminRole
   public function handle(Request $request, Closure $next): Response
   {
     $user = Auth::user()->role_id;
-    if (Auth::check() && $user === Role::$ADMIN) {
+    if (Auth::check() && ($user === Role::ADMIN || $user === Role::SUPER_ADMIN)) {
       return $next($request);
     }
 

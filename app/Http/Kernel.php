@@ -41,10 +41,10 @@ class Kernel extends HttpKernel
 
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
+            \App\Http\Middleware\LogUserActivity::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-           
-            'api.key' // \App\Http\Middleware\ApiKeyAuthentication::class,
+            \App\Http\Middleware\ApiKeyAuthentication::class,
+            // \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
         ],
     ];
 
@@ -69,7 +69,7 @@ class Kernel extends HttpKernel
         'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
 
         //custom
-        'logs' => \App\Http\Middleware\LogUserActivity::class,
+        'super' => \App\Http\Middleware\SuperRole::class,
         'admin' => \App\Http\Middleware\AdminRole::class,
         'employee' => \App\Http\Middleware\EmployeeRole::class,
         'online' =>  \App\Http\Middleware\OnlineChecker::class,

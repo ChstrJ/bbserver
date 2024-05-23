@@ -7,6 +7,7 @@ use App\Http\Helpers\transaction\TransactionStatus;
 use App\Http\Helpers\user\UserStatus;
 use App\Http\Resources\V1\TransactionCollection;
 use App\Http\Resources\V1\UserCollection;
+use App\Http\Utils\Role;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,6 +32,8 @@ class FilterController extends Controller
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->whereNot('transactions.is_removed', TransactionStatus::$REMOVE)
+            ->orderBy('transactions.created_at', 'DESC')
+            ->orderBy('transactions.status', 'ASC')
             ->with('user', 'customer');
 
         if ($startDate && $endDate) {
@@ -100,16 +103,20 @@ class FilterController extends Controller
     {
 
         $perPage = $request->input('per_page', 15);
-        $employeeName = $request->input('employee');
+        $search = $request->input('search');
 
         $query = User::query()
-            ->select('*')
             ->orderByDesc('last_login_at')
             ->whereNot('is_active', UserStatus::$NOT_ACTIVE)
+            ->whereNot('role_id', Role::SUPER_ADMIN)
+            ->orderBy('status', 'DESC')
             ->with('products', 'transactions');
 
-        if ($employeeName) {
-            $query->where('full_name', 'LIKE', "%$employeeName%");
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'LIKE', "%{$search}%")
+                ->orWhere('username', 'LIKE', "%{$search}%");
+            });
         }
 
         $user = $query->paginate($perPage);
@@ -134,7 +141,7 @@ class FilterController extends Controller
             ->leftJoin('users', 'transactions.user_id', '=', 'users.id')
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->orderBy('transactions.status', 'ASC')
-            ->orderByDesc('transactions.created_at');
+            ->orderBy('transactions.created_at', 'DESC');
 
         if ($startDate && $endDate) {
             $query->whereDate('transactions.created_at', '>=', $startDate)

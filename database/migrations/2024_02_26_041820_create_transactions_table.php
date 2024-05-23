@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('amount_due');
             $table->integer('number_of_items');
             $table->tinyInteger('payment_method');
+            //$table->string('image');
             $table->json('checkouts');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->decimal('commission')->nullable();

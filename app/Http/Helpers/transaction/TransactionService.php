@@ -7,10 +7,9 @@ use App\Http\Helpers\user\UserService;
 use App\Models\Product;
 use App\Models\Transaction;
 use Carbon\Carbon;
-use DB;
 use Exception;
 
-trait TransactionService
+class TransactionService
 {
     public static function processTransaction($data)
     {
@@ -75,7 +74,7 @@ trait TransactionService
 
             $qty = $checkouts['quantity'];
 
-            if (!$product) {
+            if (!$product) { 
                 throw new Exception('Product ID not found.');
             }
 
@@ -133,22 +132,22 @@ trait TransactionService
     {
         $names = [];
 
-        for ($i = 0; $i < count($data); $i++) {
-            $names[] = $data[$i]['name'];
-        }
+        $names = array_map(function ($item) {
+            return "{$item['name']} {$item['quantity']} qty";
+        }, $data);
 
         return implode(', ', $names);
     }
 
 
-    public static function getLogScaleData($interval)
+    public static function getLogScaleData(string $interval, int $userId = null)
     {
         $now = Carbon::now();
 
         $query = Transaction::query();
 
-        $startWeek = $now->startOfWeek()->toDateString();
-        $endWeek = $now->endOfWeek()->toDateString();
+        $startWeek = $now->startOfWeek()->toDateTimeString();
+        $endWeek = $now->endOfWeek()->toDateTimeString();
 
         $startYear = $now->startOfYear()->toDateString();
         $endYear = $now->endOfYear()->toDateString();
@@ -168,11 +167,11 @@ trait TransactionService
 
                 $weeklySalesData = $query
                     ->selectRaw('DATE(created_at) AS day, TRUNCATE(SUM(amount_due), 2) AS total_sales')
+                    ->when($userId, fn($q, $userId) => $q->where('user_id', $userId))
                     ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereBetween('created_at', [$startWeek, $endWeek])
                     ->groupByRaw('DATE(created_at)')
                     ->get();
-
 
                 for ($day = 0; $day < count($weeklySalesData); $day++) {
                     $dayName = Carbon::parse($weeklySalesData[$day]->day)->format('l');
@@ -187,14 +186,16 @@ trait TransactionService
 
                 $monthlySales = $query
                     ->selectRaw('MONTH(created_at) AS month, TRUNCATE(SUM(amount_due), 2) AS total_sales')
+                    ->when($userId, fn($q, $userId) => $q->where('user_id', $userId))
                     ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereBetween('created_at', [$startYear, $endYear])
                     ->groupByRaw('MONTH(created_at)')
                     ->get();
 
-
-                for ($month = 0; $month < 12; $month++) {
+                for ($month = 1; $month < 12 + 1; $month++) {
                     $monthName = Carbon::createFromDate(null, $month)->format('F');
+
+                    $monthName = substr($monthName, 0, 3);
                     $salesData = $monthlySales->where('month', $month)->first();
                     $monthSales[$monthName] = $salesData ? $salesData->total_sales : 0;
                 }
@@ -211,6 +212,7 @@ trait TransactionService
 
                 $yearlySalesData = $query
                     ->selectRaw('YEAR(created_at) AS year, SUM(amount_due) AS total_sales')
+                    ->when($userId, fn($q, $userId) => $q->where('user_id', $userId))
                     ->whereRaw('status = ?', [TransactionStatus::$APPROVE])
                     ->whereRaw('created_at >= DATE_SUB(NOW(), INTERVAL 5 YEAR)')
                     ->groupByRaw('YEAR(created_at)')

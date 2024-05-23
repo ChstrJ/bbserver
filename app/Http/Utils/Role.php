@@ -4,7 +4,7 @@
 namespace App\Http\Utils;
 
 class Role {
-    static $ADMIN = 1;
-    static $EMPLOYEE = 2;
+    const SUPER_ADMIN = 3;
+    const ADMIN = 1;
+    const EMPLOYEE = 2;
 }
-

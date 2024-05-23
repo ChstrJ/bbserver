@@ -33,13 +33,16 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     Route::get('/auth/verify', [AuthController::class, 'verifyToken']);
     Route::get('/auth/user', [AuthController::class, 'getUserInfo']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/register', [AuthController::class, 'register']);
 
     Route::group(['middleware' => 'employee'], function () {
         //employee scope
-        Route::get('/employee/summary', [EmployeeController::class, 'getAllTotal']);
+        Route::get('/employee/summary', [EmployeeController::class, 'getAllSummary']);
         Route::get('/employee/chart/sales', [EmployeeController::class, 'chartSales']);
+        Route::get('/employee/chart/products', [EmployeeController::class, 'criticalStocks']);
+        Route::get('/employee/filter/orders', [TransactionController::class, 'index']);
+        Route::apiResource('/employee/orders', TransactionController::class)->except(['update']);
         Route::apiResource('/products', ProductController::class);
-        Route::apiResource('/orders', TransactionController::class)->except(['update']);
         Route::apiResource('/customers', CustomerController::class);
         Route::apiResource('/appointments', AppointmentController::class);
     });
@@ -47,13 +50,15 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
     Route::group(['middleware' => 'admin'], function () {
         //admin scope
         Route::apiResource('/users', UserController::class);
-        Route::apiResource('/categories', CategoryController::class);
-        Route::get('/admin/summary', [AdminController::class, 'getAllTotal']);
-        Route::get('/admin/employees', [FilterController::class, 'filterEmployees']);
-        Route::get('/admin/sales', [FilterController::class, 'filterSales']);
-        Route::get('/admin/orders', [FilterController::class, 'filterOrders']);
-        Route::get('/admin/export', [ExportController::class, 'exportSales']);
+        Route::apiResource('/categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+        Route::apiResource('/admin/orders', TransactionController::class)->except(['update']);
+        Route::get('/admin/summary', [AdminController::class, 'getAllSummary']);
         Route::get('/admin/chart/sales', [AdminController::class, 'chartSales']);
+        Route::get('/admin/chart/products', [AdminController::class, 'criticalStocks']);
+        Route::get('/admin/filter/employees', [FilterController::class, 'filterEmployees']);
+        Route::get('/admin/filter/sales', [FilterController::class, 'filterSales']);
+        Route::get('/admin/filter/orders', [FilterController::class, 'filterOrders']);
+        Route::get('/admin/export', [ExportController::class, 'exportSales']);
         Route::patch('/admin/order/approve/{id}', [AdminController::class, 'approve']);
         Route::patch('/admin/order/reject/{id}', [AdminController::class, 'reject']);
 
@@ -66,7 +71,9 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::patch('/admin/restore/order/{id}', [RestoreController::class, 'restoreTransaction']);
         Route::patch('/admin/restore/employee/{id}', [RestoreController::class, 'restoreEmployee']);
         Route::patch('/admin/restore/product/{id}', [RestoreController::class, 'restoreProduct']);
-
-        Route::post('/admin-create', [AdminController::class, 'createAdmin']);
     });
+
+        Route::group(['middleware' => 'super'], function () {
+            Route::post('/admin/create', [AdminController::class, 'createAdmin']);
+        });
 });
