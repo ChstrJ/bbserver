@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth:sanctum', 'online']], function () {
         Route::get('/employee/summary', [EmployeeController::class, 'getAllSummary']);
         Route::get('/employee/chart/sales', [EmployeeController::class, 'chartSales']);
         Route::get('/employee/chart/products', [EmployeeController::class, 'criticalStocks']);
+        Route::get('/employee/filter/orders', [TransactionController::class, 'index']);
         Route::apiResource('/employee/orders', TransactionController::class)->except(['update']);
         Route::apiResource('/products', ProductController::class);
         Route::apiResource('/customers', CustomerController::class);
