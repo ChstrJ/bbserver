@@ -19,8 +19,8 @@ class UserSeeder extends Seeder
        User::factory()->count(7)->create();
        DB::table('users')->insert([
         [
-            "full_name" => "Admin admin",
-            "username" => "admin4",
+            "full_name" => "Super admin",
+            "username" => "super1",
             "password" => bcrypt('1234'),
             "role_id" => Role::SUPER_ADMIN,
             "created_at" => now()
