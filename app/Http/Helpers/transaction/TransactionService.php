@@ -192,8 +192,9 @@ class TransactionService
                     ->groupByRaw('MONTH(created_at)')
                     ->get();
 
-                for ($month = 0; $month < 12; $month++) {
+                for ($month = 1; $month < 12 + 1; $month++) {
                     $monthName = Carbon::createFromDate(null, $month)->format('F');
+
                     $monthName = substr($monthName, 0, 3);
                     $salesData = $monthlySales->where('month', $month)->first();
                     $monthSales[$monthName] = $salesData ? $salesData->total_sales : 0;

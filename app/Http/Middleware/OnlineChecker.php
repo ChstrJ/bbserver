@@ -19,17 +19,18 @@ class OnlineChecker
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
-    
-        if ($user && $user->last_activity >= now()->subMinutes(15)->toDateTimeString()) {
-            $user->last_activity = now();
-            $user->status = UserStatus::$ONLINE;
-            $user->save();
-        } else {
-            $user->status = UserStatus::$OFFLINE;
+
+        if ($user) {
+            $lastActivity = new Carbon($user->last_activity);
+            if ($lastActivity->diffInMinutes(now()) <= 15) {
+                $user->last_activity = now();
+                $user->status = UserStatus::$ONLINE;
+            } else {
+                $user->status = UserStatus::$OFFLINE;
+            }
             $user->save();
         }
+
         return $next($request);
-
     }
-
 }
