@@ -19,8 +19,8 @@ class CustomerResource extends JsonResource
             "address" => $this->address,
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at,
-            "created_by" => $this->created_by ? UserService::getUsernameById($this->created_by) : null,
-            "updated_by" => $this->updated_by ? UserService::getUsernameById($this->updated_by) : null,
+            "created_by" => $this->created_by ? UserService::getFullnameById($this->created_by) : null,
+            "updated_by" => $this->updated_by ? UserService::getFullnameById($this->updated_by) : null,
             "transactions" => TransactionResource::collection($this->whenLoaded("transactions")),
         ];
     }
