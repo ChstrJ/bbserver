@@ -20,15 +20,15 @@ class ProductFactory extends Factory
     {
         $description = Category::pluck('name')->toArray();
         return [
-            'product_code' => 'BB'. $this->faker->unique()->numberBetween(1, 100),
+            'product_code' => 'BB'. $this->faker->unique()->numberBetween(1, 50),
             'category_id' => $this->faker->numberBetween(1, 8), 
             'name' => $this->faker->randomElement(['Hazelnut', 'Mocha', 'Matcha', 'Italian', 'Supremo', 'Hazelnut', 'Vanilla', 'Chocolate']),
             'description' => $this->faker->randomElement($description),
             'quantity' => $this->faker->numberBetween(50, 100),
             'srp' => $this->faker->randomFloat(2, 500, 1000),
             'member_price' => $this->faker->randomFloat(2, 1, 500),
-            'user_id' => $this->faker->numberBetween(1, 2),
-            'created_by' => $this->faker->numberBetween(1, 2)
+            'user_id' => $this->faker->numberBetween(1, 3),
+            'created_by' => $this->faker->numberBetween(1, 3)
         ];
     }
 }

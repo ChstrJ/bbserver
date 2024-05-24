@@ -15,8 +15,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-
-       User::factory()->count(7)->create();
        DB::table('users')->insert([
         [
             "full_name" => "Super admin",
