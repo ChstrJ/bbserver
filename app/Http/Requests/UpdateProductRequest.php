@@ -24,6 +24,7 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         //$categories_length = \App\Http\Utils\ProductCategories::getCategories();
+        $product = DB::table("products")->where("id", $this->id)->first();
        
         return [
             'category_id' => "sometimes|int|min:1|exists:categories,id",
@@ -34,14 +35,13 @@ class UpdateProductRequest extends FormRequest
                 'int',
                 'min:1',
                 'max:10000',
-                function ($attribute, $value, $fail) {
-                    $product = DB::table("products")->where("id", $this->id)->first();
+                function ($attribute, $value, $fail) use ($product) {
                     if ($product && $value <= $product->quantity) {
                         $fail("The {$attribute} must be greater than the current quantity");
                     }
                  }
             ],
-            'srp' => 'sometimes|numeric|min:1|max:500000',
+            'srp' => 'sometimes|numeric|gt:member_price|min:1|max:500000',
             'member_price' => 'sometimes|numeric|min:1|max:500000',
         ];
     }
