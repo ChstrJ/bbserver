@@ -21,7 +21,7 @@ class TransactionFactory extends Factory
         return [
             'reference_number' => TransactionService::generateReference(),
             'customer_id' => $this->faker->numberBetween(1, 10),
-            'user_id' => $this->faker->numberBetween(1, 3),
+            'user_id' => $this->faker->numberBetween(2, 5),
             'amount_due' => $this->faker->numberBetween(1, 1500),
             'number_of_items' => $this->faker->numberBetween(1, 50),
             'status' => $this->faker->randomElement(['approved', 'rejected', 'pending']),
