@@ -29,6 +29,10 @@ Route::get('test', function() {
     dd("Hello world!");
 });
 
+Route::get('test', function() {
+    dd("Hello world!");
+});
+
 //public routes
 Route::post('/auth/login', [AuthController::class, 'login']);
 
