@@ -25,6 +25,9 @@ use App\Http\Controllers\Api\V1\FilterController;
 |
 */
 
+Route::get('test', function() {
+    dd("Hello world!");
+});
 
 //public routes
 Route::post('/auth/login', [AuthController::class, 'login']);
